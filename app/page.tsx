@@ -17,16 +17,34 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+const subTabNames: Record<string, string> = {
+  enterprise: "企业中心",
+  todo: "待办事项",
+  "warehouse-info": "仓储信息管理",
+  order: "订单管理",
+  contract: "合同管理",
+}
+
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("frontend")
+  const [activeSubTab, setActiveSubTab] = useState("enterprise")
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+
+  const handleTabChange = (tab: string, subTab?: string) => {
+    setActiveTab(tab)
+    if (subTab) {
+      setActiveSubTab(subTab)
+    } else if (tab === "personal") {
+      setActiveSubTab("enterprise")
+    }
+  }
 
   const renderContent = () => {
     switch (activeTab) {
       case "frontend":
         return <FrontendPage />
       case "personal":
-        return <PersonalWorkbench />
+        return <PersonalWorkbench activeSubTab={activeSubTab} />
       case "operation":
         return <OperationWorkbench />
       default:
@@ -39,7 +57,7 @@ export default function HomePage() {
       case "frontend":
         return "仓储基地门户"
       case "personal":
-        return "个人工作台"
+        return `个人工作台 - ${subTabNames[activeSubTab] || "企业中心"}`
       case "operation":
         return "运营工作台"
       default:
@@ -52,7 +70,8 @@ export default function HomePage() {
       {/* 侧边栏 */}
       <AppSidebar
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        activeSubTab={activeSubTab}
+        onTabChange={handleTabChange}
         collapsed={sidebarCollapsed}
         onCollapsedChange={setSidebarCollapsed}
       />
