@@ -154,7 +154,11 @@ const getPublishStatusBadge = (status: string) => {
   }
 }
 
-export function WarehouseInfo() {
+interface WarehouseInfoProps {
+  roleType?: "warehouse-unit" | "warehouse-site"
+}
+
+export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProps) {
   const [searchKeyword, setSearchKeyword] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
 

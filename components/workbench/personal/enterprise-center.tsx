@@ -95,8 +95,20 @@ const roleStatus = [
   { roleId: "material-user", status: "uncertified", date: null },
 ]
 
-export function EnterpriseCenter() {
-  const [activeRole, setActiveRole] = useState("property-owner")
+interface EnterpriseCenterProps {
+  roleType?: "property" | "warehouse-unit" | "warehouse-site" | "transport" | "user"
+}
+
+const roleMapping: Record<string, string> = {
+  "property": "property-owner",
+  "warehouse-unit": "warehouse-unit",
+  "warehouse-site": "warehouse-site",
+  "transport": "transport-unit",
+  "user": "material-user",
+}
+
+export function EnterpriseCenter({ roleType = "property" }: EnterpriseCenterProps) {
+  const [activeRole, setActiveRole] = useState(roleMapping[roleType] || "property-owner")
 
   const getStatusBadge = (status: string) => {
     switch (status) {

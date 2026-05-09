@@ -151,8 +151,13 @@ const getStatusBadge = (status: string) => {
   }
 }
 
-export function TodoList() {
-  const [activeTab, setActiveTab] = useState("entrust")
+interface TodoListProps {
+  activeTab?: string
+  roleType?: "property" | "warehouse-unit" | "warehouse-site" | "transport" | "user"
+}
+
+export function TodoList({ activeTab: initialTab = "entrust", roleType = "property" }: TodoListProps) {
+  const [activeTab, setActiveTab] = useState(initialTab === "delegate" ? "entrust" : initialTab === "approval" ? "approval" : "entrust")
   const [searchKeyword, setSearchKeyword] = useState("")
 
   const stats = {

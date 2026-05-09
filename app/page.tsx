@@ -3,7 +3,11 @@
 import { useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { FrontendPage } from "@/components/frontend/frontend-page"
-import { PersonalWorkbench } from "@/components/workbench/personal-workbench"
+import { PropertyOwnerWorkbench } from "@/components/workbench/roles/property-owner-workbench"
+import { WarehouseUnitWorkbench } from "@/components/workbench/roles/warehouse-unit-workbench"
+import { WarehouseSiteWorkbench } from "@/components/workbench/roles/warehouse-site-workbench"
+import { TransportUnitWorkbench } from "@/components/workbench/roles/transport-unit-workbench"
+import { UserUnitWorkbench } from "@/components/workbench/roles/user-unit-workbench"
 import { OperationWorkbench } from "@/components/workbench/operation-workbench"
 import { cn } from "@/lib/utils"
 import { Bell, User, Menu } from "lucide-react"
@@ -17,25 +21,27 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-const subTabNames: Record<string, string> = {
-  enterprise: "企业中心",
-  todo: "待办事项",
-  "warehouse-info": "仓储信息管理",
-  order: "订单管理",
-  contract: "合同管理",
+const pageNames: Record<string, string> = {
+  frontend: "仓储基地门户",
+  "personal-property": "个人工作台 - 物权单位",
+  "personal-warehouse-unit": "个人工作台 - 仓储单位",
+  "personal-warehouse-site": "个人工作台 - 仓储站点",
+  "personal-transport": "个人工作台 - 专运单位",
+  "personal-user": "个人工作台 - 使用单位",
+  operation: "运营工作台",
 }
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("frontend")
-  const [activeSubTab, setActiveSubTab] = useState("enterprise")
+  const [activeSubTab, setActiveSubTab] = useState("")
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   const handleTabChange = (tab: string, subTab?: string) => {
     setActiveTab(tab)
     if (subTab) {
       setActiveSubTab(subTab)
-    } else if (tab === "personal") {
-      setActiveSubTab("enterprise")
+    } else {
+      setActiveSubTab("")
     }
   }
 
@@ -43,8 +49,16 @@ export default function HomePage() {
     switch (activeTab) {
       case "frontend":
         return <FrontendPage />
-      case "personal":
-        return <PersonalWorkbench activeSubTab={activeSubTab} />
+      case "personal-property":
+        return <PropertyOwnerWorkbench subTab={activeSubTab} />
+      case "personal-warehouse-unit":
+        return <WarehouseUnitWorkbench subTab={activeSubTab} />
+      case "personal-warehouse-site":
+        return <WarehouseSiteWorkbench subTab={activeSubTab} />
+      case "personal-transport":
+        return <TransportUnitWorkbench subTab={activeSubTab} />
+      case "personal-user":
+        return <UserUnitWorkbench subTab={activeSubTab} />
       case "operation":
         return <OperationWorkbench />
       default:
@@ -53,16 +67,7 @@ export default function HomePage() {
   }
 
   const getPageTitle = () => {
-    switch (activeTab) {
-      case "frontend":
-        return "仓储基地门户"
-      case "personal":
-        return `个人工作台 - ${subTabNames[activeSubTab] || "企业中心"}`
-      case "operation":
-        return "运营工作台"
-      default:
-        return "仓储基地"
-    }
+    return pageNames[activeTab] || "仓储基地"
   }
 
   return (
@@ -80,7 +85,7 @@ export default function HomePage() {
       <div
         className={cn(
           "transition-all duration-300",
-          sidebarCollapsed ? "ml-16" : "ml-64"
+          sidebarCollapsed ? "ml-16" : "ml-72"
         )}
       >
         {/* 顶部导航栏 */}

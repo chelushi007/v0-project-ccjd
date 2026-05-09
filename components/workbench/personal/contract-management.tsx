@@ -191,7 +191,11 @@ const getTypeBadge = (type: string) => {
   return <Badge className={colors[type] || ""}>{type}</Badge>
 }
 
-export function ContractManagement() {
+interface ContractManagementProps {
+  roleType?: "property" | "warehouse-unit" | "warehouse-site" | "transport" | "user"
+}
+
+export function ContractManagement({ roleType = "property" }: ContractManagementProps) {
   const [searchKeyword, setSearchKeyword] = useState("")
   const [activeTab, setActiveTab] = useState("all")
 
