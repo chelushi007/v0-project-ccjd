@@ -1,6 +1,6 @@
 "use client"
 
-import { Sparkles, ArrowRight, FileText, Package } from "lucide-react"
+import { Sparkles, ArrowRight, FileText, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -14,7 +14,7 @@ interface SmartMatchProps {
 export function SmartMatch({ onNavigate }: SmartMatchProps) {
   const [description, setDescription] = useState("")
 
-  const handleQuickMatch = (type: "storage" | "rent") => {
+  const handleQuickMatch = (type: "material" | "rent") => {
     onNavigate?.("smart-match")
   }
 
@@ -23,7 +23,7 @@ export function SmartMatch({ onNavigate }: SmartMatchProps) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-accent" />
-          <h2 className="text-lg font-semibold text-foreground">智能推荐</h2>
+          <h2 className="text-lg font-semibold text-foreground">智能匹配</h2>
           <Badge variant="secondary" className="bg-accent/10 text-accent">AI匹配</Badge>
         </div>
         <Button variant="link" className="text-primary" onClick={() => onNavigate?.("smart-match")}>
@@ -40,17 +40,17 @@ export function SmartMatch({ onNavigate }: SmartMatchProps) {
               <div className="grid grid-cols-2 gap-3">
                 <Card
                   className="cursor-pointer hover:shadow-md transition-all hover:border-primary/50 group"
-                  onClick={() => handleQuickMatch("storage")}
+                  onClick={() => handleQuickMatch("material")}
                 >
                   <CardContent className="p-4 text-center">
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                      <Package className="w-6 h-6 text-primary" />
+                      <Search className="w-6 h-6 text-primary" />
                     </div>
                     <h4 className="font-medium text-card-foreground group-hover:text-primary transition-colors">
-                      物资存放
+                      物资寻找
                     </h4>
                     <p className="text-xs text-muted-foreground mt-1">
-                      寻找合适的存放站点
+                      寻找合适的循环物资
                     </p>
                   </CardContent>
                 </Card>
@@ -89,7 +89,7 @@ export function SmartMatch({ onNavigate }: SmartMatchProps) {
                   </p>
                   <Button onClick={() => onNavigate?.("smart-match")}>
                     <Sparkles className="w-4 h-4 mr-2" />
-                    智能推荐
+                    智能匹配
                   </Button>
                 </div>
               </div>
