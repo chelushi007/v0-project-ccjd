@@ -1,6 +1,6 @@
 "use client"
 
-import { TrendingUp, ArrowRight, Building2, Clock, Eye, Star } from "lucide-react"
+import { TrendingUp, ArrowRight, Building2, MapPin, Maximize2, Eye, Clock, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -10,79 +10,142 @@ const opportunities = {
   rent: [
     {
       id: 1,
-      title: "深圳龙岗5000㎡标准仓库急租",
+      name: "深圳龙岗5000㎡标准仓库",
       location: "广东省深圳市龙岗区",
-      area: "5000㎡",
-      price: "32元/㎡/月",
+      type: "综合仓储",
+      area: "5000",
+      price: "0.56",
+      priceStatus: "竞价中",
+      rentType: "自主出租",
+      views: 328,
       publishTime: "2小时前",
-      views: 128,
+      features: ["近地铁", "24小时监控", "消防达标"],
       isHot: true,
-      tags: ["急租", "可分租"],
     },
     {
       id: 2,
-      title: "广州黄埔恒温仓储出租",
+      name: "广州黄埔恒温仓储中心",
       location: "广东省广州市黄埔区",
-      area: "3000㎡",
-      price: "48元/㎡/月",
+      type: "恒温仓储",
+      area: "3000",
+      price: "0.85",
+      priceStatus: "固定价",
+      rentType: "委托出租",
+      views: 256,
       publishTime: "5小时前",
-      views: 86,
-      isHot: false,
-      tags: ["恒温", "近港口"],
+      features: ["恒温恒湿", "近港口", "可分租"],
+      isHot: true,
     },
     {
       id: 3,
-      title: "东莞虎门大型堆场招租",
+      name: "东莞虎门大型堆场",
       location: "广东省东莞市虎门镇",
-      area: "15000㎡",
-      price: "15元/㎡/月",
+      type: "露天堆场",
+      area: "15000",
+      price: "0.25",
+      priceStatus: "竞价中",
+      rentType: "自主出租",
+      views: 412,
       publishTime: "1天前",
-      views: 256,
-      isHot: true,
-      tags: ["露天", "大面积"],
+      features: ["大面积", "近虎门港", "天车设备"],
+      isHot: false,
+    },
+    {
+      id: 4,
+      name: "佛山顺德钢材专用仓库",
+      location: "广东省佛山市顺德区",
+      type: "专业仓储",
+      area: "8000",
+      price: "0.45",
+      priceStatus: "固定价",
+      rentType: "委托出租",
+      views: 189,
+      publishTime: "2天前",
+      features: ["钢材专用", "防锈处理", "重载地面"],
+      isHot: false,
     },
   ],
   demand: [
     {
       id: 1,
-      title: "某央企求租广州周边3000㎡仓储",
+      name: "某央企求租广州周边3000㎡仓储",
       location: "广东省广州市",
-      area: "3000㎡",
+      area: "3000",
       budget: "30-40元/㎡/月",
       publishTime: "1小时前",
-      views: 45,
+      features: ["长期租赁", "央企背景"],
       isHot: true,
-      tags: ["长期", "央企"],
     },
     {
       id: 2,
-      title: "物流公司寻找深圳冷链仓库",
+      name: "物流公司寻找深圳冷链仓库",
       location: "广东省深圳市",
-      area: "2000㎡",
+      area: "2000",
       budget: "面议",
       publishTime: "3小时前",
-      views: 32,
+      features: ["冷链需求", "急需"],
       isHot: false,
-      tags: ["冷链", "急需"],
+    },
+    {
+      id: 3,
+      name: "建筑集团求租东莞堆场",
+      location: "广东省东莞市",
+      area: "10000",
+      budget: "20-25元/㎡/月",
+      publishTime: "1天前",
+      features: ["大面积", "建材存放"],
+      isHot: false,
+    },
+    {
+      id: 4,
+      name: "医药企业求租恒温仓",
+      location: "广东省广州市",
+      area: "1500",
+      budget: "50-60元/㎡/月",
+      publishTime: "2天前",
+      features: ["恒温需求", "医药存储"],
+      isHot: true,
     },
   ],
   entrust: [
     {
       id: 1,
-      title: "钢材物资委托运营招标",
-      content: "某项目剩余钢材约2000吨，寻求专业运营方",
+      name: "钢材物资委托运营招标",
+      content: "某项目剩余钢材约2000吨",
       estimatedValue: "约500万元",
       publishTime: "今天",
       deadline: "2024年3月15日",
+      features: ["整体托管", "专业运营"],
       isHot: true,
     },
     {
       id: 2,
-      title: "建筑周转材料托管服务",
-      content: "脚手架、模板等周转材料，需要专业存储及调配",
+      name: "建筑周转材料托管服务",
+      content: "脚手架、模板等周转材料",
       estimatedValue: "约200万元",
       publishTime: "昨天",
       deadline: "2024年3月20日",
+      features: ["周转材料", "长期合作"],
+      isHot: false,
+    },
+    {
+      id: 3,
+      name: "机械设备存放托管",
+      content: "闲置施工机械设备托管",
+      estimatedValue: "约150万元",
+      publishTime: "2天前",
+      deadline: "2024年3月25日",
+      features: ["设备托管", "维护保养"],
+      isHot: false,
+    },
+    {
+      id: 4,
+      name: "临时物资委托运营",
+      content: "项目临时物资代管代销",
+      estimatedValue: "约80万元",
+      publishTime: "3天前",
+      deadline: "2024年3月30日",
+      features: ["临时存放", "代销服务"],
       isHot: false,
     },
   ],
@@ -110,45 +173,69 @@ export function WarehouseOpportunity() {
         </TabsList>
 
         <TabsContent value="rent">
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {opportunities.rent.map((item) => (
-              <Card key={item.id} className="group hover:shadow-md transition-all hover:border-primary/50 cursor-pointer">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        {item.isHot && (
-                          <Badge className="bg-destructive text-destructive-foreground">热门</Badge>
-                        )}
-                        <h3 className="font-medium text-card-foreground group-hover:text-primary transition-colors">
-                          {item.title}
-                        </h3>
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
-                        <span>{item.location}</span>
-                        <span>{item.area}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {item.tags.map((tag) => (
-                          <Badge key={tag} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg font-bold text-primary">{item.price}</div>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {item.publishTime}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Eye className="w-3 h-3" />
-                          {item.views}
-                        </span>
-                      </div>
-                    </div>
+              <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group">
+                {/* 头部图片 */}
+                <div className="h-32 bg-gradient-to-br from-primary/10 to-primary/5 relative">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Building2 className="w-12 h-12 text-primary/20" />
+                  </div>
+                  <Badge className="absolute top-2 left-2 bg-accent">
+                    出租
+                  </Badge>
+                  <Badge variant="outline" className="absolute top-2 right-2 bg-card/90 text-xs">
+                    {item.rentType}
+                  </Badge>
+                  {item.isHot && (
+                    <Badge className="absolute bottom-2 left-2 bg-destructive text-xs">
+                      热门
+                    </Badge>
+                  )}
+                </div>
+
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-lg font-bold text-primary">{item.price}</span>
+                    <span className="text-xs text-muted-foreground">元/㎡/天</span>
+                    <Badge variant="secondary" className="ml-auto text-xs">
+                      {item.priceStatus}
+                    </Badge>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                    <Maximize2 className="w-3 h-3" />
+                    <span>{item.area}㎡</span>
+                  </div>
+
+                  <h3 className="font-medium text-card-foreground mb-2 line-clamp-1 text-sm group-hover:text-primary transition-colors">
+                    {item.name}
+                  </h3>
+
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
+                    <Building2 className="w-3 h-3" />
+                    <span>{item.type}</span>
+                    <MapPin className="w-3 h-3 ml-1" />
+                    <span className="line-clamp-1">{item.location}</span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {item.features.slice(0, 2).map((feature) => (
+                      <Badge key={feature} variant="outline" className="text-xs">
+                        {feature}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-border text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Eye className="w-3 h-3" />
+                      {item.views}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {item.publishTime}
+                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -157,45 +244,55 @@ export function WarehouseOpportunity() {
         </TabsContent>
 
         <TabsContent value="demand">
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {opportunities.demand.map((item) => (
-              <Card key={item.id} className="group hover:shadow-md transition-all hover:border-primary/50 cursor-pointer">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        {item.isHot && (
-                          <Badge className="bg-accent text-accent-foreground">优质</Badge>
-                        )}
-                        <h3 className="font-medium text-card-foreground group-hover:text-primary transition-colors">
-                          {item.title}
-                        </h3>
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
-                        <span>{item.location}</span>
-                        <span>需求面积：{item.area}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {item.tags.map((tag) => (
-                          <Badge key={tag} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg font-bold text-accent">{item.budget}</div>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {item.publishTime}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Eye className="w-3 h-3" />
-                          {item.views}
-                        </span>
-                      </div>
-                    </div>
+              <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group">
+                <div className="h-32 bg-gradient-to-br from-accent/10 to-accent/5 relative">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Building2 className="w-12 h-12 text-accent/20" />
+                  </div>
+                  <Badge className="absolute top-2 left-2 bg-primary">
+                    求租
+                  </Badge>
+                  {item.isHot && (
+                    <Badge className="absolute bottom-2 left-2 bg-accent text-xs">
+                      优质
+                    </Badge>
+                  )}
+                </div>
+
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-lg font-bold text-accent">{item.budget}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                    <Maximize2 className="w-3 h-3" />
+                    <span>需求面积：{item.area}㎡</span>
+                  </div>
+
+                  <h3 className="font-medium text-card-foreground mb-2 line-clamp-1 text-sm group-hover:text-primary transition-colors">
+                    {item.name}
+                  </h3>
+
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
+                    <MapPin className="w-3 h-3" />
+                    <span>{item.location}</span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {item.features.map((feature) => (
+                      <Badge key={feature} variant="outline" className="text-xs">
+                        {feature}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-end pt-2 border-t border-border text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {item.publishTime}
+                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -204,31 +301,47 @@ export function WarehouseOpportunity() {
         </TabsContent>
 
         <TabsContent value="entrust">
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {opportunities.entrust.map((item) => (
-              <Card key={item.id} className="group hover:shadow-md transition-all hover:border-primary/50 cursor-pointer">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        {item.isHot && (
-                          <Badge className="bg-chart-3 text-white">招标</Badge>
-                        )}
-                        <h3 className="font-medium text-card-foreground group-hover:text-primary transition-colors">
-                          {item.title}
-                        </h3>
-                      </div>
-                      <p className="text-sm text-muted-foreground mb-2">{item.content}</p>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span>截止日期：{item.deadline}</span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg font-bold text-primary">{item.estimatedValue}</div>
-                      <div className="text-xs text-muted-foreground mt-2">
-                        发布于：{item.publishTime}
-                      </div>
-                    </div>
+              <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group">
+                <div className="h-32 bg-gradient-to-br from-chart-3/10 to-chart-3/5 relative">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Building2 className="w-12 h-12 text-chart-3/20" />
+                  </div>
+                  <Badge className="absolute top-2 left-2 bg-chart-3 text-white">
+                    委托
+                  </Badge>
+                  {item.isHot && (
+                    <Badge className="absolute bottom-2 left-2 bg-destructive text-xs">
+                      招标中
+                    </Badge>
+                  )}
+                </div>
+
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-lg font-bold text-primary">{item.estimatedValue}</span>
+                  </div>
+
+                  <h3 className="font-medium text-card-foreground mb-2 line-clamp-1 text-sm group-hover:text-primary transition-colors">
+                    {item.name}
+                  </h3>
+
+                  <p className="text-xs text-muted-foreground mb-2 line-clamp-1">
+                    {item.content}
+                  </p>
+
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {item.features.map((feature) => (
+                      <Badge key={feature} variant="outline" className="text-xs">
+                        {feature}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-border text-xs text-muted-foreground">
+                    <span>截止：{item.deadline}</span>
+                    <span>{item.publishTime}</span>
                   </div>
                 </CardContent>
               </Card>

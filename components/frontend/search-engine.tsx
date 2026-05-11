@@ -1,134 +1,110 @@
 "use client"
 
 import { useState } from "react"
-import { Search, MapPin, Layers, Maximize2 } from "lucide-react"
+import { MapPin, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
-const regions = [
-  "全部区域",
-  "华南地区",
-  "华东地区",
-  "华北地区",
-  "华中地区",
-  "西南地区",
-  "西北地区",
-  "东北地区",
-]
+interface SearchEngineProps {
+  onNavigate?: (page: string) => void
+}
 
-const warehouseTypes = [
-  "全部类型",
-  "普通仓储",
-  "恒温仓储",
-  "冷链仓储",
-  "危化品仓储",
-  "露天堆场",
-  "立体仓库",
-]
-
-const areaRanges = [
-  "不限面积",
-  "100㎡以下",
-  "100-500㎡",
-  "500-1000㎡",
-  "1000-5000㎡",
-  "5000㎡以上",
-]
-
-export function SearchEngine() {
+export function SearchEngine({ onNavigate }: SearchEngineProps) {
   const [keyword, setKeyword] = useState("")
-  const [region, setRegion] = useState("")
-  const [warehouseType, setWarehouseType] = useState("")
-  const [areaRange, setAreaRange] = useState("")
 
   const handleSearch = () => {
-    console.log("[v0] Search params:", { keyword, region, warehouseType, areaRange })
+    if (onNavigate) {
+      onNavigate("warehouse-list")
+    }
+  }
+
+  const handleMapClick = () => {
+    if (onNavigate) {
+      onNavigate("warehouse-map-page")
+    }
   }
 
   return (
-    <section className="w-full bg-card rounded-xl shadow-sm border border-border p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Search className="w-5 h-5 text-primary" />
-        <h2 className="text-lg font-semibold text-card-foreground">仓储资源搜索</h2>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {/* 关键词搜索 */}
-        <div className="lg:col-span-2">
-          <Input
-            placeholder="搜索仓储站点名称、地址..."
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            className="h-11"
-          />
+    <section className="w-full">
+      <div className="relative bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+        <div className="flex items-center">
+          {/* 搜索输入框 */}
+          <div className="flex-1 relative">
+            <Input
+              placeholder="请输入区域、商圈或小区名开始找仓"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              className="h-14 pl-5 pr-4 border-0 text-base bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+            />
+          </div>
+
+          {/* 右侧操作区 */}
+          <div className="flex items-center gap-2 px-4 border-l border-border">
+            <Button
+              variant="ghost"
+              className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+              onClick={handleMapClick}
+            >
+              <MapPin className="w-5 h-5" />
+              <span>地图</span>
+            </Button>
+            <Button 
+              className="h-10 px-6 bg-accent hover:bg-accent/90 text-accent-foreground"
+              onClick={handleSearch}
+            >
+              开始找仓
+            </Button>
+          </div>
         </div>
-
-        {/* 区域选择 */}
-        <Select value={region} onValueChange={setRegion}>
-          <SelectTrigger className="h-11">
-            <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
-            <SelectValue placeholder="选择区域" />
-          </SelectTrigger>
-          <SelectContent>
-            {regions.map((r) => (
-              <SelectItem key={r} value={r}>
-                {r}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {/* 仓储类型 */}
-        <Select value={warehouseType} onValueChange={setWarehouseType}>
-          <SelectTrigger className="h-11">
-            <Layers className="w-4 h-4 mr-2 text-muted-foreground" />
-            <SelectValue placeholder="仓储类型" />
-          </SelectTrigger>
-          <SelectContent>
-            {warehouseTypes.map((t) => (
-              <SelectItem key={t} value={t}>
-                {t}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {/* 面积范围 */}
-        <Select value={areaRange} onValueChange={setAreaRange}>
-          <SelectTrigger className="h-11">
-            <Maximize2 className="w-4 h-4 mr-2 text-muted-foreground" />
-            <SelectValue placeholder="面积范围" />
-          </SelectTrigger>
-          <SelectContent>
-            {areaRanges.map((a) => (
-              <SelectItem key={a} value={a}>
-                {a}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
-      <div className="flex justify-end mt-4 gap-3">
-        <Button variant="outline" onClick={() => {
-          setKeyword("")
-          setRegion("")
-          setWarehouseType("")
-          setAreaRange("")
-        }}>
-          重置条件
-        </Button>
-        <Button onClick={handleSearch}>
-          <Search className="w-4 h-4 mr-2" />
-          搜索仓储
-        </Button>
+      {/* 过滤条件 */}
+      <div className="flex items-center gap-6 mt-4 text-sm">
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground">区域：</span>
+          <div className="flex items-center gap-1">
+            {["全部", "华南", "华东", "华北", "华中", "西南"].map((region) => (
+              <Button
+                key={region}
+                variant="ghost"
+                size="sm"
+                className="h-7 px-3 text-muted-foreground hover:text-foreground hover:bg-muted"
+              >
+                {region}
+              </Button>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground">类型：</span>
+          <div className="flex items-center gap-1">
+            {["全部", "普通仓储", "恒温仓储", "冷链仓储", "露天堆场"].map((type) => (
+              <Button
+                key={type}
+                variant="ghost"
+                size="sm"
+                className="h-7 px-3 text-muted-foreground hover:text-foreground hover:bg-muted"
+              >
+                {type}
+              </Button>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground">面积：</span>
+          <div className="flex items-center gap-1">
+            {["不限", "500㎡以下", "500-2000㎡", "2000㎡以上"].map((area) => (
+              <Button
+                key={area}
+                variant="ghost"
+                size="sm"
+                className="h-7 px-3 text-muted-foreground hover:text-foreground hover:bg-muted"
+              >
+                {area}
+              </Button>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )

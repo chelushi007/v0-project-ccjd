@@ -3,6 +3,9 @@
 import { useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { FrontendPage } from "@/components/frontend/frontend-page"
+import { WarehouseMapPage } from "@/components/frontend/warehouse-map-page"
+import { WarehouseListPage } from "@/components/frontend/warehouse-list-page"
+import { SmartMatchPage } from "@/components/frontend/smart-match-page"
 import { PropertyOwnerWorkbench } from "@/components/workbench/roles/property-owner-workbench"
 import { WarehouseUnitWorkbench } from "@/components/workbench/roles/warehouse-unit-workbench"
 import { WarehouseSiteWorkbench } from "@/components/workbench/roles/warehouse-site-workbench"
@@ -21,15 +24,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-
-
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("frontend")
   const [activeSubTab, setActiveSubTab] = useState("")
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  // 二级页面状态
+  const [currentPage, setCurrentPage] = useState("frontend")
 
   const handleTabChange = (tab: string, subTab?: string) => {
     setActiveTab(tab)
+    setCurrentPage(tab) // 重置二级页面
     if (subTab) {
       setActiveSubTab(subTab)
     } else {
@@ -37,10 +41,28 @@ export default function HomePage() {
     }
   }
 
+  // 页面内导航（用于二级页面）
+  const handleNavigate = (page: string) => {
+    setCurrentPage(page)
+  }
+
   const renderContent = () => {
+    // 处理前台二级页面
+    if (activeTab === "frontend") {
+      switch (currentPage) {
+        case "warehouse-map-page":
+          return <WarehouseMapPage onNavigate={handleNavigate} />
+        case "warehouse-list":
+          return <WarehouseListPage onNavigate={handleNavigate} />
+        case "smart-match":
+          return <SmartMatchPage onNavigate={handleNavigate} />
+        default:
+          return <FrontendPage onNavigate={handleNavigate} />
+      }
+    }
+
+    // 其他工作台页面
     switch (activeTab) {
-      case "frontend":
-        return <FrontendPage />
       case "personal-property":
         return <PropertyOwnerWorkbench subTab={activeSubTab} />
       case "personal-warehouse-unit":
@@ -54,7 +76,7 @@ export default function HomePage() {
       case "operation":
         return <OperationWorkbench />
       default:
-        return <FrontendPage />
+        return <FrontendPage onNavigate={handleNavigate} />
     }
   }
 

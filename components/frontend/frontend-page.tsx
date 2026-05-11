@@ -7,31 +7,47 @@ import { SmartMatch } from "./smart-match"
 import { WarehouseMap } from "./warehouse-map"
 import { WarehouseOpportunity } from "./warehouse-opportunity"
 import { PlatformRecommend } from "./platform-recommend"
+import { TiejianWarehouse } from "./tiejian-warehouse"
+import { HotSites } from "./hot-sites"
+import { FeaturedTransport } from "./featured-transport"
 import { TransactionNotice } from "./transaction-notice"
 
-export function FrontendPage() {
+interface FrontendPageProps {
+  onNavigate?: (page: string) => void
+}
+
+export function FrontendPage({ onNavigate }: FrontendPageProps) {
   return (
     <div className="space-y-8">
       {/* Banner轮播图 */}
       <HeroBanner />
 
       {/* 搜索引擎 */}
-      <SearchEngine />
+      <SearchEngine onNavigate={onNavigate} />
 
-      {/* 需求发布 + 智能匹配 */}
+      {/* 需求发布 + 智能推荐 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <DemandPublish />
-        <SmartMatch />
+        <DemandPublish onNavigate={onNavigate} />
+        <SmartMatch onNavigate={onNavigate} />
       </div>
 
       {/* 仓储地图 */}
-      <WarehouseMap />
+      <WarehouseMap onNavigate={onNavigate} />
 
       {/* 仓储商机 */}
       <WarehouseOpportunity />
 
       {/* 平台推荐 */}
       <PlatformRecommend />
+
+      {/* 铁建仓储 */}
+      <TiejianWarehouse />
+
+      {/* 热门站点 */}
+      <HotSites />
+
+      {/* 精选专运单位 */}
+      <FeaturedTransport />
 
       {/* 成交公告 */}
       <TransactionNotice />
