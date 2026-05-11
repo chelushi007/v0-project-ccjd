@@ -135,45 +135,92 @@ export function SmartMatchPage({ onNavigate, initialType = "rent" }: SmartMatchP
                 </div>
               </div>
 
-              {/* 快捷输入表单 */}
-              <div className="space-y-4 mb-6">
-                <div className="space-y-2">
-                  <Label>期望区域</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="选择区域" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="guangzhou">广州市</SelectItem>
-                      <SelectItem value="shenzhen">深圳市</SelectItem>
-                      <SelectItem value="dongguan">东莞市</SelectItem>
-                      <SelectItem value="foshan">佛山市</SelectItem>
-                      <SelectItem value="huizhou">惠州市</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              {/* 快捷输入表单 - 根据需求类型显示不同字段 */}
+              {demandType === "material" ? (
+                <div className="space-y-4 mb-6">
+                  <div className="space-y-2">
+                    <Label>期望区域</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择区域" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="guangzhou">广州市</SelectItem>
+                        <SelectItem value="shenzhen">深圳市</SelectItem>
+                        <SelectItem value="dongguan">东莞市</SelectItem>
+                        <SelectItem value="foshan">佛山市</SelectItem>
+                        <SelectItem value="huizhou">惠州市</SelectItem>
+                        <SelectItem value="zhongshan">中山市</SelectItem>
+                        <SelectItem value="zhuhai">珠海市</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                <div className="space-y-2">
-                  <Label>仓储类型</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="选择类型" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="general">综合仓储</SelectItem>
-                      <SelectItem value="cold">冷链仓储</SelectItem>
-                      <SelectItem value="danger">危化品仓储</SelectItem>
-                      <SelectItem value="outdoor">露天堆场</SelectItem>
-                      <SelectItem value="stereo">立体仓库</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                  <div className="space-y-2">
+                    <Label>物资类型</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择物资类型" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="steel">钢材</SelectItem>
+                        <SelectItem value="wood">木材</SelectItem>
+                        <SelectItem value="cement">水泥</SelectItem>
+                        <SelectItem value="equipment">机械设备</SelectItem>
+                        <SelectItem value="pipe">管材</SelectItem>
+                        <SelectItem value="electric">电气设备</SelectItem>
+                        <SelectItem value="other">其他物资</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                <div className="space-y-2">
-                  <Label>需求面积</Label>
-                  <Input placeholder="如：3000㎡" />
+                  <div className="space-y-2">
+                    <Label>承租数量</Label>
+                    <Input placeholder="如：100吨 或 500件" />
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-4 mb-6">
+                  <div className="space-y-2">
+                    <Label>期望区域</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择区域" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="guangzhou">广州市</SelectItem>
+                        <SelectItem value="shenzhen">深圳市</SelectItem>
+                        <SelectItem value="dongguan">东莞市</SelectItem>
+                        <SelectItem value="foshan">佛山市</SelectItem>
+                        <SelectItem value="huizhou">惠州市</SelectItem>
+                        <SelectItem value="zhongshan">中山市</SelectItem>
+                        <SelectItem value="zhuhai">珠海市</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>仓储类型</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择类型" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="general">综合仓储</SelectItem>
+                        <SelectItem value="cold">冷链仓储</SelectItem>
+                        <SelectItem value="danger">危化品仓储</SelectItem>
+                        <SelectItem value="outdoor">露天堆场</SelectItem>
+                        <SelectItem value="stereo">立体仓库</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>需求面积</Label>
+                    <Input placeholder="如：3000㎡" />
+                  </div>
+                </div>
+              )}
 
               {/* 文本描述 */}
               <div className="space-y-2 mb-6">
