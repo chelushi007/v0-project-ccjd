@@ -161,16 +161,16 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
         </div>
 
         {/* 中间地图区域 */}
-        <div className="bg-white border-y border-border relative h-full overflow-hidden">
+        <div className="bg-[#e8f4fc] border-y border-border relative h-full overflow-hidden">
           <ComposableMap
             projection="geoMercator"
             projectionConfig={{
-              scale: 620,
-              center: [105, 36],
+              scale: 480,
+              center: [104, 35],
             }}
             style={{ width: "100%", height: "100%" }}
           >
-            <ZoomableGroup center={[105, 36]} zoom={1} minZoom={0.8} maxZoom={3}>
+            <ZoomableGroup center={[104, 35]} zoom={1} minZoom={0.6} maxZoom={4}>
               <Geographies geography={CHINA_GEO_URL}>
                 {({ geographies }) =>
                   geographies.map((geo) => {
