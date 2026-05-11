@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Sparkles, ChevronRight, Building2, MapPin, Maximize2, CheckCircle, Star, ArrowRight } from "lucide-react"
+import { Sparkles, ChevronRight, Building2, MapPin, Maximize2, CheckCircle, Star, ArrowRight, Package, Weight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -21,7 +21,8 @@ interface SmartMatchPageProps {
   initialType?: "material" | "rent"
 }
 
-const matchResults = [
+// 仓储匹配结果
+const warehouseResults = [
   {
     id: 1,
     name: "中铁物资广州综合仓储中心",
@@ -69,6 +70,58 @@ const matchResults = [
     price: "0.45元/㎡/天",
     rating: 4.6,
     reviews: 78,
+  },
+]
+
+// 物资匹配结果
+const materialResults = [
+  {
+    id: 1,
+    name: "Q235B热轧H型钢",
+    provider: "中铁物资华南公司",
+    location: "广东省广州市黄埔区",
+    materialType: "钢材",
+    quantity: "500吨可租",
+    matchScore: 97,
+    specs: ["规格齐全", "质量检测报告", "可分批提货"],
+    price: "1800元/吨/月",
+    condition: "95成新",
+  },
+  {
+    id: 2,
+    name: "建筑钢管脚手架",
+    provider: "深圳前海物资站",
+    location: "广东省深圳市宝安区",
+    materialType: "钢材",
+    quantity: "2000套可租",
+    matchScore: 94,
+    specs: ["48*3.5规格", "带扣件", "现场可验货"],
+    price: "15元/套/天",
+    condition: "90成新",
+  },
+  {
+    id: 3,
+    name: "工字钢梁",
+    provider: "东莞虎门专运站",
+    location: "广东省东莞市虎门镇",
+    materialType: "钢材",
+    quantity: "300吨可租",
+    matchScore: 91,
+    specs: ["20#工字钢", "12米定尺", "防锈处理"],
+    price: "1500元/吨/月",
+    condition: "85成新",
+  },
+  {
+    id: 4,
+    name: "塔吊设备",
+    provider: "佛山顺德机械租赁",
+    location: "广东省佛山市顺德区",
+    materialType: "机械设备",
+    quantity: "5台可租",
+    matchScore: 88,
+    specs: ["QTZ63型", "臂长50m", "含安拆服务"],
+    price: "28000元/台/月",
+    condition: "良好",
   },
 ]
 
@@ -270,26 +323,128 @@ export function SmartMatchPage({ onNavigate, initialType = "rent" }: SmartMatchP
                   输入您的需求，AI将为您智能匹配
                 </h3>
                 <p className="text-sm text-muted-foreground text-center max-w-md">
-                  支持自然语言描述，系统将根据区域、类型、面积、配套设施等维度进行智能分析，为您推荐最合适的仓储资源
+                  {demandType === "material" 
+                    ? "支持自然语言描述，系统将根据区域、物资类型、数量等维度进行智能分析，为您推荐最合适的循环物资"
+                    : "支持自然语言描述，系统将根据区域、类型、面积、配套设施等维度进行智能分析，为您推荐最合适的仓储资源"
+                  }
                 </p>
               </CardContent>
             </Card>
-          ) : (
+          ) : demandType === "material" ? (
+            // 物资匹配结果
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-semibold">匹配结果</h3>
+                  <h3 className="text-lg font-semibold">物资匹配结果</h3>
                   <Badge variant="secondary">
-                    找到 {matchResults.length} 个匹配
+                    找到 {materialResults.length} 个匹配
                   </Badge>
                 </div>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => setHasResults(false)}>
                   重新匹配
                 </Button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {matchResults.map((result, index) => (
+                {materialResults.map((result, index) => (
+                  <Card 
+                    key={result.id} 
+                    className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
+                  >
+                    <CardContent className="p-0">
+                      {/* 匹配度头部 */}
+                      <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-3 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {index === 0 && (
+                            <Badge className="bg-accent">
+                              最佳匹配
+                            </Badge>
+                          )}
+                          <span className="text-sm text-muted-foreground">
+                            #{index + 1}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1 bg-accent/20 text-accent px-3 py-1 rounded-full">
+                          <CheckCircle className="w-4 h-4" />
+                          <span className="font-semibold">{result.matchScore}%</span>
+                          <span className="text-xs">匹配</span>
+                        </div>
+                      </div>
+
+                      <div className="p-4">
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                            <Package className="w-6 h-6 text-accent" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-card-foreground mb-1 line-clamp-1 group-hover:text-primary transition-colors">
+                              {result.name}
+                            </h4>
+                            <div className="text-sm text-muted-foreground">
+                              {result.provider}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+                          <div className="flex items-center gap-1">
+                            <span className="text-muted-foreground">类型：</span>
+                            <span className="font-medium">{result.materialType}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Weight className="w-3 h-3 text-muted-foreground" />
+                            <span className="font-medium">{result.quantity}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <MapPin className="w-3 h-3 text-muted-foreground" />
+                            <span className="line-clamp-1">{result.location}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span className="text-muted-foreground">成色：</span>
+                            <span className="font-medium text-accent">{result.condition}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          {result.specs.map((spec) => (
+                            <Badge key={spec} variant="outline" className="text-xs">
+                              {spec}
+                            </Badge>
+                          ))}
+                        </div>
+
+                        <div className="flex items-center justify-between pt-3 border-t border-border">
+                          <div>
+                            <span className="text-lg font-bold text-primary">{result.price}</span>
+                          </div>
+                          <Button size="sm">
+                            查看详情
+                            <ArrowRight className="w-3 h-3 ml-1" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          ) : (
+            // 仓储匹配结果
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-semibold">仓储匹配结果</h3>
+                  <Badge variant="secondary">
+                    找到 {warehouseResults.length} 个匹配
+                  </Badge>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => setHasResults(false)}>
+                  重新匹配
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {warehouseResults.map((result, index) => (
                   <Card 
                     key={result.id} 
                     className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
