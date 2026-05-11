@@ -1,9 +1,16 @@
 "use client"
 
 import { useState } from "react"
-import { MapPin, Search } from "lucide-react"
+import { MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface SearchEngineProps {
   onNavigate?: (page: string) => void
@@ -11,6 +18,9 @@ interface SearchEngineProps {
 
 export function SearchEngine({ onNavigate }: SearchEngineProps) {
   const [keyword, setKeyword] = useState("")
+  const [region, setRegion] = useState("")
+  const [warehouseType, setWarehouseType] = useState("")
+  const [area, setArea] = useState("")
 
   const handleSearch = () => {
     if (onNavigate) {
@@ -20,7 +30,7 @@ export function SearchEngine({ onNavigate }: SearchEngineProps) {
 
   const handleMapClick = () => {
     if (onNavigate) {
-      onNavigate("warehouse-map-page")
+      onNavigate("warehouse-map")
     }
   }
 
@@ -28,6 +38,57 @@ export function SearchEngine({ onNavigate }: SearchEngineProps) {
     <section className="w-full">
       <div className="relative bg-card rounded-xl shadow-sm border border-border overflow-hidden">
         <div className="flex items-center">
+          {/* 下拉选择区域 */}
+          <div className="flex items-center border-r border-border">
+            <Select value={region} onValueChange={setRegion}>
+              <SelectTrigger className="w-28 h-14 border-0 rounded-none focus:ring-0 focus:ring-offset-0">
+                <SelectValue placeholder="区域" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部区域</SelectItem>
+                <SelectItem value="huanan">华南</SelectItem>
+                <SelectItem value="huadong">华东</SelectItem>
+                <SelectItem value="huabei">华北</SelectItem>
+                <SelectItem value="huazhong">华中</SelectItem>
+                <SelectItem value="xinan">西南</SelectItem>
+                <SelectItem value="xibei">西北</SelectItem>
+                <SelectItem value="dongbei">东北</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center border-r border-border">
+            <Select value={warehouseType} onValueChange={setWarehouseType}>
+              <SelectTrigger className="w-28 h-14 border-0 rounded-none focus:ring-0 focus:ring-offset-0">
+                <SelectValue placeholder="类型" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部类型</SelectItem>
+                <SelectItem value="normal">普通仓储</SelectItem>
+                <SelectItem value="constant">恒温仓储</SelectItem>
+                <SelectItem value="cold">冷链仓储</SelectItem>
+                <SelectItem value="dangerous">危化品仓储</SelectItem>
+                <SelectItem value="open">露天堆场</SelectItem>
+                <SelectItem value="stereo">立体仓库</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center border-r border-border">
+            <Select value={area} onValueChange={setArea}>
+              <SelectTrigger className="w-32 h-14 border-0 rounded-none focus:ring-0 focus:ring-offset-0">
+                <SelectValue placeholder="出租面积" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">不限面积</SelectItem>
+                <SelectItem value="small">500m²以下</SelectItem>
+                <SelectItem value="medium">500-2000m²</SelectItem>
+                <SelectItem value="large">2000-5000m²</SelectItem>
+                <SelectItem value="xlarge">5000m²以上</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           {/* 搜索输入框 */}
           <div className="flex-1 relative">
             <Input
@@ -54,55 +115,6 @@ export function SearchEngine({ onNavigate }: SearchEngineProps) {
             >
               开始找仓
             </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* 过滤条件 */}
-      <div className="flex items-center gap-6 mt-4 text-sm">
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground">区域：</span>
-          <div className="flex items-center gap-1">
-            {["全部", "华南", "华东", "华北", "华中", "西南"].map((region) => (
-              <Button
-                key={region}
-                variant="ghost"
-                size="sm"
-                className="h-7 px-3 text-muted-foreground hover:text-foreground hover:bg-muted"
-              >
-                {region}
-              </Button>
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground">类型：</span>
-          <div className="flex items-center gap-1">
-            {["全部", "普通仓储", "恒温仓储", "冷链仓储", "露天堆场"].map((type) => (
-              <Button
-                key={type}
-                variant="ghost"
-                size="sm"
-                className="h-7 px-3 text-muted-foreground hover:text-foreground hover:bg-muted"
-              >
-                {type}
-              </Button>
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground">面积：</span>
-          <div className="flex items-center gap-1">
-            {["不限", "500㎡以下", "500-2000㎡", "2000㎡以上"].map((area) => (
-              <Button
-                key={area}
-                variant="ghost"
-                size="sm"
-                className="h-7 px-3 text-muted-foreground hover:text-foreground hover:bg-muted"
-              >
-                {area}
-              </Button>
-            ))}
           </div>
         </div>
       </div>

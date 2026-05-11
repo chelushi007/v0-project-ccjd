@@ -22,6 +22,9 @@ import {
   Truck,
   Users,
   MapPinned,
+  List,
+  Map,
+  FilePlus,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -46,6 +49,14 @@ interface MenuSection {
   description: string
   items?: MenuItem[]
 }
+
+// 前台菜单
+const frontendMenu: MenuItem[] = [
+  { id: "home", label: "首页", icon: Home },
+  { id: "warehouse-list", label: "仓储列表", icon: List },
+  { id: "warehouse-map", label: "仓储地图", icon: Map },
+  { id: "detail-publish", label: "详细发布", icon: FilePlus },
+]
 
 // 物权单位菜单
 const propertyOwnerMenu: MenuItem[] = [
@@ -232,6 +243,7 @@ const menuSections: MenuSection[] = [
     label: "前台",
     icon: Home,
     description: "仓储资源门户",
+    items: frontendMenu,
   },
   {
     id: "personal-property",
@@ -291,7 +303,7 @@ export function AppSidebar({
   collapsed,
   onCollapsedChange,
 }: AppSidebarProps) {
-  const [expandedSections, setExpandedSections] = useState<string[]>([])
+  const [expandedSections, setExpandedSections] = useState<string[]>(["frontend"])
   const [expandedMenus, setExpandedMenus] = useState<string[]>([])
 
   const toggleSection = (sectionId: string) => {

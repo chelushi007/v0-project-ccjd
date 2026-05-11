@@ -82,7 +82,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
           <MapPin className="w-5 h-5 text-primary" />
           <h2 className="text-lg font-semibold text-foreground">仓储地图</h2>
         </div>
-        <Button variant="link" className="text-primary" onClick={() => onNavigate?.("warehouse-map-page")}>
+        <Button variant="link" className="text-primary" onClick={() => onNavigate?.("warehouse-map")}>
           查看完整地图
           <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
@@ -138,7 +138,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                     onMouseEnter={() => setSelectedProvince(province.id)}
                     onClick={() => {
                       setSelectedProvince(province.id)
-                      onNavigate?.("warehouse-map-page")
+                      onNavigate?.("warehouse-map")
                     }}
                   >
                     <circle

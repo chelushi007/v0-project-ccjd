@@ -6,6 +6,7 @@ import { FrontendPage } from "@/components/frontend/frontend-page"
 import { WarehouseMapPage } from "@/components/frontend/warehouse-map-page"
 import { WarehouseListPage } from "@/components/frontend/warehouse-list-page"
 import { SmartMatchPage } from "@/components/frontend/smart-match-page"
+import { DetailPublishPage } from "@/components/frontend/detail-publish-page"
 import { PropertyOwnerWorkbench } from "@/components/workbench/roles/property-owner-workbench"
 import { WarehouseUnitWorkbench } from "@/components/workbench/roles/warehouse-unit-workbench"
 import { WarehouseSiteWorkbench } from "@/components/workbench/roles/warehouse-site-workbench"
@@ -26,36 +27,61 @@ import {
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("frontend")
-  const [activeSubTab, setActiveSubTab] = useState("")
+  const [activeSubTab, setActiveSubTab] = useState("home")
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   // 二级页面状态
-  const [currentPage, setCurrentPage] = useState("frontend")
+  const [currentPage, setCurrentPage] = useState("home")
 
   const handleTabChange = (tab: string, subTab?: string) => {
     setActiveTab(tab)
-    setCurrentPage(tab) // 重置二级页面
-    if (subTab) {
+    if (tab === "frontend" && subTab) {
+      setActiveSubTab(subTab)
+      // 根据子菜单设置当前页面
+      if (subTab === "home") {
+        setCurrentPage("home")
+      } else if (subTab === "warehouse-list") {
+        setCurrentPage("warehouse-list")
+      } else if (subTab === "warehouse-map") {
+        setCurrentPage("warehouse-map")
+      } else if (subTab === "detail-publish") {
+        setCurrentPage("detail-publish")
+      }
+    } else if (subTab) {
       setActiveSubTab(subTab)
     } else {
       setActiveSubTab("")
+      setCurrentPage(tab)
     }
   }
 
   // 页面内导航（用于二级页面）
   const handleNavigate = (page: string) => {
     setCurrentPage(page)
+    // 更新侧边栏选中状态
+    if (page === "home") {
+      setActiveSubTab("home")
+    } else if (page === "warehouse-list") {
+      setActiveSubTab("warehouse-list")
+    } else if (page === "warehouse-map") {
+      setActiveSubTab("warehouse-map")
+    } else if (page === "detail-publish") {
+      setActiveSubTab("detail-publish")
+    }
   }
 
   const renderContent = () => {
     // 处理前台二级页面
     if (activeTab === "frontend") {
       switch (currentPage) {
-        case "warehouse-map-page":
+        case "warehouse-map":
           return <WarehouseMapPage onNavigate={handleNavigate} />
         case "warehouse-list":
           return <WarehouseListPage onNavigate={handleNavigate} />
         case "smart-match":
           return <SmartMatchPage onNavigate={handleNavigate} />
+        case "detail-publish":
+          return <DetailPublishPage onNavigate={handleNavigate} />
+        case "home":
         default:
           return <FrontendPage onNavigate={handleNavigate} />
       }

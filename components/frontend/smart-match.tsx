@@ -35,9 +35,8 @@ export function SmartMatch({ onNavigate }: SmartMatchProps) {
       <Card>
         <CardContent className="p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* 快捷发布入口 */}
+            {/* 快捷入口 */}
             <div className="space-y-4">
-              <h3 className="font-medium text-card-foreground">快捷发布需求</h3>
               <div className="grid grid-cols-2 gap-3">
                 <Card
                   className="cursor-pointer hover:shadow-md transition-all hover:border-primary/50 group"
@@ -77,7 +76,6 @@ export function SmartMatch({ onNavigate }: SmartMatchProps) {
 
             {/* 文本描述输入 */}
             <div className="space-y-4">
-              <h3 className="font-medium text-card-foreground">智能文本匹配</h3>
               <div className="space-y-3">
                 <Textarea
                   placeholder="用自然语言描述您的需求，例如：我需要在广州番禺区找一个3000平方米的仓库，用于存放建材物资..."
