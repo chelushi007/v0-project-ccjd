@@ -418,7 +418,7 @@ export function SmartMatchPage({ onNavigate, initialType = "rent" }: SmartMatchP
                             <span className="text-lg font-bold text-primary">{result.price}</span>
                           </div>
                           <Button size="sm">
-                            查看详情
+                            立即下单
                             <ArrowRight className="w-3 h-3 ml-1" />
                           </Button>
                         </div>
