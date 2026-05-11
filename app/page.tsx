@@ -21,15 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-const pageNames: Record<string, string> = {
-  frontend: "仓储基地门户",
-  "personal-property": "个人工作台 - 物权单位",
-  "personal-warehouse-unit": "个人工作台 - 仓储单位",
-  "personal-warehouse-site": "个人工作台 - 仓储站点",
-  "personal-transport": "个人工作台 - 专运单位",
-  "personal-user": "个人工作台 - 使用单位",
-  operation: "运营工作台",
-}
+
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState("frontend")
@@ -66,10 +58,6 @@ export default function HomePage() {
     }
   }
 
-  const getPageTitle = () => {
-    return pageNames[activeTab] || "仓储基地"
-  }
-
   return (
     <div className="min-h-screen bg-background">
       {/* 侧边栏 */}
@@ -99,7 +87,6 @@ export default function HomePage() {
             >
               <Menu className="w-5 h-5" />
             </Button>
-            <h1 className="text-lg font-semibold text-card-foreground">{getPageTitle()}</h1>
           </div>
 
           <div className="flex items-center gap-2">
