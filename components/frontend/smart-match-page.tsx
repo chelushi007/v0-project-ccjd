@@ -18,7 +18,7 @@ import {
 
 interface SmartMatchPageProps {
   onNavigate?: (page: string) => void
-  initialType?: "storage" | "rent"
+  initialType?: "material" | "rent"
 }
 
 const matchResults = [
@@ -73,7 +73,7 @@ const matchResults = [
 ]
 
 export function SmartMatchPage({ onNavigate, initialType = "rent" }: SmartMatchPageProps) {
-  const [demandType, setDemandType] = useState<"storage" | "rent">(initialType)
+  const [demandType, setDemandType] = useState<"material" | "rent">(initialType)
   const [textDescription, setTextDescription] = useState("")
   const [hasResults, setHasResults] = useState(false)
   const [isMatching, setIsMatching] = useState(false)
@@ -108,7 +108,7 @@ export function SmartMatchPage({ onNavigate, initialType = "rent" }: SmartMatchP
             <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-6">
                 <Sparkles className="w-5 h-5 text-accent" />
-                <h2 className="text-lg font-semibold">智能推荐</h2>
+                <h2 className="text-lg font-semibold">智能匹配</h2>
                 <Badge variant="secondary">AI匹配</Badge>
               </div>
 
@@ -117,12 +117,12 @@ export function SmartMatchPage({ onNavigate, initialType = "rent" }: SmartMatchP
                 <Label>需求类型</Label>
                 <div className="grid grid-cols-2 gap-3">
                   <Button
-                    variant={demandType === "storage" ? "default" : "outline"}
+                    variant={demandType === "material" ? "default" : "outline"}
                     className="h-auto py-4 flex-col gap-2"
-                    onClick={() => setDemandType("storage")}
+                    onClick={() => setDemandType("material")}
                   >
-                    <span className="text-xl">📦</span>
-                    <span>物资存放</span>
+                    <span className="text-xl">🔍</span>
+                    <span>物资寻找</span>
                   </Button>
                   <Button
                     variant={demandType === "rent" ? "default" : "outline"}
@@ -203,7 +203,7 @@ export function SmartMatchPage({ onNavigate, initialType = "rent" }: SmartMatchP
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4 mr-2" />
-                    智能推荐
+                    智能匹配
                   </>
                 )}
               </Button>
