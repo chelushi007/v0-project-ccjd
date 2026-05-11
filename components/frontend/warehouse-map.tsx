@@ -139,12 +139,12 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
               <div className="text-xs text-white/70 mt-1">总仓库数量</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#60a5fa]">{(totalStats.totalArea / 10000).toFixed(0)},000,000</div>
-              <div className="text-xs text-white/70 mt-1">总面积(m²)</div>
+              <div className="text-3xl font-bold text-[#60a5fa]">{(totalStats.totalArea / 10000).toFixed(2)}</div>
+              <div className="text-xs text-white/70 mt-1">总面积(万m²)</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#60a5fa]">{(totalStats.rentableArea / 10000).toFixed(0)},000,000</div>
-              <div className="text-xs text-white/70 mt-1">可出租面积(m²)</div>
+              <div className="text-3xl font-bold text-[#60a5fa]">{(totalStats.rentableArea / 10000).toFixed(2)}</div>
+              <div className="text-xs text-white/70 mt-1">可出租面积(万m²)</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-[#60a5fa]">{totalStats.infoCount.toLocaleString()}</div>
@@ -165,12 +165,12 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
           <ComposableMap
             projection="geoMercator"
             projectionConfig={{
-              scale: 480,
-              center: [104, 35],
+              scale: 420,
+              center: [105, 32],
             }}
             style={{ width: "100%", height: "100%" }}
           >
-            <ZoomableGroup center={[104, 35]} zoom={1} minZoom={0.6} maxZoom={4}>
+            <ZoomableGroup center={[105, 32]} zoom={1} minZoom={0.5} maxZoom={4}>
               <Geographies geography={CHINA_GEO_URL}>
                 {({ geographies }) =>
                   geographies.map((geo) => {
@@ -229,10 +229,6 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
             </div>
           )}
 
-          {/* 南海诸岛小图 */}
-          <div className="absolute bottom-2 right-2 w-20 h-24 border border-gray-300 rounded bg-white/90 flex items-center justify-center">
-            <span className="text-xs text-gray-500 text-center leading-tight">南海诸岛</span>
-          </div>
         </div>
 
         {/* 右侧仓储列表 */}
