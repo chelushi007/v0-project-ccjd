@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, ArrowRight, CheckCircle2, Calendar } from "lucide-react"
+import { Bell, ArrowRight, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -89,7 +89,6 @@ export function TransactionNotice() {
                 <TableHead className="font-semibold">承租单位</TableHead>
                 <TableHead className="font-semibold text-right">成交金额</TableHead>
                 <TableHead className="font-semibold text-center">成交时间</TableHead>
-                <TableHead className="font-semibold text-center">状态</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -119,12 +118,6 @@ export function TransactionNotice() {
                       <Calendar className="w-3 h-3" />
                       <span>{item.date}</span>
                     </div>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Badge variant="secondary" className="bg-accent/20 text-accent">
-                      <CheckCircle2 className="w-3 h-3 mr-1" />
-                      已成交
-                    </Badge>
                   </TableCell>
                 </TableRow>
               ))}
