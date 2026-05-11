@@ -98,8 +98,8 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
       {/* 标题名称 */}
       <div>
         <SectionTitle title="需求标题" />
-        <div className="flex items-center gap-4">
-          <Label className="w-20 text-right shrink-0">标题<span className="text-destructive">*</span></Label>
+        <div className="flex items-center gap-2">
+          <Label className="whitespace-nowrap shrink-0">标题<span className="text-destructive">*</span></Label>
           <Input placeholder="请输入50个字符以内的描述" className="flex-1" maxLength={50} />
         </div>
       </div>
@@ -107,16 +107,16 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
       {/* 业务类型 */}
       <div>
         <SectionTitle title="业务类型" />
-        <div className="flex items-center gap-4">
-          <Label className="w-20 text-right shrink-0">租赁类型<span className="text-destructive">*</span></Label>
+        <div className="flex items-center gap-2">
+          <Label className="whitespace-nowrap shrink-0">租赁类型<span className="text-destructive">*</span></Label>
           <RadioGroup value={rentType} onValueChange={setRentType} className="flex gap-6">
             <label className="flex items-center gap-2 cursor-pointer">
               <RadioGroupItem value="self" />
-              <span>自主</span>
+              <span className="whitespace-nowrap">自主</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <RadioGroupItem value="entrust" />
-              <span>委托</span>
+              <span className="whitespace-nowrap">委托</span>
             </label>
           </RadioGroup>
         </div>
@@ -125,8 +125,8 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
       {/* 仓储描述 */}
       <div>
         <SectionTitle title="仓储描述" />
-        <div className="flex items-start gap-4">
-          <Label className="w-20 text-right shrink-0 mt-2">详细介绍<span className="text-destructive">*</span></Label>
+        <div className="flex items-start gap-2">
+          <Label className="whitespace-nowrap shrink-0 mt-2">详细介绍<span className="text-destructive">*</span></Label>
           <div className="flex-1">
             <Textarea 
               placeholder="请输入仓储的详细描述信息，包括仓储类型、面积、配套设施等" 
@@ -141,14 +141,14 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
       {/* 联系信息 */}
       <div>
         <SectionTitle title="联系信息" />
-        <div className="grid grid-cols-2 gap-6">
-          <div className="flex items-center gap-4">
-            <Label className="w-20 text-right shrink-0">联系人<span className="text-destructive">*</span></Label>
-            <Input placeholder="请输入联系人名称" className="flex-1" />
+        <div className="flex flex-wrap gap-x-12 gap-y-4">
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap shrink-0">联系人<span className="text-destructive">*</span></Label>
+            <Input placeholder="请输入联系人名称" className="w-48" />
           </div>
-          <div className="flex items-center gap-4">
-            <Label className="w-20 text-right shrink-0">联系方式<span className="text-destructive">*</span></Label>
-            <Input placeholder="请输入联系人电话" className="flex-1" maxLength={11} />
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap shrink-0">联系方式<span className="text-destructive">*</span></Label>
+            <Input placeholder="请输入联系人电话" className="w-48" maxLength={11} />
           </div>
         </div>
       </div>
@@ -183,8 +183,8 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
       {/* 需求标题 */}
       <div>
         <SectionTitle title="需求标题" />
-        <div className="flex items-center gap-4">
-          <Label className="w-20 text-right shrink-0">标题<span className="text-destructive">*</span></Label>
+        <div className="flex items-center gap-2">
+          <Label className="whitespace-nowrap shrink-0">标题<span className="text-destructive">*</span></Label>
           <Input placeholder="请输入50个字符以内的描述" className="flex-1" maxLength={50} />
         </div>
       </div>
@@ -192,16 +192,16 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
       {/* 业务类型 */}
       <div>
         <SectionTitle title="业务类型" />
-        <div className="flex items-center gap-4">
-          <Label className="w-20 text-right shrink-0">租赁类型<span className="text-destructive">*</span></Label>
+        <div className="flex items-center gap-2">
+          <Label className="whitespace-nowrap shrink-0">租赁类型<span className="text-destructive">*</span></Label>
           <RadioGroup value={rentType} onValueChange={setRentType} className="flex gap-6">
             <label className="flex items-center gap-2 cursor-pointer">
               <RadioGroupItem value="self" />
-              <span>自主</span>
+              <span className="whitespace-nowrap">自主</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <RadioGroupItem value="entrust" />
-              <span>委托</span>
+              <span className="whitespace-nowrap">委托</span>
             </label>
           </RadioGroup>
         </div>
@@ -211,71 +211,71 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
       <div>
         <SectionTitle title="基础信息" />
         <div className="space-y-4">
-          <div className="grid grid-cols-4 gap-4 items-center">
+          <div className="flex flex-wrap gap-x-8 gap-y-4 items-center">
             <div className="flex items-center gap-2">
-              <Label className="w-20 text-right shrink-0">仓储名称<span className="text-destructive">*</span></Label>
-              <Button variant="link" className="text-primary p-0 h-auto">选择仓储</Button>
+              <Label className="whitespace-nowrap shrink-0">仓储名称<span className="text-destructive">*</span></Label>
+              <Button variant="link" className="text-primary p-0 h-auto whitespace-nowrap">选择仓储</Button>
             </div>
             <div className="flex items-center gap-2">
-              <Label className="w-16 text-right shrink-0">起租期<span className="text-destructive">*</span></Label>
-              <Input defaultValue="60" className="w-20" />
-              <span className="text-sm text-muted-foreground">天起</span>
+              <Label className="whitespace-nowrap shrink-0">起租期<span className="text-destructive">*</span></Label>
+              <Input defaultValue="60" className="w-16" />
+              <span className="text-sm text-muted-foreground whitespace-nowrap">天起</span>
             </div>
             <div className="flex items-center gap-2">
-              <Label className="w-16 text-right shrink-0">公摊面积</Label>
-              <Input placeholder="100" className="w-24" />
-              <span className="text-sm text-muted-foreground">m²</span>
+              <Label className="whitespace-nowrap shrink-0">公摊面积</Label>
+              <Input placeholder="100" className="w-20" />
+              <span className="text-sm text-muted-foreground whitespace-nowrap">m²</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-4 gap-4 items-center">
+          <div className="flex flex-wrap gap-x-8 gap-y-4 items-center">
             <div className="flex items-center gap-2">
-              <Label className="w-20 text-right shrink-0">建筑面积<span className="text-destructive">*</span></Label>
-              <Input placeholder="10,000" className="w-24" />
-              <span className="text-sm text-muted-foreground">m²</span>
+              <Label className="whitespace-nowrap shrink-0">建筑面积<span className="text-destructive">*</span></Label>
+              <Input placeholder="10,000" className="w-20" />
+              <span className="text-sm text-muted-foreground whitespace-nowrap">m²</span>
             </div>
             <div className="flex items-center gap-2">
-              <Label className="w-16 text-right shrink-0">可租面积<span className="text-destructive">*</span></Label>
-              <Input className="w-24" />
-              <span className="text-sm text-muted-foreground">m²</span>
+              <Label className="whitespace-nowrap shrink-0">可租面积<span className="text-destructive">*</span></Label>
+              <Input className="w-20" />
+              <span className="text-sm text-muted-foreground whitespace-nowrap">m²</span>
             </div>
             <div className="flex items-center gap-2">
-              <Label className="w-16 text-right shrink-0">起租面积<span className="text-destructive">*</span></Label>
-              <Input className="w-24" />
-              <span className="text-sm text-muted-foreground">m²</span>
+              <Label className="whitespace-nowrap shrink-0">起租面积<span className="text-destructive">*</span></Label>
+              <Input className="w-20" />
+              <span className="text-sm text-muted-foreground whitespace-nowrap">m²</span>
             </div>
             <div className="flex items-center gap-2">
               <Checkbox checked={rentMethod.includes("整租")} onCheckedChange={() => toggleArrayItem(rentMethod, setRentMethod, "整租")} />
-              <span className="text-sm">整租</span>
+              <span className="text-sm whitespace-nowrap">整租</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-4 gap-4 items-center">
+          <div className="flex flex-wrap gap-x-8 gap-y-4 items-center">
             <div className="flex items-center gap-2">
-              <Label className="w-20 text-right shrink-0">租金单价<span className="text-destructive">*</span></Label>
-              <Input className="w-24" />
+              <Label className="whitespace-nowrap shrink-0">租金单价<span className="text-destructive">*</span></Label>
+              <Input className="w-20" />
               <span className="text-sm text-muted-foreground whitespace-nowrap">元/m²/天</span>
             </div>
             <div className="flex items-center gap-2">
-              <Label className="w-16 text-right shrink-0">押金<span className="text-destructive">*</span></Label>
-              <Input className="w-24" />
-              <span className="text-sm text-muted-foreground">元</span>
+              <Label className="whitespace-nowrap shrink-0">押金<span className="text-destructive">*</span></Label>
+              <Input className="w-20" />
+              <span className="text-sm text-muted-foreground whitespace-nowrap">元</span>
             </div>
             <div className="flex items-center gap-2">
-              <Label className="w-16 text-right shrink-0">出租方式<span className="text-destructive">*</span></Label>
+              <Label className="whitespace-nowrap shrink-0">出租方式<span className="text-destructive">*</span></Label>
               <label className="flex items-center gap-1">
                 <Checkbox checked={rentMethod.includes("整租")} onCheckedChange={() => toggleArrayItem(rentMethod, setRentMethod, "整租")} />
-                <span className="text-sm">整租</span>
+                <span className="text-sm whitespace-nowrap">整租</span>
               </label>
               <label className="flex items-center gap-1 ml-2">
                 <Checkbox checked={rentMethod.includes("分租")} onCheckedChange={() => toggleArrayItem(rentMethod, setRentMethod, "分租")} />
-                <span className="text-sm">分租</span>
+                <span className="text-sm whitespace-nowrap">分租</span>
               </label>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <Label className="w-20 text-right shrink-0">税率<span className="text-destructive">*</span></Label>
+            <Label className="whitespace-nowrap shrink-0">税率<span className="text-destructive">*</span></Label>
             <Select>
               <SelectTrigger className="w-32">
                 <SelectValue placeholder="请选择" />
@@ -288,7 +288,7 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
                 <SelectItem value="13">13%</SelectItem>
               </SelectContent>
             </Select>
-            <span className="text-sm text-muted-foreground">%</span>
+            <span className="text-sm text-muted-foreground whitespace-nowrap">%</span>
           </div>
         </div>
       </div>
@@ -297,11 +297,11 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
       <div>
         <SectionTitle title="详细信息" />
         <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-6 items-center">
+          <div className="flex flex-wrap gap-x-8 gap-y-4 items-center">
             <div className="flex items-center gap-2">
-              <Label className="w-16 text-right shrink-0">仓储类型</Label>
+              <Label className="whitespace-nowrap shrink-0">仓储类型</Label>
               <Select>
-                <SelectTrigger className="flex-1">
+                <SelectTrigger className="w-28">
                   <SelectValue placeholder="请选择" />
                 </SelectTrigger>
                 <SelectContent>
@@ -313,9 +313,9 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
               </Select>
             </div>
             <div className="flex items-center gap-2">
-              <Label className="w-10 text-right shrink-0">楼层</Label>
+              <Label className="whitespace-nowrap shrink-0">楼层</Label>
               <Select>
-                <SelectTrigger className="flex-1">
+                <SelectTrigger className="w-24">
                   <SelectValue placeholder="其他" />
                 </SelectTrigger>
                 <SelectContent>
@@ -327,9 +327,9 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
               </Select>
             </div>
             <div className="flex items-center gap-2">
-              <Label className="w-16 text-right shrink-0">堆高限高</Label>
-              <Input className="w-20" />
-              <span className="text-sm text-muted-foreground">米</span>
+              <Label className="whitespace-nowrap shrink-0">堆高限高</Label>
+              <Input className="w-16" />
+              <span className="text-sm text-muted-foreground whitespace-nowrap">米</span>
               <label className="flex items-center gap-1 ml-2">
                 <Checkbox />
                 <span className="text-sm whitespace-nowrap">不限制</span>
@@ -337,11 +337,11 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-6 items-center">
+          <div className="flex flex-wrap gap-x-8 gap-y-4 items-center">
             <div className="flex items-center gap-2">
-              <Label className="w-16 text-right shrink-0">仓储结构</Label>
+              <Label className="whitespace-nowrap shrink-0">仓储结构</Label>
               <Select>
-                <SelectTrigger className="flex-1">
+                <SelectTrigger className="w-28">
                   <SelectValue placeholder="钢结构" />
                 </SelectTrigger>
                 <SelectContent>
@@ -352,9 +352,9 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
               </Select>
             </div>
             <div className="flex items-center gap-2">
-              <Label className="w-16 text-right shrink-0">消防等级</Label>
+              <Label className="whitespace-nowrap shrink-0">消防等级</Label>
               <Select>
-                <SelectTrigger className="flex-1">
+                <SelectTrigger className="w-24">
                   <SelectValue placeholder="有" />
                 </SelectTrigger>
                 <SelectContent>
@@ -366,9 +366,9 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
               </Select>
             </div>
             <div className="flex items-center gap-2">
-              <Label className="w-16 text-right shrink-0">楼板承重</Label>
-              <Input className="w-20" />
-              <span className="text-sm text-muted-foreground">吨</span>
+              <Label className="whitespace-nowrap shrink-0">楼板承重</Label>
+              <Input className="w-16" />
+              <span className="text-sm text-muted-foreground whitespace-nowrap">吨</span>
               <label className="flex items-center gap-1 ml-2">
                 <Checkbox />
                 <span className="text-sm whitespace-nowrap">不限制</span>
@@ -376,8 +376,8 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
             </div>
           </div>
 
-          <div className="flex items-start gap-2">
-            <Label className="w-16 text-right shrink-0 mt-2">仓储特色</Label>
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap shrink-0">仓储特色</Label>
             <div className="flex flex-wrap gap-4">
               {["随时看仓", "靠近高速", "设施齐全"].map(item => (
                 <label key={item} className="flex items-center gap-2 cursor-pointer">
@@ -385,10 +385,10 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
                     checked={warehouseFeatures.includes(item)}
                     onCheckedChange={() => toggleArrayItem(warehouseFeatures, setWarehouseFeatures, item)}
                   />
-                  <span className="text-sm">{item}</span>
+                  <span className="text-sm whitespace-nowrap">{item}</span>
                 </label>
               ))}
-              <Button variant="link" className="text-primary p-0 h-auto text-sm">
+              <Button variant="link" className="text-primary p-0 h-auto text-sm whitespace-nowrap">
                 <Plus className="w-3 h-3 mr-1" />
                 自定义
               </Button>
@@ -401,8 +401,8 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
       <div>
         <SectionTitle title="配套信息" />
         <div className="space-y-4">
-          <div className="flex items-start gap-2">
-            <Label className="w-16 text-right shrink-0 mt-2">装卸设备</Label>
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap shrink-0">装卸设备</Label>
             <CheckboxGroup 
               items={["龙门吊", "叉车", "行车", "地磅"]}
               selected={loadingEquipment}
@@ -412,8 +412,8 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
             />
           </div>
 
-          <div className="flex items-start gap-2">
-            <Label className="w-16 text-right shrink-0 mt-2">货架设备</Label>
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap shrink-0">货架设备</Label>
             <CheckboxGroup 
               items={["登高车", "重型货架", "悬臂货架", "托盘"]}
               selected={rackEquipment}
@@ -423,8 +423,8 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
             />
           </div>
 
-          <div className="flex items-start gap-2">
-            <Label className="w-16 text-right shrink-0 mt-2">基础设施</Label>
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap shrink-0">基础设施</Label>
             <CheckboxGroup 
               items={["办公室", "水电", "暖气", "员工宿舍", "停车场"]}
               selected={facilities}
@@ -434,8 +434,8 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
             />
           </div>
 
-          <div className="flex items-start gap-2">
-            <Label className="w-16 text-right shrink-0 mt-2">安全环保</Label>
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap shrink-0">安全环保</Label>
             <CheckboxGroup 
               items={["消火栓", "灭火器", "消防沙池", "自动喷淋系统", "污水处理系统", "粉尘抑制设备", "固废收集点", "防坠物网", "应急照明"]}
               selected={safetyEnv}
@@ -445,8 +445,8 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
             />
           </div>
 
-          <div className="flex items-start gap-2">
-            <Label className="w-16 text-right shrink-0 mt-2">安全配套</Label>
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap shrink-0">安全配套</Label>
             <CheckboxGroup 
               items={["封闭式围墙", "铁丝网围栏", "车辆进出车牌识别", "人员进出人脸识别", "人员进出人工登记", "监控重点区域覆盖", "监控全覆盖", "无监控"]}
               selected={securityConfig}
@@ -456,22 +456,22 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
             />
           </div>
 
-          <div className="flex items-start gap-2">
-            <Label className="w-16 text-right shrink-0 mt-2">改制/加工</Label>
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap shrink-0">改制/加工</Label>
             <div className="flex items-center gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
                 <Checkbox 
                   checked={processing.includes("改制")}
                   onCheckedChange={() => toggleArrayItem(processing, setProcessing, "改制")}
                 />
-                <span className="text-sm">改制</span>
+                <span className="text-sm whitespace-nowrap">改制</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <Checkbox 
                   checked={processing.includes("加工")}
                   onCheckedChange={() => toggleArrayItem(processing, setProcessing, "加工")}
                 />
-                <span className="text-sm">加工</span>
+                <span className="text-sm whitespace-nowrap">加工</span>
               </label>
               <Input placeholder="请输入改制/加工能力描述" className="w-64" />
             </div>
@@ -483,7 +483,7 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
       <div>
         <SectionTitle title="仓储描述" />
         <div className="flex items-start gap-2">
-          <Label className="w-16 text-right shrink-0 mt-2">详细介绍</Label>
+          <Label className="whitespace-nowrap shrink-0 mt-2">详细介绍</Label>
           <div className="flex-1">
             <Textarea 
               placeholder="默认填充仓储数据，支持修改" 
@@ -499,7 +499,7 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
       <div>
         <SectionTitle title="仓储图片" />
         <div className="flex items-start gap-2">
-          <Label className="w-16 text-right shrink-0 mt-2">上传图片<span className="text-destructive">*</span></Label>
+          <Label className="whitespace-nowrap shrink-0 mt-2">上传图片<span className="text-destructive">*</span></Label>
           <div className="flex-1">
             <div className="flex gap-4 mb-4">
               {uploadedImages.map((img, index) => (
@@ -532,7 +532,7 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
       <div>
         <SectionTitle title="所在位置" />
         <div className="flex items-start gap-2">
-          <Label className="w-16 text-right shrink-0 mt-2">具体位置<span className="text-destructive">*</span></Label>
+          <Label className="whitespace-nowrap shrink-0 mt-2">具体位置<span className="text-destructive">*</span></Label>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-4">
               <Select>
@@ -581,17 +581,15 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
       {/* 联系信息 */}
       <div>
         <SectionTitle title="联系信息" />
-        <div className="grid grid-cols-2 gap-6">
-          <div className="flex items-center gap-4">
-            <Label className="w-20 text-right shrink-0">联系人<span className="text-destructive">*</span></Label>
-            <Input placeholder="请输入联系人名称" className="flex-1" />
+        <div className="flex flex-wrap gap-x-12 gap-y-4">
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap shrink-0">联系人<span className="text-destructive">*</span></Label>
+            <Input placeholder="请输入联系人名称" className="w-48" />
           </div>
-          <div className="flex items-center gap-4">
-            <Label className="w-20 text-right shrink-0">联系方式<span className="text-destructive">*</span></Label>
-            <div className="flex-1 flex items-center gap-2">
-              <Input placeholder="请输入联系人电话" className="flex-1" maxLength={11} />
-              <span className="text-xs text-muted-foreground">0/11</span>
-            </div>
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap shrink-0">联系方式<span className="text-destructive">*</span></Label>
+            <Input placeholder="请输入联系人电话" className="w-48" maxLength={11} />
+            <span className="text-xs text-muted-foreground whitespace-nowrap">0/11</span>
           </div>
         </div>
       </div>
