@@ -7,6 +7,7 @@ import { WarehouseMapPage } from "@/components/frontend/warehouse-map-page"
 import { WarehouseListPage } from "@/components/frontend/warehouse-list-page"
 import { SmartMatchPage } from "@/components/frontend/smart-match-page"
 import { DetailPublishPage } from "@/components/frontend/detail-publish-page"
+import { MaterialPublishPage } from "@/components/frontend/material-publish-page"
 import { PropertyOwnerWorkbench } from "@/components/workbench/roles/property-owner-workbench"
 import { WarehouseUnitWorkbench } from "@/components/workbench/roles/warehouse-unit-workbench"
 import { WarehouseSiteWorkbench } from "@/components/workbench/roles/warehouse-site-workbench"
@@ -48,6 +49,8 @@ export default function HomePage() {
       } else if (subTab === "detail-publish") {
         setCurrentPage("detail-publish")
         setPublishDefaultTab("quick") // 从侧边栏进入默认显示快捷发布
+      } else if (subTab === "material-publish") {
+        setCurrentPage("material-publish")
       }
     } else if (subTab) {
       setActiveSubTab(subTab)
@@ -70,6 +73,10 @@ export default function HomePage() {
       setPublishDefaultTab("detail")
       setActiveSubTab("detail-publish")
       return
+    } else if (page === "material-publish") {
+      setCurrentPage("material-publish")
+      setActiveSubTab("material-publish")
+      return
     }
     
     setCurrentPage(page)
@@ -82,6 +89,8 @@ export default function HomePage() {
       setActiveSubTab("warehouse-map")
     } else if (page === "detail-publish") {
       setActiveSubTab("detail-publish")
+    } else if (page === "material-publish") {
+      setActiveSubTab("material-publish")
     }
   }
 
@@ -97,6 +106,8 @@ export default function HomePage() {
           return <SmartMatchPage onNavigate={handleNavigate} />
         case "detail-publish":
           return <DetailPublishPage onNavigate={handleNavigate} defaultTab={publishDefaultTab} />
+        case "material-publish":
+          return <MaterialPublishPage onNavigate={handleNavigate} />
         case "home":
         default:
           return <FrontendPage onNavigate={handleNavigate} />

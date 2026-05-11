@@ -55,7 +55,8 @@ const frontendMenu: MenuItem[] = [
   { id: "home", label: "首页", icon: Home },
   { id: "warehouse-list", label: "仓储列表", icon: List },
   { id: "warehouse-map", label: "仓储地图", icon: Map },
-  { id: "detail-publish", label: "详细发布", icon: FilePlus },
+  { id: "detail-publish", label: "仓储出租发布", icon: FilePlus },
+  { id: "material-publish", label: "物资出租发布", icon: Package },
 ]
 
 // 物权单位菜单
