@@ -31,6 +31,8 @@ export default function HomePage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   // 二级页面状态
   const [currentPage, setCurrentPage] = useState("home")
+  // 发布页面默认tab
+  const [publishDefaultTab, setPublishDefaultTab] = useState<"quick" | "detail">("quick")
 
   const handleTabChange = (tab: string, subTab?: string) => {
     setActiveTab(tab)
@@ -45,6 +47,7 @@ export default function HomePage() {
         setCurrentPage("warehouse-map")
       } else if (subTab === "detail-publish") {
         setCurrentPage("detail-publish")
+        setPublishDefaultTab("quick") // 从侧边栏进入默认显示快捷发布
       }
     } else if (subTab) {
       setActiveSubTab(subTab)
@@ -56,6 +59,19 @@ export default function HomePage() {
 
   // 页面内导航（用于二级页面）
   const handleNavigate = (page: string) => {
+    // 处理发布页面带tab参数
+    if (page === "detail-publish-quick") {
+      setCurrentPage("detail-publish")
+      setPublishDefaultTab("quick")
+      setActiveSubTab("detail-publish")
+      return
+    } else if (page === "detail-publish-detail") {
+      setCurrentPage("detail-publish")
+      setPublishDefaultTab("detail")
+      setActiveSubTab("detail-publish")
+      return
+    }
+    
     setCurrentPage(page)
     // 更新侧边栏选中状态
     if (page === "home") {
@@ -80,7 +96,7 @@ export default function HomePage() {
         case "smart-match":
           return <SmartMatchPage onNavigate={handleNavigate} />
         case "detail-publish":
-          return <DetailPublishPage onNavigate={handleNavigate} />
+          return <DetailPublishPage onNavigate={handleNavigate} defaultTab={publishDefaultTab} />
         case "home":
         default:
           return <FrontendPage onNavigate={handleNavigate} />

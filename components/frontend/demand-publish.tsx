@@ -10,13 +10,13 @@ interface DemandPublishProps {
 
 export function DemandPublish({ onNavigate }: DemandPublishProps) {
   const handleQuickPublish = () => {
-    // 跳转到详细发布页面（简化版弹窗或跳转）
-    onNavigate?.("detail-publish")
+    // 跳转到发布页面-快捷发布tab
+    onNavigate?.("detail-publish-quick")
   }
 
   const handleDetailPublish = () => {
-    // 跳转到详细发布页面
-    onNavigate?.("detail-publish")
+    // 跳转到发布页面-详细发布tab
+    onNavigate?.("detail-publish-detail")
   }
 
   return (

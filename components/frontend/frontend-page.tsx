@@ -6,6 +6,7 @@ import { DemandPublish } from "./demand-publish"
 import { SmartMatch } from "./smart-match"
 import { WarehouseMap } from "./warehouse-map"
 import { WarehouseOpportunity } from "./warehouse-opportunity"
+import { MaterialRecommend } from "./material-recommend"
 import { PlatformRecommend } from "./platform-recommend"
 import { TiejianWarehouse } from "./tiejian-warehouse"
 import { HotSites } from "./hot-sites"
@@ -36,6 +37,9 @@ export function FrontendPage({ onNavigate }: FrontendPageProps) {
 
       {/* 仓储商机 */}
       <WarehouseOpportunity />
+
+      {/* 物资推荐 */}
+      <MaterialRecommend />
 
       {/* 平台推荐 */}
       <PlatformRecommend />
