@@ -50,15 +50,7 @@ export function PropertyOwnerWorkbench({ subTab }: PropertyOwnerWorkbenchProps) 
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">个人工作台 - 物权单位</h1>
-          <p className="text-muted-foreground">
-            管理仓储承租、物资存放及托管运营业务
-          </p>
-        </div>
-      </div>
+    <div>
       {renderContent()}
     </div>
   )

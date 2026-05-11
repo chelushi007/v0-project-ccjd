@@ -39,7 +39,6 @@ export function FrontendPage() {
       {/* 页脚 */}
       <footer className="py-8 border-t border-border">
         <div className="text-center text-sm text-muted-foreground">
-          <p className="mb-2">中铁物资循环物资平台 · 仓储基地</p>
           <p>提供专业的仓储资源服务，助力物资循环利用</p>
         </div>
       </footer>

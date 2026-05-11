@@ -63,15 +63,7 @@ export function TransportUnitWorkbench({ subTab }: TransportUnitWorkbenchProps) 
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">个人工作台 - 专运单位</h1>
-          <p className="text-muted-foreground">
-            管理仓储出租、物资托管运营及物资出租业务
-          </p>
-        </div>
-      </div>
+    <div>
       {renderContent()}
     </div>
   )

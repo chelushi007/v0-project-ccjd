@@ -56,15 +56,7 @@ export function WarehouseSiteWorkbench({ subTab }: WarehouseSiteWorkbenchProps) 
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">个人工作台 - 仓储站点</h1>
-          <p className="text-muted-foreground">
-            管理仓储出租、委托出租及物资存放业务，可申请成为专运单位
-          </p>
-        </div>
-      </div>
+    <div>
       {renderContent()}
     </div>
   )

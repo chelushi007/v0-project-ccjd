@@ -20,7 +20,6 @@ export function OperationWorkbench() {
         <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
           <Settings className="w-10 h-10 text-accent" />
         </div>
-        <h1 className="text-2xl font-bold text-foreground mb-2">运营工作台</h1>
         <p className="text-muted-foreground max-w-md">
           此模块正在开发中，将提供仓储资源管理、客户管理、合同管理、数据分析等运营功能
         </p>
