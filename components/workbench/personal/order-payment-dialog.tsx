@@ -425,7 +425,7 @@ export function OrderPaymentDialog({
             订单支付
           </DialogTitle>
           <DialogDescription>
-            请核对支付信息后完成支付���工商银行对公账户扣款，扣款成功后立即生成电子凭证
+            请核对支付信息后完成支付，工商银行对公账户扣款成功后立即生成电子凭证
           </DialogDescription>
         </DialogHeader>
 

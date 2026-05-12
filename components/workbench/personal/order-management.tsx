@@ -268,7 +268,7 @@ const materialStorageOrders: Array<{
     materialType: "机械设备",
     quantity: "86 件",
     owner: "中铁二十局集团华南分公司",
-    site: "中铁十六局佛山顺德钢构��储基地",
+    site: "中铁十六局佛山顺德钢构仓储基地",
     inDate: "2026-04-22",
     outDate: "—",
     storageFee: "4,200元/月",

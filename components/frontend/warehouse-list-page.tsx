@@ -195,9 +195,9 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all-area">不限面积</SelectItem>
-                <SelectItem value="small">1000㎡以下</SelectItem>
-                <SelectItem value="medium">1000-5000㎡</SelectItem>
-                <SelectItem value="large">5000㎡以上</SelectItem>
+                <SelectItem value="small">1000m²以下</SelectItem>
+                <SelectItem value="medium">1000-5000m²</SelectItem>
+                <SelectItem value="large">5000m²以上</SelectItem>
               </SelectContent>
             </Select>
             <Button>
@@ -253,7 +253,7 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xl font-bold text-primary">{warehouse.price}</span>
-                <span className="text-sm text-muted-foreground">元/㎡/天</span>
+                <span className="text-sm text-muted-foreground">元/m²/天</span>
                 <Badge variant="secondary" className="ml-auto text-xs">
                   {warehouse.priceStatus}
                 </Badge>
@@ -262,7 +262,7 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
               <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
                 <span className="flex items-center gap-1">
                   <Maximize2 className="w-3 h-3" />
-                  {warehouse.rentableArea}㎡可租
+                  {warehouse.rentableArea}m²可租
                 </span>
               </div>
 

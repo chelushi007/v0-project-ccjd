@@ -116,7 +116,7 @@ export function HotSites() {
                 </div>
                 <div>
                   <span className="text-muted-foreground">总面积：</span>
-                  <span className="font-medium">{(parseInt(site.totalArea) / 10000).toFixed(1)}万㎡</span>
+                  <span className="font-medium">{(parseInt(site.totalArea) / 10000).toFixed(1)}万m²</span>
                 </div>
               </div>
 

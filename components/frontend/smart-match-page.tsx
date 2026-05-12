@@ -28,10 +28,10 @@ const warehouseResults = [
     name: "中铁建广州南沙综合仓储基地",
     location: "广东省广州市南沙区",
     type: "综合仓储",
-    area: "15000㎡可租",
+    area: "15000m²可租",
     matchScore: 98,
     features: ["铁路专用线", "大型装卸设备", "24小时安保"],
-    price: "0.56元/㎡/天",
+    price: "0.56元/m²/天",
     rating: 4.9,
     reviews: 128,
   },
@@ -40,10 +40,10 @@ const warehouseResults = [
     name: "中铁建深圳前海智慧仓储基地",
     location: "广东省深圳市南山区",
     type: "智慧仓储",
-    area: "8000㎡可租",
+    area: "8000m²可租",
     matchScore: 95,
     features: ["自动化设备", "WMS系统", "恒温区"],
-    price: "0.52元/㎡/天",
+    price: "0.52元/m²/天",
     rating: 4.8,
     reviews: 96,
   },
@@ -52,10 +52,10 @@ const warehouseResults = [
     name: "中铁建东莞虎门港务仓储基地",
     location: "广东省东莞市虎门镇",
     type: "港口仓储",
-    area: "25000㎡可租",
+    area: "25000m²可租",
     matchScore: 92,
     features: ["近虎门港", "海关监管", "大型堆场"],
-    price: "0.38元/㎡/天",
+    price: "0.38元/m²/天",
     rating: 4.7,
     reviews: 156,
   },
@@ -64,10 +64,10 @@ const warehouseResults = [
     name: "中铁十六局佛山顺德钢构仓储基地",
     location: "广东省佛山市顺德区",
     type: "专业仓储",
-    area: "6000㎡可租",
+    area: "6000m²可租",
     matchScore: 88,
     features: ["钢材专用", "天车设备", "防锈处理"],
-    price: "0.45元/㎡/天",
+    price: "0.45元/m²/天",
     rating: 4.6,
     reviews: 78,
   },
@@ -270,7 +270,7 @@ export function SmartMatchPage({ onNavigate, initialType = "rent" }: SmartMatchP
 
                   <div className="space-y-2">
                     <Label>需求面积</Label>
-                    <Input placeholder="如：3000㎡" />
+                    <Input placeholder="如：3000m²" />
                   </div>
                 </div>
               )}

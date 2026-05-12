@@ -218,7 +218,7 @@ export function AppSidebar({
           ) : (
             <>
               <ChevronLeft className="w-4 h-4 mr-2" />
-              <span>收起���单</span>
+              <span>收起菜单</span>
             </>
           )}
         </Button>

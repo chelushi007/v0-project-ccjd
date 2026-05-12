@@ -114,11 +114,11 @@ export function TiejianWarehouse() {
               <div className="grid grid-cols-2 gap-2 text-sm mb-3">
                 <div>
                   <span className="text-muted-foreground">总面积：</span>
-                  <span className="font-medium">{parseInt(warehouse.totalArea).toLocaleString()}㎡</span>
+                  <span className="font-medium">{parseInt(warehouse.totalArea).toLocaleString()}m²</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">可租：</span>
-                  <span className="text-primary font-medium">{parseInt(warehouse.availableArea).toLocaleString()}㎡</span>
+                  <span className="text-primary font-medium">{parseInt(warehouse.availableArea).toLocaleString()}m²</span>
                 </div>
               </div>
 
@@ -138,7 +138,7 @@ export function TiejianWarehouse() {
               <div className="flex items-center justify-between pt-3 border-t border-border">
                 <div>
                   <span className="text-lg font-bold text-primary">{warehouse.price}</span>
-                  <span className="text-xs text-muted-foreground ml-1">元/㎡/天</span>
+                  <span className="text-xs text-muted-foreground ml-1">元/m²/天</span>
                 </div>
                 <Button size="sm" variant="outline">
                   查看详情

@@ -89,7 +89,7 @@ const enterpriseRoles = [
       businessScope: "工程物资仓储与中转、工程机械周转管理、循环物资入出库与配送、库存数据化管理",
       certifications: ["仓储服务一级资质", "ISO9001质量体系", "AA级信用企业"],
       stats: [
-        { label: "运营仓储面积", value: "12.5", unit: "万㎡" },
+        { label: "运营仓储面积", value: "12.5", unit: "万m²" },
         { label: "下辖站点", value: "8", unit: "个" },
         { label: "服务局/分公司", value: "126", unit: "家" },
       ],
@@ -122,7 +122,7 @@ const enterpriseRoles = [
       businessScope: "工程钢构与轨道物资仓储、危化品仓储、循环周转物资管理、铁路专用线装卸",
       certifications: ["危化品仓储许可证", "消防安全合格证", "海关监管资质"],
       stats: [
-        { label: "可用仓储面积", value: "3.2", unit: "万㎡" },
+        { label: "可用仓储面积", value: "3.2", unit: "万m²" },
         { label: "在库物资批次", value: "1,286", unit: "批" },
         { label: "出租率", value: "86", unit: "%" },
       ],
