@@ -38,8 +38,8 @@ import {
 } from "lucide-react"
 
 interface SettlementManagementProps {
-  subTab: string
-  roleType: "property" | "warehouse-unit" | "warehouse-site" | "transport" | "user"
+  subTab?: string
+  roleType?: "property" | "warehouse-unit" | "warehouse-site" | "transport" | "user"
 }
 
 // 对账数据
@@ -515,12 +515,29 @@ export function SettlementManagement({ subTab, roleType }: SettlementManagementP
   }
 
   // 根据subTab决定显示哪个视图
-  if (subTab.includes("reconciliation")) {
-    return renderReconciliation()
-  } else if (subTab.includes("payment")) {
-    return renderPayment()
+  if (subTab) {
+    if (subTab.includes("reconciliation")) {
+      return renderReconciliation()
+    } else if (subTab.includes("payment")) {
+      return renderPayment()
+    }
   }
 
-  // 默认显示对账管理
-  return renderReconciliation()
+  // 没有subTab时，使用Tabs在内部切换对账与支付
+  return (
+    <div className="space-y-6">
+      <Tabs defaultValue="reconciliation" className="w-full">
+        <TabsList>
+          <TabsTrigger value="reconciliation">对账管理</TabsTrigger>
+          <TabsTrigger value="payment">支付结算</TabsTrigger>
+        </TabsList>
+        <TabsContent value="reconciliation" className="mt-6">
+          {renderReconciliation()}
+        </TabsContent>
+        <TabsContent value="payment" className="mt-6">
+          {renderPayment()}
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
 }

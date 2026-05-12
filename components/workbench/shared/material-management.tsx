@@ -35,7 +35,7 @@ import {
 } from "lucide-react"
 
 interface MaterialManagementProps {
-  roleType: "property" | "warehouse-unit" | "warehouse-site" | "transport"
+  roleType?: "property" | "warehouse-unit" | "warehouse-site" | "transport"
 }
 
 const mockMaterials = [
@@ -108,7 +108,7 @@ const statusConfig: Record<string, { label: string; variant: "default" | "second
   "待出库": { label: "待出库", variant: "destructive" },
 }
 
-export function MaterialManagement({ roleType }: MaterialManagementProps) {
+export function MaterialManagement({ roleType = "warehouse-unit" }: MaterialManagementProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [categoryFilter, setCategoryFilter] = useState("all")
