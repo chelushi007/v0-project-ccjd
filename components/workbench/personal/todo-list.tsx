@@ -242,7 +242,7 @@ const quickApprovalEntries = [
   { label: "合同审批", icon: FilePen, count: 2, color: "text-blue-600", bg: "bg-blue-500/10" },
   { label: "站点申请", icon: MapPin, count: 1, color: "text-green-600", bg: "bg-green-500/10" },
   { label: "资质审核", icon: ShieldCheck, count: 1, color: "text-purple-600", bg: "bg-purple-500/10" },
-  { label: "入口申请", icon: LogOut, count: 3, color: "text-orange-600", bg: "bg-orange-500/10" },
+  { label: "入库申请", icon: Package, count: 3, color: "text-orange-600", bg: "bg-orange-500/10" },
 ]
 
 const quickBizEntries = [
@@ -358,8 +358,8 @@ export function TodoList({ roleType = "property" }: TodoListProps) {
       <div className="grid grid-cols-5 gap-4">
 
         {/* 交易统计（占3列） */}
-        <div className="col-span-3 space-y-4">
-          <Card>
+        <div className="col-span-3">
+          <Card className="h-full flex flex-col">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center justify-between">
                 <span className="flex items-center gap-1.5">
@@ -369,7 +369,7 @@ export function TodoList({ roleType = "property" }: TodoListProps) {
                 <span className="text-xs text-muted-foreground font-normal">本月</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 flex-1 flex flex-col">
               <div className="grid grid-cols-2 gap-3 mb-4">
                 {tradeStats.map((item) => (
                   <div key={item.label} className="p-3 bg-muted/40 rounded-lg flex items-center gap-3">
@@ -391,31 +391,105 @@ export function TodoList({ roleType = "property" }: TodoListProps) {
                 ))}
               </div>
 
-              {/* 近6个月趋势条形图 */}
-              <div>
-                <p className="text-xs text-muted-foreground mb-2">近6个月成交金额（万元）</p>
-                <div className="flex items-end gap-2 h-20">
-                  {[
-                    { month: "8月", val: 98 },
-                    { month: "9月", val: 112 },
-                    { month: "10月", val: 134 },
-                    { month: "11月", val: 145 },
-                    { month: "12月", val: 138 },
-                    { month: "1月", val: 156 },
-                  ].map((item) => {
-                    const pct = Math.round((item.val / 160) * 100)
-                    return (
-                      <div key={item.month} className="flex flex-col items-center gap-1 flex-1">
-                        <span className="text-[10px] text-muted-foreground">{item.val}</span>
-                        <div
-                          className="w-full rounded-t-sm bg-primary/70 hover:bg-primary transition-colors"
-                          style={{ height: `${pct}%` }}
-                        />
-                        <span className="text-[10px] text-muted-foreground">{item.month}</span>
-                      </div>
-                    )
-                  })}
+              {/* 近6个月成交金额趋势变化图 */}
+              <div className="flex-1 flex flex-col">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs text-muted-foreground">近6个月成交金额趋势（万元）</p>
+                  <div className="flex items-center gap-3 text-[11px]">
+                    <span className="flex items-center gap-1">
+                      <span className="w-2.5 h-2.5 rounded-sm bg-primary" />
+                      <span className="text-muted-foreground">仓储</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <span className="w-2.5 h-2.5 rounded-sm bg-accent" />
+                      <span className="text-muted-foreground">物资</span>
+                    </span>
+                  </div>
                 </div>
+                {(() => {
+                  const data = [
+                    { month: "8月", warehouse: 58, material: 40 },
+                    { month: "9月", warehouse: 68, material: 44 },
+                    { month: "10月", warehouse: 82, material: 52 },
+                    { month: "11月", warehouse: 88, material: 57 },
+                    { month: "12月", warehouse: 84, material: 54 },
+                    { month: "1月", warehouse: 98.6, material: 57.8 },
+                  ]
+                  const W = 560
+                  const H = 140
+                  const PAD_X = 24
+                  const PAD_Y = 16
+                  const max = 110
+                  const innerW = W - PAD_X * 2
+                  const innerH = H - PAD_Y * 2
+                  const xAt = (i: number) => PAD_X + (innerW * i) / (data.length - 1)
+                  const yAt = (v: number) => PAD_Y + innerH - (innerH * v) / max
+                  const buildPath = (key: "warehouse" | "material") =>
+                    data.map((d, i) => `${i === 0 ? "M" : "L"} ${xAt(i)} ${yAt(d[key])}`).join(" ")
+                  const buildArea = (key: "warehouse" | "material") =>
+                    `${buildPath(key)} L ${xAt(data.length - 1)} ${PAD_Y + innerH} L ${xAt(0)} ${PAD_Y + innerH} Z`
+
+                  return (
+                    <div className="flex-1 w-full min-h-[150px]">
+                      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-full" preserveAspectRatio="none">
+                        <defs>
+                          <linearGradient id="gradWarehouse" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.35" />
+                            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.02" />
+                          </linearGradient>
+                          <linearGradient id="gradMaterial" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="hsl(var(--accent))" stopOpacity="0.35" />
+                            <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity="0.02" />
+                          </linearGradient>
+                        </defs>
+
+                        {/* 网格线 */}
+                        {[0, 0.25, 0.5, 0.75, 1].map((p) => (
+                          <line
+                            key={p}
+                            x1={PAD_X}
+                            y1={PAD_Y + innerH * p}
+                            x2={W - PAD_X}
+                            y2={PAD_Y + innerH * p}
+                            stroke="currentColor"
+                            className="text-muted/40"
+                            strokeDasharray="2 3"
+                          />
+                        ))}
+
+                        {/* 面积 */}
+                        <path d={buildArea("warehouse")} fill="url(#gradWarehouse)" />
+                        <path d={buildArea("material")} fill="url(#gradMaterial)" />
+
+                        {/* 折线 */}
+                        <path d={buildPath("warehouse")} fill="none" stroke="hsl(var(--primary))" strokeWidth="2" />
+                        <path d={buildPath("material")} fill="none" stroke="hsl(var(--accent))" strokeWidth="2" />
+
+                        {/* 数据点 */}
+                        {data.map((d, i) => (
+                          <g key={d.month}>
+                            <circle cx={xAt(i)} cy={yAt(d.warehouse)} r="3" fill="hsl(var(--primary))" />
+                            <circle cx={xAt(i)} cy={yAt(d.material)} r="3" fill="hsl(var(--accent))" />
+                          </g>
+                        ))}
+
+                        {/* X 轴标签 */}
+                        {data.map((d, i) => (
+                          <text
+                            key={d.month}
+                            x={xAt(i)}
+                            y={H - 2}
+                            textAnchor="middle"
+                            className="fill-muted-foreground"
+                            style={{ fontSize: "10px" }}
+                          >
+                            {d.month}
+                          </text>
+                        ))}
+                      </svg>
+                    </div>
+                  )
+                })()}
               </div>
             </CardContent>
           </Card>
@@ -544,12 +618,6 @@ export function TodoList({ roleType = "property" }: TodoListProps) {
             </TabsContent>
 
             <TabsContent value="approval" className="mt-0 space-y-3">
-              <div className="mb-2 p-3 bg-blue-50 border border-blue-100 rounded-lg flex items-start gap-2">
-                <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                <p className="text-xs text-blue-700">
-                  以下审批事项由<span className="font-medium">运营工作台</span>统一审批，您可在此查看申请进度
-                </p>
-              </div>
               {todoItems.approval.map((item) => (
                 <div key={item.id} className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
                   <div className="flex items-start justify-between gap-4">
