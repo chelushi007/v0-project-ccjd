@@ -31,6 +31,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  OrderPaymentDialog,
+  type FeeKind,
+  type OrderType,
+  type PaymentOrder,
+  type PaymentRecord,
+} from "./order-payment-dialog"
 
 // 主状态
 type MainStatus = "履约中" | "已完成" | "合同到期"
@@ -485,64 +492,246 @@ const getTradeTypeBadge = (type: string) => {
   return <Badge variant="outline">出租</Badge>
 }
 
-// 根据子状态返回主操作按钮配色
-const getPrimaryAction = (
-  subStatus: RentSubStatus | StorageSubStatus,
-): { label: string; className: string } | null => {
-  const contractCls = "text-orange-700 hover:text-orange-800 hover:bg-orange-50"
-  const payCls = "text-amber-700 hover:text-amber-800 hover:bg-amber-50"
-  const renewCls = "text-sky-700 hover:text-sky-800 hover:bg-sky-50"
-  const refundCls = "text-rose-700 hover:text-rose-800 hover:bg-rose-50"
-  switch (subStatus) {
-    case "待确认合同":
-      return { label: "确认合同", className: contractCls }
-    case "待签署合同":
-      return { label: "签署合同", className: contractCls }
+// 业务样式
+const ACTION_CLS = {
+  contract: "text-orange-700 hover:text-orange-800 hover:bg-orange-50",
+  pay: "text-amber-700 hover:text-amber-800 hover:bg-amber-50",
+  renew: "text-sky-700 hover:text-sky-800 hover:bg-sky-50",
+  refund: "text-rose-700 hover:text-rose-800 hover:bg-rose-50",
+}
+
+// 金额字符串 → 数字（剔除逗号与中文）
+function parseAmount(amountStr: string): number {
+  return Number(amountStr.replace(/[^\d.]/g, "")) || 0
+}
+
+// "2026-05-15 至 2027-05-14" → 12
+function parseMonths(periodStr: string): number {
+  const parts = periodStr.split(" 至 ")
+  if (parts.length !== 2) return 12
+  const [sy, sm] = parts[0].trim().split("-").map(Number)
+  const [ey, em] = parts[1].trim().split("-").map(Number)
+  if (!sy || !sm || !ey || !em) return 12
+  const months = (ey - sy) * 12 + (em - sm)
+  return Math.max(1, months)
+}
+
+// 仓储交易订单 → 支付订单视图
+function toWarehousePaymentOrder(o: (typeof warehouseOrders)[number]): PaymentOrder {
+  const total = parseAmount(o.amount)
+  const months = parseMonths(o.period)
+  const monthly = Math.round(total / months)
+  return {
+    id: o.id,
+    title: o.title,
+    payer: o.tenant,
+    depositPayee: o.landlord,
+    periodLabel: o.period,
+    totalAmount: total,
+    totalMonths: months,
+    monthlyAmount: monthly,
+    depositAmount: monthly * 2,
+    serviceFeeAmount: Math.round(total * 0.03),
+    rentStartDate: o.period.split(" 至 ")[0].slice(0, 7),
+  }
+}
+
+// 物资存放订单 → 支付订单视图（按 12 个月计算）
+function toStoragePaymentOrder(o: (typeof materialStorageOrders)[number]): PaymentOrder {
+  const monthly = parseAmount(o.storageFee)
+  const months = 12
+  const total = monthly * months
+  return {
+    id: o.id,
+    title: o.title,
+    payer: o.owner,
+    depositPayee: o.site,
+    periodLabel: `${o.inDate} 起 ${months} 个月`,
+    totalAmount: total,
+    totalMonths: months,
+    monthlyAmount: monthly,
+    depositAmount: monthly * 2,
+    serviceFeeAmount: Math.round(total * 0.03),
+    rentStartDate: o.inDate.slice(0, 7),
+  }
+}
+
+// 物资交易订单 → 支付订单视图
+function toTradePaymentOrder(o: (typeof materialTradeOrders)[number]): PaymentOrder {
+  const total = parseAmount(o.amount)
+  const months = parseMonths(o.period)
+  const monthly = Math.round(total / months)
+  return {
+    id: o.id,
+    title: o.title,
+    payer: o.user,
+    depositPayee: o.provider,
+    periodLabel: o.period,
+    totalAmount: total,
+    totalMonths: months,
+    monthlyAmount: monthly,
+    depositAmount: monthly * 2,
+    serviceFeeAmount: Math.round(total * 0.03),
+    rentStartDate: o.period.split(" 至 ")[0].slice(0, 7),
+  }
+}
+
+// 子状态 → 默认打开的支付 Tab
+function subStatusToTab(s: RentSubStatus | StorageSubStatus): FeeKind | null {
+  switch (s) {
     case "待支付押金":
     case "待支付保证金":
+      return "deposit"
     case "待支付服务费":
+      return "serviceFee"
     case "待支付租金":
     case "待支付保管费":
-      return { label: subStatus.replace("待", ""), className: payCls }
-    case "待续租":
-      return { label: "续租", className: renewCls }
-    case "待退还押金":
-      return { label: "退还押金", className: refundCls }
-    case "待退还保证金":
-      return { label: "退还保证金", className: refundCls }
-    case "在租履约":
-    case "保管履约":
-    case "已完成":
-      return null
+      return "rent"
     default:
       return null
   }
 }
 
-// 操作按钮组渲染（全部以文字呈现）
-// 合同查看/下载统一在"合同管理"模块中处理，订单列表此处不再重复展示
-const renderActions = (subStatus: RentSubStatus | StorageSubStatus) => {
-  const primary = getPrimaryAction(subStatus)
-  return (
-    <div className="flex items-center justify-center gap-0.5">
-      {primary && (
-        <Button variant="ghost" size="sm" className={`h-8 px-2 font-medium ${primary.className}`}>
-          {primary.label}
-        </Button>
-      )}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 px-2 text-muted-foreground hover:text-foreground"
-      >
-        查看
-      </Button>
-    </div>
-  )
+// 初始支付进度：按订单当前所处子状态，反推之前步骤应该已完成
+// 在租履约/保管履约/已完成/合同到期等订单：押金、服务费已付，租金按月部分/全部已付
+// 待支付租金/待支付保管费：押金、服务费已付，租金未支付或部分已付
+// 待支付服务费：押金已付
+const INITIAL_PAYMENT_RECORDS: Record<string, PaymentRecord> = {
+  // 仓储交易
+  CCJY20260506004: { depositPaid: true },
+  CCJY20260428005: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 2 },
+  CCJY20260315006: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 5 },
+  CCJY20251015007: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
+  CCJY20260420008: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
+  CCJY20260425009: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
+  // 物资存放
+  WZCF20260505004: { depositPaid: true },
+  WZCF20260420005: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 1 },
+  WZCF20260301006: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 3 },
+  WZCF20251115007: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
+  WZCF20251025008: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
+  WZCF20251015009: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
+  // 物资交易
+  WZJY20260505004: { depositPaid: true },
+  WZJY20260428005: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 2 },
+  WZJY20260315006: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 5 },
+  WZJY20251108007: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
+  WZJY20251020008: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
+  WZJY20251015009: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
 }
 
 export function OrderManagement() {
   const [activeTab, setActiveTab] = useState("warehouse")
+  const [paymentRecords, setPaymentRecords] =
+    useState<Record<string, PaymentRecord>>(INITIAL_PAYMENT_RECORDS)
+  const [payDialog, setPayDialog] = useState<{
+    open: boolean
+    order: PaymentOrder | null
+    orderType: OrderType
+    defaultTab: FeeKind
+  }>({ open: false, order: null, orderType: "warehouse", defaultTab: "deposit" })
+
+  const openPay = (order: PaymentOrder, orderType: OrderType, defaultTab: FeeKind) => {
+    setPayDialog({ open: true, order, orderType, defaultTab })
+  }
+
+  const handlePay = (kind: FeeKind) => {
+    const id = payDialog.order?.id
+    if (!id) return
+    setPaymentRecords((prev) => {
+      const cur = prev[id] ?? {}
+      if (kind === "deposit") return { ...prev, [id]: { ...cur, depositPaid: true } }
+      if (kind === "serviceFee") return { ...prev, [id]: { ...cur, serviceFeePaid: true } }
+      if (kind === "rent") {
+        return {
+          ...prev,
+          [id]: { ...cur, rentPaidMonths: (cur.rentPaidMonths ?? 0) + 1 },
+        }
+      }
+      return prev
+    })
+  }
+
+  // 行操作渲染：基于子状态 + 当前支付进度共同决定显示哪个主操作按钮
+  const renderRowActions = (
+    paymentOrder: PaymentOrder,
+    orderType: OrderType,
+    subStatus: RentSubStatus | StorageSubStatus,
+  ) => {
+    const record = paymentRecords[paymentOrder.id] ?? {}
+    let primary: { label: string; className: string; onClick?: () => void } | null = null
+
+    switch (subStatus) {
+      case "待确认合同":
+        primary = { label: "确认合同", className: ACTION_CLS.contract }
+        break
+      case "待签署合同":
+        primary = { label: "签署合同", className: ACTION_CLS.contract }
+        break
+      case "待支付押金":
+      case "待支付保证金":
+        if (!record.depositPaid) {
+          primary = {
+            label: subStatus.replace("待", ""),
+            className: ACTION_CLS.pay,
+            onClick: () => openPay(paymentOrder, orderType, "deposit"),
+          }
+        }
+        break
+      case "待支付服务费":
+        if (!record.serviceFeePaid) {
+          primary = {
+            label: "支付服务费",
+            className: ACTION_CLS.pay,
+            onClick: () => openPay(paymentOrder, orderType, "serviceFee"),
+          }
+        }
+        break
+      case "待支付租金":
+      case "待支付保管费": {
+        const paid = record.rentPaidMonths ?? 0
+        if (paid < paymentOrder.totalMonths) {
+          primary = {
+            label: subStatus.replace("待", ""),
+            className: ACTION_CLS.pay,
+            onClick: () => openPay(paymentOrder, orderType, "rent"),
+          }
+        }
+        break
+      }
+      case "待续租":
+        primary = { label: "续租", className: ACTION_CLS.renew }
+        break
+      case "待退还押金":
+        primary = { label: "退还押金", className: ACTION_CLS.refund }
+        break
+      case "待退还保证金":
+        primary = { label: "退还保证金", className: ACTION_CLS.refund }
+        break
+    }
+
+    return (
+      <div className="flex items-center justify-center gap-0.5">
+        {primary && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`h-8 px-2 font-medium ${primary.className}`}
+            onClick={primary.onClick}
+          >
+            {primary.label}
+          </Button>
+        )}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 px-2 text-muted-foreground hover:text-foreground"
+        >
+          查看
+        </Button>
+      </div>
+    )
+  }
 
   const warehouseTotal = warehouseOrders.reduce(
     (sum, o) => sum + Number(o.amount.replace(/,/g, "")),
@@ -710,7 +899,7 @@ export function OrderManagement() {
                           <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{order.period}</TableCell>
                           <TableCell className="whitespace-nowrap">{getMainStatusBadge(order.status)}</TableCell>
                           <TableCell className="whitespace-nowrap sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
-                            {renderActions(order.subStatus)}
+                            {renderRowActions(toWarehousePaymentOrder(order), "warehouse", order.subStatus)}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -763,7 +952,7 @@ export function OrderManagement() {
                           <TableCell className="text-primary font-medium whitespace-nowrap">{order.storageFee}</TableCell>
                           <TableCell className="whitespace-nowrap">{getMainStatusBadge(order.status)}</TableCell>
                           <TableCell className="whitespace-nowrap sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
-                            {renderActions(order.subStatus)}
+                            {renderRowActions(toStoragePaymentOrder(order), "storage", order.subStatus)}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -816,7 +1005,7 @@ export function OrderManagement() {
                           <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{order.period}</TableCell>
                           <TableCell className="whitespace-nowrap">{getMainStatusBadge(order.status)}</TableCell>
                           <TableCell className="whitespace-nowrap sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
-                            {renderActions(order.subStatus)}
+                            {renderRowActions(toTradePaymentOrder(order), "trade", order.subStatus)}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -828,6 +1017,17 @@ export function OrderManagement() {
           </Tabs>
         </CardHeader>
       </Card>
+
+      {/* 订单支付弹窗 */}
+      <OrderPaymentDialog
+        open={payDialog.open}
+        onOpenChange={(o) => setPayDialog((d) => ({ ...d, open: o }))}
+        order={payDialog.order}
+        orderType={payDialog.orderType}
+        defaultTab={payDialog.defaultTab}
+        record={payDialog.order ? paymentRecords[payDialog.order.id] ?? {} : {}}
+        onPay={handlePay}
+      />
     </div>
   )
 }
