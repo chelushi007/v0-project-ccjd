@@ -523,7 +523,7 @@ const getPrimaryAction = (
 const renderActions = (subStatus: RentSubStatus | StorageSubStatus) => {
   const primary = getPrimaryAction(subStatus)
   return (
-    <div className="flex items-center justify-end gap-0.5">
+    <div className="flex items-center justify-center gap-0.5">
       {primary && (
         <Button variant="ghost" size="sm" className={`h-8 px-2 font-medium ${primary.className}`}>
           {primary.label}
@@ -699,7 +699,7 @@ export function OrderManagement() {
                         <TableHead className="whitespace-nowrap">成交金额(元)</TableHead>
                         <TableHead className="whitespace-nowrap">租期</TableHead>
                         <TableHead className="whitespace-nowrap">状态</TableHead>
-                        <TableHead className="whitespace-nowrap text-right sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
+                        <TableHead className="whitespace-nowrap text-center sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
                           操作
                         </TableHead>
                       </TableRow>
@@ -750,7 +750,7 @@ export function OrderManagement() {
                         <TableHead className="whitespace-nowrap">入库时间</TableHead>
                         <TableHead className="whitespace-nowrap">保管费</TableHead>
                         <TableHead className="whitespace-nowrap">状态</TableHead>
-                        <TableHead className="whitespace-nowrap text-right sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
+                        <TableHead className="whitespace-nowrap text-center sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
                           操作
                         </TableHead>
                       </TableRow>
@@ -803,7 +803,7 @@ export function OrderManagement() {
                         <TableHead className="whitespace-nowrap">成交金额(元)</TableHead>
                         <TableHead className="whitespace-nowrap">租期</TableHead>
                         <TableHead className="whitespace-nowrap">状态</TableHead>
-                        <TableHead className="whitespace-nowrap text-right sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
+                        <TableHead className="whitespace-nowrap text-center sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
                           操作
                         </TableHead>
                       </TableRow>
