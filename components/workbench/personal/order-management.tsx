@@ -309,9 +309,9 @@ export function OrderManagement() {
       </div>
 
       {/* 订单列表 */}
-      <Card>
+      <Card className="w-full min-w-0 overflow-hidden">
         <CardHeader className="pb-3">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full min-w-0">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <TabsList>
                 <TabsTrigger value="warehouse">
@@ -350,7 +350,7 @@ export function OrderManagement() {
             </div>
 
             {/* 仓储交易订单 */}
-            <TabsContent value="warehouse" className="mt-4">
+            <TabsContent value="warehouse" className="mt-4 min-w-0">
               <CardTitle className="text-base mb-3 flex items-center gap-2">
                 <ClipboardCheck className="w-4 h-4 text-primary" />
                 仓储交易订单
@@ -406,7 +406,7 @@ export function OrderManagement() {
             </TabsContent>
 
             {/* 物资存放订单 */}
-            <TabsContent value="storage" className="mt-4">
+            <TabsContent value="storage" className="mt-4 min-w-0">
               <CardTitle className="text-base mb-3 flex items-center gap-2">
                 <PackageOpen className="w-4 h-4 text-purple-700" />
                 物资存放订单
@@ -466,7 +466,7 @@ export function OrderManagement() {
             </TabsContent>
 
             {/* 物资交易订单 */}
-            <TabsContent value="trade" className="mt-4">
+            <TabsContent value="trade" className="mt-4 min-w-0">
               <CardTitle className="text-base mb-3 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-accent" />
                 物资交易订单

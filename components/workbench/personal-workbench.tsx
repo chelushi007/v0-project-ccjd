@@ -37,5 +37,5 @@ export function PersonalWorkbench({ activeSubTab }: PersonalWorkbenchProps) {
     }
   }
 
-  return <div className="w-full">{renderContent()}</div>
+  return <div className="w-full min-w-0">{renderContent()}</div>
 }
