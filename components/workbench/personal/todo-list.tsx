@@ -13,17 +13,20 @@ import {
   Building2,
   TrendingUp,
   TrendingDown,
-  DollarSign,
   BarChart3,
   Bell,
   MessageSquare,
   Info,
-  CheckCircle2,
   ArrowUpRight,
   FilePen,
   Handshake,
-  PackageCheck,
   ShieldCheck,
+  MapPin,
+  LogOut,
+  Truck,
+  FileCheck,
+  Package,
+  Warehouse,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -71,47 +74,59 @@ const todoItems = {
   approval: [
     {
       id: "A001",
-      title: "合同审批 - 仓储租赁协议",
-      applicant: "张三",
-      type: "合同审批",
+      title: "站点申请 - 东莞塘厦新站点",
+      applicant: "本企业",
+      type: "站点申请",
       createTime: "2024-01-20 15:00",
-      deadline: "2024-01-22",
-      status: "pending",
+      submitTime: "2024-01-20 15:00",
+      progress: "运营审核中",
+      progressStep: 2,
+      totalStep: 3,
+      status: "processing",
       priority: "high",
-      description: "广州站点与中铁建工的租赁合同审批",
+      description: "申请在东莞塘厦新增仓储站点，由运营工作台审核中",
     },
     {
       id: "A002",
-      title: "费用审批 - 仓储服务费",
-      applicant: "李四",
-      type: "费用审批",
+      title: "站点退出申请 - 深圳坪山站点",
+      applicant: "本企业",
+      type: "站点退出申请",
       createTime: "2024-01-19 11:30",
-      deadline: "2024-01-21",
-      status: "pending",
-      priority: "high",
-      description: "12月份仓储服务费结算审批",
+      submitTime: "2024-01-19 11:30",
+      progress: "材料初审通过",
+      progressStep: 1,
+      totalStep: 3,
+      status: "processing",
+      priority: "medium",
+      description: "申请退出深圳坪山仓储站点，运营工作台正在复核",
     },
     {
       id: "A003",
-      title: "资质审核 - 新增站点",
-      applicant: "王五",
-      type: "资质审核",
+      title: "专运单位申请 - 中铁物资华南",
+      applicant: "本企业",
+      type: "专运单位申请",
       createTime: "2024-01-17 16:45",
-      deadline: "2024-01-27",
-      status: "processing",
+      submitTime: "2024-01-17 16:45",
+      progress: "已提交待审核",
+      progressStep: 1,
+      totalStep: 3,
+      status: "pending",
       priority: "medium",
-      description: "东莞塘厦新站点资质材料审核",
+      description: "申请成为物资专运单位，等待运营工作台受理",
     },
     {
       id: "A004",
-      title: "入库审批 - 物资入库申请",
-      applicant: "赵六",
-      type: "入库审批",
+      title: "专运单位退出申请 - 广州番禺",
+      applicant: "本企业",
+      type: "专运单位退出申请",
       createTime: "2024-01-16 10:00",
-      deadline: "2024-01-26",
-      status: "pending",
+      submitTime: "2024-01-16 10:00",
+      progress: "审核通过",
+      progressStep: 3,
+      totalStep: 3,
+      status: "completed",
       priority: "low",
-      description: "钢材物资入库申请审批",
+      description: "申请退出广州番禺专运单位资质，已审核通过",
     },
   ],
 }
@@ -195,6 +210,21 @@ const getStatusBadge = (status: string) => {
   }
 }
 
+const getApprovalTypeIcon = (type: string) => {
+  switch (type) {
+    case "站点申请":
+      return <MapPin className="w-3.5 h-3.5 text-blue-600" />
+    case "站点退出申请":
+      return <LogOut className="w-3.5 h-3.5 text-orange-600" />
+    case "专运单位申请":
+      return <Truck className="w-3.5 h-3.5 text-purple-600" />
+    case "专运单位退出申请":
+      return <LogOut className="w-3.5 h-3.5 text-red-600" />
+    default:
+      return <FileText className="w-3.5 h-3.5 text-muted-foreground" />
+  }
+}
+
 const getMsgIcon = (type: string) => {
   switch (type) {
     case "business":
@@ -210,19 +240,27 @@ const getMsgIcon = (type: string) => {
 
 const quickApprovalEntries = [
   { label: "合同审批", icon: FilePen, count: 2, color: "text-blue-600", bg: "bg-blue-500/10" },
-  { label: "费用审批", icon: DollarSign, count: 1, color: "text-green-600", bg: "bg-green-500/10" },
+  { label: "站点申请", icon: MapPin, count: 1, color: "text-green-600", bg: "bg-green-500/10" },
   { label: "资质审核", icon: ShieldCheck, count: 1, color: "text-purple-600", bg: "bg-purple-500/10" },
-  { label: "入库审批", icon: PackageCheck, count: 3, color: "text-orange-600", bg: "bg-orange-500/10" },
+  { label: "入口申请", icon: LogOut, count: 3, color: "text-orange-600", bg: "bg-orange-500/10" },
 ]
 
 const quickBizEntries = [
   { label: "委托受理", icon: Handshake, count: 3, color: "text-primary", bg: "bg-primary/10" },
-  { label: "业务跟进", icon: CheckCircle2, count: 5, color: "text-accent", bg: "bg-accent/10" },
+  { label: "对账确认", icon: FileCheck, count: 5, color: "text-accent", bg: "bg-accent/10" },
   { label: "合同签署", icon: FileText, count: 2, color: "text-blue-600", bg: "bg-blue-500/10" },
   { label: "订单确认", icon: ClipboardList, count: 4, color: "text-orange-600", bg: "bg-orange-500/10" },
 ]
 
-// ── 主组件 ───────────────────────────────────────────────────────────────────
+// 交易统计配置
+const tradeStats = [
+  { label: "仓储成交订单", value: "18", unit: "笔", trend: "+15%", up: true, icon: Warehouse, color: "text-blue-600", bg: "bg-blue-500/10" },
+  { label: "物资成交订单", value: "10", unit: "笔", trend: "+8%", up: true, icon: Package, color: "text-green-600", bg: "bg-green-500/10" },
+  { label: "仓储成交金额", value: "98.6", unit: "万元", trend: "+12.3%", up: true, icon: Warehouse, color: "text-purple-600", bg: "bg-purple-500/10" },
+  { label: "物资成交金额", value: "57.8", unit: "万元", trend: "-3.5%", up: false, icon: Package, color: "text-orange-600", bg: "bg-orange-500/10" },
+]
+
+// ── 主组件 ──────────────────────────────────────────────────────────────────
 
 interface TodoListProps {
   activeTab?: string
@@ -332,22 +370,22 @@ export function TodoList({ roleType = "property" }: TodoListProps) {
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className="grid grid-cols-4 gap-3 mb-4">
-                {[
-                  { label: "成交订单", value: "28", unit: "笔", trend: "+12%", up: true },
-                  { label: "成交金额", value: "156.4", unit: "万元", trend: "+8.3%", up: true },
-                  { label: "待收款项", value: "23.8", unit: "万元", trend: "-5.1%", up: false },
-                  { label: "仓储出租率", value: "87", unit: "%", trend: "+3.2%", up: true },
-                ].map((item) => (
-                  <div key={item.label} className="p-3 bg-muted/40 rounded-lg">
-                    <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-xl font-bold text-foreground">{item.value}</span>
-                      <span className="text-xs text-muted-foreground">{item.unit}</span>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {tradeStats.map((item) => (
+                  <div key={item.label} className="p-3 bg-muted/40 rounded-lg flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center shrink-0`}>
+                      <item.icon className={`w-5 h-5 ${item.color}`} />
                     </div>
-                    <div className={`flex items-center gap-0.5 mt-1 text-xs ${item.up ? "text-green-600" : "text-red-500"}`}>
-                      {item.up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                      <span>{item.trend}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-xl font-bold text-foreground">{item.value}</span>
+                        <span className="text-xs text-muted-foreground">{item.unit}</span>
+                        <span className={`flex items-center gap-0.5 ml-auto text-xs ${item.up ? "text-green-600" : "text-red-500"}`}>
+                          {item.up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                          <span>{item.trend}</span>
+                        </span>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -506,30 +544,65 @@ export function TodoList({ roleType = "property" }: TodoListProps) {
             </TabsContent>
 
             <TabsContent value="approval" className="mt-0 space-y-3">
+              <div className="mb-2 p-3 bg-blue-50 border border-blue-100 rounded-lg flex items-start gap-2">
+                <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                <p className="text-xs text-blue-700">
+                  以下审批事项由<span className="font-medium">运营工作台</span>统一审批，您可在此查看申请进度
+                </p>
+              </div>
               {todoItems.approval.map((item) => (
                 <div key={item.id} className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                        {getPriorityBadge(item.priority)}
                         {getStatusBadge(item.status)}
-                        <Badge variant="outline" className="text-xs">{item.type}</Badge>
+                        <Badge variant="outline" className="text-xs flex items-center gap-1">
+                          {getApprovalTypeIcon(item.type)}
+                          {item.type}
+                        </Badge>
                       </div>
                       <h3 className="font-medium text-foreground text-sm mb-1">{item.title}</h3>
                       <p className="text-xs text-muted-foreground line-clamp-1">{item.description}</p>
-                      <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+
+                      {/* 进度条 */}
+                      <div className="mt-3">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            当前进度：<span className="font-medium text-foreground">{item.progress}</span>
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {item.progressStep}/{item.totalStep}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {Array.from({ length: item.totalStep }).map((_, idx) => (
+                            <div
+                              key={idx}
+                              className={`h-1.5 flex-1 rounded-full ${
+                                idx < item.progressStep
+                                  ? item.status === "completed"
+                                    ? "bg-green-500"
+                                    : "bg-primary"
+                                  : "bg-muted"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
-                          <User className="w-3 h-3" />{item.applicant}
+                          <User className="w-3 h-3" />申请人：{item.applicant}
                         </span>
                         <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />截止：{item.deadline}
+                          <Calendar className="w-3 h-3" />提交时间：{item.submitTime}
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Button variant="outline" size="sm">驳回</Button>
-                      <Button size="sm">通过</Button>
-                    </div>
+                    <Button variant="outline" size="sm" className="shrink-0">
+                      查看详情<ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
                   </div>
                 </div>
               ))}
