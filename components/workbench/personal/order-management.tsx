@@ -43,6 +43,7 @@ import {
   OrderRefundDialog,
 } from "./order-renewal-refund-dialog"
 import { OrderContractDialog } from "./order-contract-dialog"
+import { OrderContractConfirmDialog } from "./order-contract-confirm-dialog"
 
 // 主状态
 type MainStatus = "履约中" | "已完成" | "合同到期"
@@ -655,10 +656,17 @@ export function OrderManagement() {
     orderType: OrderType
   }>({ open: false, order: null, orderType: "warehouse" })
 
-  // 续租 / 退款 / 合同签署 完成后将订单标记
+  const [confirmContractDialog, setConfirmContractDialog] = useState<{
+    open: boolean
+    order: PaymentOrder | null
+    orderType: OrderType
+  }>({ open: false, order: null, orderType: "warehouse" })
+
+  // 续租 / 退款 / 合同签署 / 合同确认 完成后将订单标记
   const [renewedIds, setRenewedIds] = useState<Set<string>>(new Set())
   const [refundedIds, setRefundedIds] = useState<Set<string>>(new Set())
   const [signedIds, setSignedIds] = useState<Set<string>>(new Set())
+  const [confirmedIds, setConfirmedIds] = useState<Set<string>>(new Set())
 
   const openPay = (order: PaymentOrder, orderType: OrderType, defaultTab: FeeKind) => {
     setPayDialog({ open: true, order, orderType, defaultTab })
@@ -680,6 +688,10 @@ export function OrderManagement() {
     setContractDialog({ open: true, order, orderType })
   }
 
+  const openConfirmContract = (order: PaymentOrder, orderType: OrderType) => {
+    setConfirmContractDialog({ open: true, order, orderType })
+  }
+
   const handleRenewalConfirm = () => {
     const id = renewalDialog.order?.id
     if (id) setRenewedIds((s) => new Set(s).add(id))
@@ -693,6 +705,11 @@ export function OrderManagement() {
   const handleContractConfirm = () => {
     const id = contractDialog.order?.id
     if (id) setSignedIds((s) => new Set(s).add(id))
+  }
+
+  const handleContractConfirmAccept = () => {
+    const id = confirmContractDialog.order?.id
+    if (id) setConfirmedIds((s) => new Set(s).add(id))
   }
 
   const handlePay = (kind: FeeKind) => {
@@ -723,7 +740,13 @@ export function OrderManagement() {
 
     switch (subStatus) {
       case "待确认合同":
-        primary = { label: "确认合同", className: ACTION_CLS.contract }
+        if (!confirmedIds.has(paymentOrder.id)) {
+          primary = {
+            label: "确认合同",
+            className: ACTION_CLS.contract,
+            onClick: () => openConfirmContract(paymentOrder, orderType),
+          }
+        }
         break
       case "待签署合同":
         if (!signedIds.has(paymentOrder.id)) {
@@ -1139,6 +1162,15 @@ export function OrderManagement() {
         order={contractDialog.order}
         orderType={contractDialog.orderType}
         onConfirm={handleContractConfirm}
+      />
+
+      {/* 确认合同弹窗 */}
+      <OrderContractConfirmDialog
+        open={confirmContractDialog.open}
+        onOpenChange={(o) => setConfirmContractDialog((d) => ({ ...d, open: o }))}
+        order={confirmContractDialog.order}
+        orderType={confirmContractDialog.orderType}
+        onConfirm={handleContractConfirmAccept}
       />
     </div>
   )
