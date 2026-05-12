@@ -360,47 +360,49 @@ export function OrderManagement() {
                 </span>
               </CardTitle>
               <CardContent className="px-0 py-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>订单号</TableHead>
-                      <TableHead>标的仓储</TableHead>
-                      <TableHead>面积</TableHead>
-                      <TableHead>承租方</TableHead>
-                      <TableHead>出租方</TableHead>
-                      <TableHead>成交金额(元)</TableHead>
-                      <TableHead>租期</TableHead>
-                      <TableHead>签约时间</TableHead>
-                      <TableHead>状态</TableHead>
-                      <TableHead className="text-center">操作</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {warehouseOrders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-mono text-xs">{order.id}</TableCell>
-                        <TableCell className="max-w-[200px] truncate">{order.title}</TableCell>
-                        <TableCell>{order.area}</TableCell>
-                        <TableCell className="text-muted-foreground">{order.tenant}</TableCell>
-                        <TableCell className="text-muted-foreground">{order.landlord}</TableCell>
-                        <TableCell className="text-primary font-medium">{order.amount}</TableCell>
-                        <TableCell className="text-xs text-muted-foreground">{order.period}</TableCell>
-                        <TableCell className="text-muted-foreground">{order.signDate}</TableCell>
-                        <TableCell>{getStatusBadge(order.status)}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center justify-center gap-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <FileDown className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
+                <div className="border rounded-md overflow-x-auto">
+                  <Table className="min-w-[1280px]">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="whitespace-nowrap">订单号</TableHead>
+                        <TableHead className="whitespace-nowrap">标的仓储</TableHead>
+                        <TableHead className="whitespace-nowrap">面积</TableHead>
+                        <TableHead className="whitespace-nowrap">承租方</TableHead>
+                        <TableHead className="whitespace-nowrap">出租方</TableHead>
+                        <TableHead className="whitespace-nowrap">成交金额(元)</TableHead>
+                        <TableHead className="whitespace-nowrap">租期</TableHead>
+                        <TableHead className="whitespace-nowrap">签约时间</TableHead>
+                        <TableHead className="whitespace-nowrap">状态</TableHead>
+                        <TableHead className="whitespace-nowrap text-center sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">操作</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {warehouseOrders.map((order) => (
+                        <TableRow key={order.id}>
+                          <TableCell className="font-mono text-xs whitespace-nowrap">{order.id}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.title}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.area}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">{order.tenant}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">{order.landlord}</TableCell>
+                          <TableCell className="text-primary font-medium whitespace-nowrap">{order.amount}</TableCell>
+                          <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{order.period}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">{order.signDate}</TableCell>
+                          <TableCell className="whitespace-nowrap">{getStatusBadge(order.status)}</TableCell>
+                          <TableCell className="whitespace-nowrap sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
+                            <div className="flex items-center justify-center gap-1">
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <FileDown className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </TabsContent>
 
@@ -414,51 +416,53 @@ export function OrderManagement() {
                 </span>
               </CardTitle>
               <CardContent className="px-0 py-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>订单号</TableHead>
-                      <TableHead>物资名称</TableHead>
-                      <TableHead>物资类型</TableHead>
-                      <TableHead>数量</TableHead>
-                      <TableHead>物权单位</TableHead>
-                      <TableHead>存放站点</TableHead>
-                      <TableHead>占用面积</TableHead>
-                      <TableHead>入库时间</TableHead>
-                      <TableHead>出库时间</TableHead>
-                      <TableHead>存储费</TableHead>
-                      <TableHead>状态</TableHead>
-                      <TableHead className="text-center">操作</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {materialStorageOrders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-mono text-xs">{order.id}</TableCell>
-                        <TableCell className="max-w-[180px] truncate">{order.title}</TableCell>
-                        <TableCell>{order.materialType}</TableCell>
-                        <TableCell>{order.quantity}</TableCell>
-                        <TableCell className="text-muted-foreground">{order.owner}</TableCell>
-                        <TableCell className="text-muted-foreground">{order.site}</TableCell>
-                        <TableCell>{order.occupiedArea}</TableCell>
-                        <TableCell className="text-muted-foreground">{order.inDate}</TableCell>
-                        <TableCell className="text-muted-foreground">{order.outDate}</TableCell>
-                        <TableCell className="text-primary font-medium">{order.storageFee}</TableCell>
-                        <TableCell>{getStatusBadge(order.status)}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center justify-center gap-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <FileDown className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
+                <div className="border rounded-md overflow-x-auto">
+                  <Table className="min-w-[1480px]">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="whitespace-nowrap">订单号</TableHead>
+                        <TableHead className="whitespace-nowrap">物资名称</TableHead>
+                        <TableHead className="whitespace-nowrap">物资类型</TableHead>
+                        <TableHead className="whitespace-nowrap">数量</TableHead>
+                        <TableHead className="whitespace-nowrap">物权单位</TableHead>
+                        <TableHead className="whitespace-nowrap">存放站点</TableHead>
+                        <TableHead className="whitespace-nowrap">占用面积</TableHead>
+                        <TableHead className="whitespace-nowrap">入库时间</TableHead>
+                        <TableHead className="whitespace-nowrap">出库时间</TableHead>
+                        <TableHead className="whitespace-nowrap">存储费</TableHead>
+                        <TableHead className="whitespace-nowrap">状态</TableHead>
+                        <TableHead className="whitespace-nowrap text-center sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">操作</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {materialStorageOrders.map((order) => (
+                        <TableRow key={order.id}>
+                          <TableCell className="font-mono text-xs whitespace-nowrap">{order.id}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.title}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.materialType}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.quantity}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">{order.owner}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">{order.site}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.occupiedArea}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">{order.inDate}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">{order.outDate}</TableCell>
+                          <TableCell className="text-primary font-medium whitespace-nowrap">{order.storageFee}</TableCell>
+                          <TableCell className="whitespace-nowrap">{getStatusBadge(order.status)}</TableCell>
+                          <TableCell className="whitespace-nowrap sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
+                            <div className="flex items-center justify-center gap-1">
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <FileDown className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </TabsContent>
 
@@ -472,51 +476,53 @@ export function OrderManagement() {
                 </span>
               </CardTitle>
               <CardContent className="px-0 py-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>订单号</TableHead>
-                      <TableHead>物资名称</TableHead>
-                      <TableHead>物资类型</TableHead>
-                      <TableHead>数量</TableHead>
-                      <TableHead>交易方式</TableHead>
-                      <TableHead>出租方</TableHead>
-                      <TableHead>承租方</TableHead>
-                      <TableHead>租金单价</TableHead>
-                      <TableHead>成交金额(元)</TableHead>
-                      <TableHead>租期</TableHead>
-                      <TableHead>状态</TableHead>
-                      <TableHead className="text-center">操作</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {materialTradeOrders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-mono text-xs">{order.id}</TableCell>
-                        <TableCell className="max-w-[180px] truncate">{order.title}</TableCell>
-                        <TableCell>{order.materialType}</TableCell>
-                        <TableCell>{order.quantity}</TableCell>
-                        <TableCell>{getTradeTypeBadge(order.tradeType)}</TableCell>
-                        <TableCell className="text-muted-foreground">{order.provider}</TableCell>
-                        <TableCell className="text-muted-foreground">{order.user}</TableCell>
-                        <TableCell className="text-xs text-muted-foreground">{order.unitPrice}</TableCell>
-                        <TableCell className="text-primary font-medium">{order.amount}</TableCell>
-                        <TableCell className="text-xs text-muted-foreground">{order.period}</TableCell>
-                        <TableCell>{getStatusBadge(order.status)}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center justify-center gap-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <FileDown className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
+                <div className="border rounded-md overflow-x-auto">
+                  <Table className="min-w-[1520px]">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="whitespace-nowrap">订单号</TableHead>
+                        <TableHead className="whitespace-nowrap">物资名称</TableHead>
+                        <TableHead className="whitespace-nowrap">物资类型</TableHead>
+                        <TableHead className="whitespace-nowrap">数量</TableHead>
+                        <TableHead className="whitespace-nowrap">交易方式</TableHead>
+                        <TableHead className="whitespace-nowrap">出租方</TableHead>
+                        <TableHead className="whitespace-nowrap">承租方</TableHead>
+                        <TableHead className="whitespace-nowrap">租金单价</TableHead>
+                        <TableHead className="whitespace-nowrap">成交金额(元)</TableHead>
+                        <TableHead className="whitespace-nowrap">租期</TableHead>
+                        <TableHead className="whitespace-nowrap">状态</TableHead>
+                        <TableHead className="whitespace-nowrap text-center sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">操作</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {materialTradeOrders.map((order) => (
+                        <TableRow key={order.id}>
+                          <TableCell className="font-mono text-xs whitespace-nowrap">{order.id}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.title}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.materialType}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.quantity}</TableCell>
+                          <TableCell className="whitespace-nowrap">{getTradeTypeBadge(order.tradeType)}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">{order.provider}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">{order.user}</TableCell>
+                          <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{order.unitPrice}</TableCell>
+                          <TableCell className="text-primary font-medium whitespace-nowrap">{order.amount}</TableCell>
+                          <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{order.period}</TableCell>
+                          <TableCell className="whitespace-nowrap">{getStatusBadge(order.status)}</TableCell>
+                          <TableCell className="whitespace-nowrap sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
+                            <div className="flex items-center justify-center gap-1">
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <FileDown className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </TabsContent>
           </Tabs>
