@@ -16,6 +16,7 @@ import {
   FilePlus,
   LayoutDashboard,
   ClipboardList,
+  ShoppingCart,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -50,6 +51,7 @@ const personalMenu: MenuItem[] = [
   { id: "warehouse", label: "仓储管理", icon: Warehouse },
   { id: "material", label: "物资管理", icon: Package },
   { id: "demand", label: "需求管理", icon: ClipboardList },
+  { id: "order", label: "订单管理", icon: ShoppingCart },
   { id: "settlement", label: "结算管理", icon: CreditCard },
   { id: "contract", label: "合同管理", icon: FileText },
 ]

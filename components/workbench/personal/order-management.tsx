@@ -2,27 +2,22 @@
 
 import { useState } from "react"
 import {
-  ShoppingCart,
   Search,
-  Filter,
-  MoreHorizontal,
   Eye,
-  FileText,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Calendar,
-  Building2,
+  FileDown,
+  Printer,
+  Warehouse,
+  PackageOpen,
   Package,
-  ChevronLeft,
-  ChevronRight,
-  Download,
+  TrendingUp,
+  CircleDollarSign,
+  ClipboardCheck,
 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Select,
   SelectContent,
@@ -38,209 +33,276 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-// 订单数据
-const orderData = [
+// 仓储交易订单
+const warehouseOrders = [
   {
-    id: "ORD20240120001",
-    type: "租赁订单",
-    warehouse: "广州番禺仓储中心",
-    customer: "中铁建工集团有限公司",
-    area: 2000,
-    amount: 70000,
-    startDate: "2024-02-01",
-    endDate: "2024-07-31",
-    status: "active",
-    createTime: "2024-01-20 10:30:25",
+    id: "CCJY20260512001",
+    title: "广州番禺综合仓储 8000m²",
+    area: "8000m²",
+    tenant: "中铁物资华南公司",
+    landlord: "广州天河仓储服务有限公司",
+    amount: "134,400",
+    period: "2026-05-15 至 2027-05-14",
+    signDate: "2026-05-11",
+    status: "履约中",
   },
   {
-    id: "ORD20240118002",
-    type: "托管订单",
-    warehouse: "深圳龙岗物流基地",
-    customer: "中铁物资北京有限公司",
-    area: 3500,
-    amount: 157500,
-    startDate: "2024-01-25",
-    endDate: "2024-12-31",
-    status: "pending",
-    createTime: "2024-01-18 14:20:15",
+    id: "CCJY20260510002",
+    title: "深圳前海智慧仓储 5000m²",
+    area: "5000m²",
+    tenant: "深圳供应链有限公司",
+    landlord: "前海智慧仓储管理公司",
+    amount: "78,000",
+    period: "2026-05-12 至 2026-11-11",
+    signDate: "2026-05-09",
+    status: "履约中",
   },
   {
-    id: "ORD20240115003",
-    type: "租赁订单",
-    warehouse: "惠州大亚湾仓储中心",
-    customer: "中铁隧道集团有限公司",
-    area: 5000,
-    amount: 160000,
-    startDate: "2024-01-20",
-    endDate: "2024-06-30",
-    status: "active",
-    createTime: "2024-01-15 09:15:30",
+    id: "CCJY20260505003",
+    title: "东莞虎门港务仓储 12000m²",
+    area: "12000m²",
+    tenant: "广东港务物流集团",
+    landlord: "虎门港务仓储基地",
+    amount: "136,800",
+    period: "2026-05-10 至 2026-12-09",
+    signDate: "2026-05-04",
+    status: "已完成",
   },
   {
-    id: "ORD20240110004",
-    type: "存放订单",
-    warehouse: "佛山南海冷链仓库",
-    customer: "中铁电气化局集团",
-    area: 800,
-    amount: 52000,
-    startDate: "2024-01-15",
-    endDate: "2024-04-15",
-    status: "completed",
-    createTime: "2024-01-10 16:45:00",
+    id: "CCJY20260428004",
+    title: "佛山顺德钢材专用仓库 3000m²",
+    area: "3000m²",
+    tenant: "顺德钢贸有限公司",
+    landlord: "番禺仓储基地有限公司",
+    amount: "40,500",
+    period: "2026-05-01 至 2026-07-31",
+    signDate: "2026-04-28",
+    status: "待付款",
+  },
+]
+
+// 物资存放订单（物权单位 ↔ 仓储站点 / 专运单位）
+const materialStorageOrders = [
+  {
+    id: "WZCF20260512001",
+    title: "Q235B 热轧 H 型钢 320 吨",
+    materialType: "钢材",
+    quantity: "320 吨",
+    owner: "中铁物资华南公司",
+    site: "广州番禺仓储基地",
+    inDate: "2026-05-11",
+    outDate: "—",
+    storageFee: "12,800元/月",
+    occupiedArea: "480m²",
+    status: "存放中",
   },
   {
-    id: "ORD20240105005",
-    type: "租赁订单",
-    warehouse: "东莞塘厦仓储站",
-    customer: "中铁大桥局集团",
-    area: 1500,
-    amount: 42000,
-    startDate: "2024-01-10",
-    endDate: "2024-03-10",
-    status: "cancelled",
-    createTime: "2024-01-05 11:00:00",
+    id: "WZCF20260510002",
+    title: "建筑钢管脚手架 1600 套",
+    materialType: "钢材",
+    quantity: "1600 套",
+    owner: "广东建工材料公司",
+    site: "深圳前海仓储站点",
+    inDate: "2026-05-09",
+    outDate: "—",
+    storageFee: "9,600元/月",
+    occupiedArea: "320m²",
+    status: "存放中",
+  },
+  {
+    id: "WZCF20260428003",
+    title: "工字钢梁 220 吨",
+    materialType: "钢材",
+    quantity: "220 吨",
+    owner: "中铁物资华南公司",
+    site: "东莞虎门仓储站点",
+    inDate: "2026-04-26",
+    outDate: "2026-05-10",
+    storageFee: "6,600元",
+    occupiedArea: "260m²",
+    status: "已出库",
+  },
+  {
+    id: "WZCF20260420004",
+    title: "塔吊配件 86 件",
+    materialType: "机械设备",
+    quantity: "86 件",
+    owner: "深圳建工集团",
+    site: "佛山顺德仓储站点",
+    inDate: "2026-04-18",
+    outDate: "—",
+    storageFee: "4,200元/月",
+    occupiedArea: "120m²",
+    status: "存放中",
+  },
+]
+
+// 物资交易订单（出租 / 整租）
+const materialTradeOrders = [
+  {
+    id: "WZJY20260512001",
+    title: "Q235B 热轧 H 型钢 出租",
+    materialType: "钢材",
+    quantity: "200 吨",
+    provider: "中铁物资华南公司",
+    user: "广州地铁建设有限公司",
+    tradeType: "出租",
+    amount: "360,000",
+    unitPrice: "1,800元/吨/月",
+    period: "2026-05-15 至 2026-11-14",
+    status: "履约中",
+  },
+  {
+    id: "WZJY20260511002",
+    title: "建筑钢管脚手架 出租",
+    materialType: "钢材",
+    quantity: "1200 套",
+    provider: "深圳前海物资专业运营有限公司",
+    user: "深圳建工集团",
+    tradeType: "出租",
+    amount: "540,000",
+    unitPrice: "15元/套/天",
+    period: "2026-05-14 至 2026-08-12",
+    status: "履约中",
+  },
+  {
+    id: "WZJY20260509003",
+    title: "工字钢梁 整租",
+    materialType: "钢材",
+    quantity: "300 吨",
+    provider: "中铁物资华南公司",
+    user: "前海物资专业运营有限公司",
+    tradeType: "整租",
+    amount: "1,350,000",
+    unitPrice: "1,500元/吨/月",
+    period: "2026-05-12 至 2027-05-11",
+    status: "履约中",
+  },
+  {
+    id: "WZJY20260505004",
+    title: "塔吊设备 出租",
+    materialType: "机械设备",
+    quantity: "5 台",
+    provider: "佛山顺德机械租赁",
+    user: "中山火炬建设公司",
+    tradeType: "出租",
+    amount: "420,000",
+    unitPrice: "28,000元/台/月",
+    period: "2026-05-08 至 2026-08-07",
+    status: "待付款",
   },
 ]
 
 const getStatusBadge = (status: string) => {
   switch (status) {
-    case "active":
-      return (
-        <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
-          <CheckCircle className="w-3 h-3 mr-1" />
-          履约中
-        </Badge>
-      )
-    case "pending":
-      return (
-        <Badge className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20">
-          <Clock className="w-3 h-3 mr-1" />
-          待生效
-        </Badge>
-      )
-    case "completed":
-      return (
-        <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20">
-          <CheckCircle className="w-3 h-3 mr-1" />
-          已完成
-        </Badge>
-      )
-    case "cancelled":
-      return (
-        <Badge className="bg-gray-500/10 text-gray-600 border-gray-500/20">
-          <XCircle className="w-3 h-3 mr-1" />
-          已取消
-        </Badge>
-      )
+    case "履约中":
+      return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">履约中</Badge>
+    case "已完成":
+      return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">已完成</Badge>
+    case "待付款":
+      return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">待付款</Badge>
+    case "存放中":
+      return <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100">存放中</Badge>
+    case "已出库":
+      return <Badge className="bg-slate-100 text-slate-700 hover:bg-slate-100">已出库</Badge>
     default:
-      return <Badge variant="outline">未知</Badge>
+      return <Badge variant="outline">{status}</Badge>
   }
 }
 
-const getTypeBadge = (type: string) => {
-  switch (type) {
-    case "租赁订单":
-      return <Badge className="bg-primary/10 text-primary border-primary/20">{type}</Badge>
-    case "托管订单":
-      return <Badge className="bg-purple-500/10 text-purple-600 border-purple-500/20">{type}</Badge>
-    case "存放订单":
-      return <Badge className="bg-orange-500/10 text-orange-600 border-orange-500/20">{type}</Badge>
-    default:
-      return <Badge variant="outline">{type}</Badge>
+const getTradeTypeBadge = (type: string) => {
+  if (type === "整租") {
+    return <Badge className="bg-primary/10 text-primary hover:bg-primary/10">整租</Badge>
   }
+  return <Badge variant="outline">出租</Badge>
 }
 
 export function OrderManagement() {
-  const [searchKeyword, setSearchKeyword] = useState("")
-  const [activeTab, setActiveTab] = useState("all")
+  const [activeTab, setActiveTab] = useState("warehouse")
 
-  const stats = {
-    total: orderData.length,
-    active: orderData.filter((item) => item.status === "active").length,
-    pending: orderData.filter((item) => item.status === "pending").length,
-    totalAmount: orderData.filter((item) => item.status !== "cancelled").reduce((sum, item) => sum + item.amount, 0),
-  }
-
-  const filteredData = activeTab === "all" 
-    ? orderData 
-    : orderData.filter(item => item.status === activeTab)
+  const warehouseTotal = warehouseOrders.reduce(
+    (sum, o) => sum + Number(o.amount.replace(/,/g, "")),
+    0,
+  )
+  const materialTradeTotal = materialTradeOrders.reduce(
+    (sum, o) => sum + Number(o.amount.replace(/,/g, "")),
+    0,
+  )
+  const monthTotalAmount = (warehouseTotal + materialTradeTotal).toLocaleString("zh-CN")
 
   return (
-    <div className="space-y-6">
-      {/* 页面标题 */}
+    <div className="space-y-4">
+      {/* 页面头部 */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">订单管理</h1>
-          <p className="text-muted-foreground mt-1">管理租赁、托管、存放等各类订单</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            管理已成交并形成订单的仓储交易、物资存放与物资交易记录，跟踪履约状态与结算进度
+          </p>
         </div>
-        <Button variant="outline">
-          <Download className="w-4 h-4 mr-2" />
-          导出订单
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline">
+            <FileDown className="w-4 h-4 mr-2" />
+            导出订单
+          </Button>
+          <Button variant="outline">
+            <Printer className="w-4 h-4 mr-2" />
+            打印汇总
+          </Button>
+        </div>
       </div>
 
-      {/* 统计卡片 */}
+      {/* 数据概览 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">订单总数</p>
-                <p className="text-2xl font-bold mt-1">{stats.total}</p>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <Warehouse className="w-6 h-6 text-primary" />
               </div>
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                <ShoppingCart className="w-6 h-6 text-primary" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">履约中</p>
-                <p className="text-2xl font-bold mt-1">{stats.active}</p>
-              </div>
-              <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+              <div className="min-w-0">
+                <div className="text-xs text-muted-foreground mb-1">仓储交易订单</div>
+                <div className="text-2xl font-bold text-foreground">{warehouseOrders.length}</div>
               </div>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">待生效</p>
-                <p className="text-2xl font-bold mt-1">{stats.pending}</p>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center shrink-0">
+                <PackageOpen className="w-6 h-6 text-purple-700" />
               </div>
-              <div className="w-12 h-12 rounded-lg bg-yellow-500/10 flex items-center justify-center">
-                <Clock className="w-6 h-6 text-yellow-600" />
+              <div className="min-w-0">
+                <div className="text-xs text-muted-foreground mb-1">物资存放订单</div>
+                <div className="text-2xl font-bold text-foreground">{materialStorageOrders.length}</div>
               </div>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">合同金额</p>
-                <p className="text-2xl font-bold mt-1">
-                  {(stats.totalAmount / 10000).toFixed(1)}
-                  <span className="text-sm font-normal text-muted-foreground ml-1">万元</span>
-                </p>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
+                <Package className="w-6 h-6 text-accent" />
               </div>
-              <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                <FileText className="w-6 h-6 text-blue-600" />
+              <div className="min-w-0">
+                <div className="text-xs text-muted-foreground mb-1">物资交易订单</div>
+                <div className="text-2xl font-bold text-foreground">{materialTradeOrders.length}</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+                <CircleDollarSign className="w-6 h-6 text-emerald-700" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-xs text-muted-foreground mb-1">本月成交金额（元）</div>
+                <div className="text-xl font-bold text-foreground">{monthTotalAmount}</div>
               </div>
             </div>
           </CardContent>
@@ -249,154 +311,216 @@ export function OrderManagement() {
 
       {/* 订单列表 */}
       <Card>
-        <CardHeader>
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <CardTitle className="text-lg">订单列表</CardTitle>
-              <CardDescription>查看和管理所有业务订单</CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  placeholder="搜索订单号或客户..."
-                  value={searchKeyword}
-                  onChange={(e) => setSearchKeyword(e.target.value)}
-                  className="pl-9 w-[200px]"
-                />
+        <CardHeader className="pb-3">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <TabsList>
+                <TabsTrigger value="warehouse">
+                  <Warehouse className="w-4 h-4 mr-2" />
+                  仓储交易订单
+                </TabsTrigger>
+                <TabsTrigger value="storage">
+                  <PackageOpen className="w-4 h-4 mr-2" />
+                  物资存放订单
+                </TabsTrigger>
+                <TabsTrigger value="trade">
+                  <Package className="w-4 h-4 mr-2" />
+                  物资交易订单
+                </TabsTrigger>
+              </TabsList>
+
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input placeholder="搜索订单号或标题" className="pl-9 w-64" />
+                </div>
+                <Select defaultValue="all">
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">全部状态</SelectItem>
+                    <SelectItem value="processing">履约中</SelectItem>
+                    <SelectItem value="completed">已完成</SelectItem>
+                    <SelectItem value="pending">待付款</SelectItem>
+                    <SelectItem value="stored">存放中</SelectItem>
+                    <SelectItem value="out">已出库</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <Select defaultValue="all">
-                <SelectTrigger className="w-[120px]">
-                  <SelectValue placeholder="订单类型" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">全部类型</SelectItem>
-                  <SelectItem value="rental">租赁订单</SelectItem>
-                  <SelectItem value="custody">托管订单</SelectItem>
-                  <SelectItem value="storage">存放订单</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-4">
-            <TabsList>
-              <TabsTrigger value="all">
-                全部
-                <Badge variant="secondary" className="ml-2">{orderData.length}</Badge>
-              </TabsTrigger>
-              <TabsTrigger value="active">
-                履约中
-                <Badge variant="secondary" className="ml-2">{stats.active}</Badge>
-              </TabsTrigger>
-              <TabsTrigger value="pending">
-                待生效
-                <Badge variant="secondary" className="ml-2">{stats.pending}</Badge>
-              </TabsTrigger>
-              <TabsTrigger value="completed">已完成</TabsTrigger>
-              <TabsTrigger value="cancelled">已取消</TabsTrigger>
-            </TabsList>
+
+            {/* 仓储交易订单 */}
+            <TabsContent value="warehouse" className="mt-4">
+              <CardTitle className="text-base mb-3 flex items-center gap-2">
+                <ClipboardCheck className="w-4 h-4 text-primary" />
+                仓储交易订单
+                <span className="text-xs text-muted-foreground font-normal ml-1">
+                  共 {warehouseOrders.length} 条
+                </span>
+              </CardTitle>
+              <CardContent className="px-0 py-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>订单号</TableHead>
+                      <TableHead>标的仓储</TableHead>
+                      <TableHead>面积</TableHead>
+                      <TableHead>承租方</TableHead>
+                      <TableHead>出租方</TableHead>
+                      <TableHead>成交金额(元)</TableHead>
+                      <TableHead>租期</TableHead>
+                      <TableHead>签约时间</TableHead>
+                      <TableHead>状态</TableHead>
+                      <TableHead className="text-center">操作</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {warehouseOrders.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell className="font-mono text-xs">{order.id}</TableCell>
+                        <TableCell className="max-w-[200px] truncate">{order.title}</TableCell>
+                        <TableCell>{order.area}</TableCell>
+                        <TableCell className="text-muted-foreground">{order.tenant}</TableCell>
+                        <TableCell className="text-muted-foreground">{order.landlord}</TableCell>
+                        <TableCell className="text-primary font-medium">{order.amount}</TableCell>
+                        <TableCell className="text-xs text-muted-foreground">{order.period}</TableCell>
+                        <TableCell className="text-muted-foreground">{order.signDate}</TableCell>
+                        <TableCell>{getStatusBadge(order.status)}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-1">
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <FileDown className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </TabsContent>
+
+            {/* 物资存放订单 */}
+            <TabsContent value="storage" className="mt-4">
+              <CardTitle className="text-base mb-3 flex items-center gap-2">
+                <PackageOpen className="w-4 h-4 text-purple-700" />
+                物资存放订单
+                <span className="text-xs text-muted-foreground font-normal ml-1">
+                  共 {materialStorageOrders.length} 条
+                </span>
+              </CardTitle>
+              <CardContent className="px-0 py-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>订单号</TableHead>
+                      <TableHead>物资名称</TableHead>
+                      <TableHead>物资类型</TableHead>
+                      <TableHead>数量</TableHead>
+                      <TableHead>物权单位</TableHead>
+                      <TableHead>存放站点</TableHead>
+                      <TableHead>占用面积</TableHead>
+                      <TableHead>入库时间</TableHead>
+                      <TableHead>出库时间</TableHead>
+                      <TableHead>存储费</TableHead>
+                      <TableHead>状态</TableHead>
+                      <TableHead className="text-center">操作</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {materialStorageOrders.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell className="font-mono text-xs">{order.id}</TableCell>
+                        <TableCell className="max-w-[180px] truncate">{order.title}</TableCell>
+                        <TableCell>{order.materialType}</TableCell>
+                        <TableCell>{order.quantity}</TableCell>
+                        <TableCell className="text-muted-foreground">{order.owner}</TableCell>
+                        <TableCell className="text-muted-foreground">{order.site}</TableCell>
+                        <TableCell>{order.occupiedArea}</TableCell>
+                        <TableCell className="text-muted-foreground">{order.inDate}</TableCell>
+                        <TableCell className="text-muted-foreground">{order.outDate}</TableCell>
+                        <TableCell className="text-primary font-medium">{order.storageFee}</TableCell>
+                        <TableCell>{getStatusBadge(order.status)}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-1">
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <FileDown className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </TabsContent>
+
+            {/* 物资交易订单 */}
+            <TabsContent value="trade" className="mt-4">
+              <CardTitle className="text-base mb-3 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-accent" />
+                物资交易订单
+                <span className="text-xs text-muted-foreground font-normal ml-1">
+                  共 {materialTradeOrders.length} 条
+                </span>
+              </CardTitle>
+              <CardContent className="px-0 py-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>订单号</TableHead>
+                      <TableHead>物资名称</TableHead>
+                      <TableHead>物资类型</TableHead>
+                      <TableHead>数量</TableHead>
+                      <TableHead>交易方式</TableHead>
+                      <TableHead>出租方</TableHead>
+                      <TableHead>承租方</TableHead>
+                      <TableHead>租金单价</TableHead>
+                      <TableHead>成交金额(元)</TableHead>
+                      <TableHead>租期</TableHead>
+                      <TableHead>状态</TableHead>
+                      <TableHead className="text-center">操作</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {materialTradeOrders.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell className="font-mono text-xs">{order.id}</TableCell>
+                        <TableCell className="max-w-[180px] truncate">{order.title}</TableCell>
+                        <TableCell>{order.materialType}</TableCell>
+                        <TableCell>{order.quantity}</TableCell>
+                        <TableCell>{getTradeTypeBadge(order.tradeType)}</TableCell>
+                        <TableCell className="text-muted-foreground">{order.provider}</TableCell>
+                        <TableCell className="text-muted-foreground">{order.user}</TableCell>
+                        <TableCell className="text-xs text-muted-foreground">{order.unitPrice}</TableCell>
+                        <TableCell className="text-primary font-medium">{order.amount}</TableCell>
+                        <TableCell className="text-xs text-muted-foreground">{order.period}</TableCell>
+                        <TableCell>{getStatusBadge(order.status)}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-1">
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <FileDown className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </TabsContent>
           </Tabs>
-
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[150px]">订单编号</TableHead>
-                  <TableHead>类型</TableHead>
-                  <TableHead>仓储站点</TableHead>
-                  <TableHead>客户</TableHead>
-                  <TableHead className="text-right">面积(m²)</TableHead>
-                  <TableHead className="text-right">金额(元)</TableHead>
-                  <TableHead>租期</TableHead>
-                  <TableHead>状态</TableHead>
-                  <TableHead className="text-right">操作</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredData.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">
-                      <div>
-                        <p className="font-mono text-sm">{item.id}</p>
-                        <p className="text-xs text-muted-foreground">{item.createTime}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>{getTypeBadge(item.type)}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Package className="w-3 h-3 text-muted-foreground" />
-                        <span className="text-sm">{item.warehouse}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Building2 className="w-3 h-3 text-muted-foreground" />
-                        <span className="text-sm truncate max-w-[150px]">{item.customer}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right font-medium">
-                      {item.area.toLocaleString()}
-                    </TableCell>
-                    <TableCell className="text-right font-medium text-primary">
-                      {item.amount.toLocaleString()}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 text-xs">
-                        <Calendar className="w-3 h-3 text-muted-foreground" />
-                        {item.startDate} ~ {item.endDate}
-                      </div>
-                    </TableCell>
-                    <TableCell>{getStatusBadge(item.status)}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="w-4 h-4 mr-2" />
-                            查看详情
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <FileText className="w-4 h-4 mr-2" />
-                            查看合同
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">
-                            <XCircle className="w-4 h-4 mr-2" />
-                            取消订单
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          {/* 分页 */}
-          <div className="flex items-center justify-between mt-4">
-            <p className="text-sm text-muted-foreground">
-              共 {filteredData.length} 条记录
-            </p>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" disabled>
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-              <Button variant="outline" size="sm" className="bg-primary text-primary-foreground">
-                1
-              </Button>
-              <Button variant="outline" size="sm">
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </CardContent>
+        </CardHeader>
       </Card>
     </div>
   )

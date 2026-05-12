@@ -5,6 +5,7 @@ import { TodoList } from "./personal/todo-list"
 import { WarehouseInfo } from "./personal/warehouse-info"
 import { ContractManagement } from "./personal/contract-management"
 import { DemandManagement } from "./personal/demand-management"
+import { OrderManagement } from "./personal/order-management"
 import { MaterialManagement } from "./shared/material-management"
 import { SettlementManagement } from "./shared/settlement-management"
 
@@ -25,6 +26,8 @@ export function PersonalWorkbench({ activeSubTab }: PersonalWorkbenchProps) {
         return <MaterialManagement />
       case "demand":
         return <DemandManagement />
+      case "order":
+        return <OrderManagement />
       case "settlement":
         return <SettlementManagement />
       case "contract":
