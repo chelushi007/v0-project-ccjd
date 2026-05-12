@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { GenerateReconciliationDialog } from "./generate-reconciliation-dialog"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -49,10 +50,11 @@ interface SettlementManagementProps {
   roleType?: "property" | "warehouse-unit" | "warehouse-site" | "transport" | "user"
 }
 
-// ============ 对账数据（保留原数据） ============
+// ============ 对账数据（保留原数据 + 关联订单号） ============
 const mockReconciliations = [
   {
     id: "DZ-2026-001",
+    orderId: "CCJY20260315006",
     partner: "中铁十四局集团广州分公司",
     type: "仓储租赁",
     period: "2026年3月",
@@ -64,6 +66,7 @@ const mockReconciliations = [
   },
   {
     id: "DZ-2026-002",
+    orderId: "WZCF20260420005",
     partner: "中铁十一局广深城际项目部",
     type: "物资存放",
     period: "2026年3月",
@@ -75,8 +78,9 @@ const mockReconciliations = [
   },
   {
     id: "DZ-2026-003",
+    orderId: "YYFC20260301002",
     partner: "中铁建东莞虎门港务仓储基地",
-    type: "托管分成",
+    type: "物资运营分成",
     period: "2026年3月",
     amount: 85000,
     confirmedAmount: 82000,
@@ -86,6 +90,7 @@ const mockReconciliations = [
   },
   {
     id: "DZ-2026-004",
+    orderId: "CCJY20260428005",
     partner: "中铁十六局集团华南分公司",
     type: "仓储租赁",
     period: "2026年2月",
@@ -94,6 +99,18 @@ const mockReconciliations = [
     status: "已结算",
     createDate: "2026-03-01",
     confirmDate: "2026-03-05",
+  },
+  {
+    id: "DZ-2026-005",
+    orderId: "WZJY20260428005",
+    partner: "中铁十二局物资分公司",
+    type: "物资交易",
+    period: "2026年4月",
+    amount: 28000,
+    confirmedAmount: 0,
+    status: "待确认",
+    createDate: "2026-05-01",
+    confirmDate: "",
   },
 ]
 
@@ -106,7 +123,7 @@ type FeeCategory =
   | "保管费"
   | "物资租金"
   | "运输费"
-  | "托管分成"
+  | "物资运营分成"
   | "退款"
 
 type SettleStatus = "已支付" | "已收款" | "待支付" | "待收款" | "处理中" | "已退款"
@@ -252,11 +269,11 @@ const mockSettlements: SettleRecord[] = [
     occurDate: "2026-04-20 17:42:09",
     voucherNo: "ICBC202604200100180",
   },
-  // 托管分成（站点 → 业主单位）
+  // 物资运营分成（站点 → 业主单位）
   {
     id: "JS20260410100168",
-    orderId: "TG20260301002",
-    category: "托管分成",
+    orderId: "YYFC20260301002",
+    category: "物资运营分成",
     direction: "收入",
     partner: "中铁十二局集团有限公司",
     amount: 82000,
@@ -290,8 +307,8 @@ const mockSettlements: SettleRecord[] = [
   },
   {
     id: "JS20260520100205",
-    orderId: "TG20260301002",
-    category: "托管分成",
+    orderId: "YYFC20260301002",
+    category: "物资运营分成",
     direction: "收入",
     partner: "中铁十二局集团有限公司",
     amount: 78000,
@@ -364,7 +381,7 @@ const categoryConfig: Record<
     chip: "bg-slate-50 text-slate-700 border-slate-200",
     iconColor: "text-slate-600",
   },
-  托管分成: {
+  物资运营分成: {
     icon: TrendingUp,
     chip: "bg-emerald-50 text-emerald-700 border-emerald-200",
     iconColor: "text-emerald-600",
@@ -417,6 +434,9 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
   // 结算管理筛选
   const [categoryFilter, setCategoryFilter] = useState<"all" | FeeCategory>("all")
   const [directionFilter, setDirectionFilter] = useState<"all" | "支出" | "收入">("all")
+
+  // 生成对账单弹窗
+  const [genDialogOpen, setGenDialogOpen] = useState(false)
 
   // ====== 统计 ======
   const pendingReconciliation = mockReconciliations.filter((r) => r.status === "待确认").length
@@ -522,7 +542,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                   <Download className="h-4 w-4 mr-1" />
                   导出
                 </Button>
-                <Button size="sm">
+                <Button size="sm" onClick={() => setGenDialogOpen(true)}>
                   <FileText className="h-4 w-4 mr-1" />
                   生成对账单
                 </Button>
@@ -559,6 +579,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[120px]">对账单号</TableHead>
+                    <TableHead className="w-[160px]">关联订单号</TableHead>
                     <TableHead>合作方</TableHead>
                     <TableHead>业务类型</TableHead>
                     <TableHead>账期</TableHead>
@@ -575,6 +596,9 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                     return (
                       <TableRow key={item.id}>
                         <TableCell className="font-mono text-sm">{item.id}</TableCell>
+                        <TableCell className="font-mono text-xs text-muted-foreground">
+                          {item.orderId}
+                        </TableCell>
                         <TableCell className="font-medium">{item.partner}</TableCell>
                         <TableCell>{item.type}</TableCell>
                         <TableCell>{item.period}</TableCell>
@@ -644,7 +668,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
       "保管费",
       "物资租金",
       "运输费",
-      "托管分成",
+      "物资运营分成",
       "退款",
     ]
 
@@ -944,10 +968,32 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
     )
   }
 
+  // 公共弹窗：生成对账单
+  const genDialog = (
+    <GenerateReconciliationDialog
+      open={genDialogOpen}
+      onOpenChange={setGenDialogOpen}
+    />
+  )
+
   // 根据 subTab 决定显示哪个视图（兼容旧路由）
   if (subTab) {
-    if (subTab.includes("reconciliation")) return renderReconciliation()
-    if (subTab.includes("payment") || subTab.includes("settle")) return renderSettlement()
+    if (subTab.includes("reconciliation")) {
+      return (
+        <>
+          {renderReconciliation()}
+          {genDialog}
+        </>
+      )
+    }
+    if (subTab.includes("payment") || subTab.includes("settle")) {
+      return (
+        <>
+          {renderSettlement()}
+          {genDialog}
+        </>
+      )
+    }
   }
 
   // 默认通过顶部 Tabs 切换两个下级
@@ -965,6 +1011,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
           {renderSettlement()}
         </TabsContent>
       </Tabs>
+      {genDialog}
     </div>
   )
 }
