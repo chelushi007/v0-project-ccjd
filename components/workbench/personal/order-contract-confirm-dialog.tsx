@@ -412,8 +412,17 @@ export function OrderContractConfirmDialog({
             onClick={handleSubmit}
             className="bg-orange-600 hover:bg-orange-700 text-white"
           >
-            <CheckCircle2 className="w-4 h-4 mr-1" />
-            确认接受合同
+            {mode === "online" ? (
+              <>
+                <ArrowUpRight className="w-4 h-4 mr-1" />
+                确认并前往签署
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="w-4 h-4 mr-1" />
+                确认接受合同
+              </>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
