@@ -38,6 +38,10 @@ import {
   type PaymentOrder,
   type PaymentRecord,
 } from "./order-payment-dialog"
+import {
+  OrderRenewalDialog,
+  OrderRefundDialog,
+} from "./order-renewal-refund-dialog"
 
 // 主状态
 type MainStatus = "履约中" | "已完成" | "合同到期"
@@ -631,8 +635,47 @@ export function OrderManagement() {
     defaultTab: FeeKind
   }>({ open: false, order: null, orderType: "warehouse", defaultTab: "deposit" })
 
+  const [renewalDialog, setRenewalDialog] = useState<{
+    open: boolean
+    order: PaymentOrder | null
+    orderType: OrderType
+    originalEndDate?: string
+  }>({ open: false, order: null, orderType: "warehouse" })
+
+  const [refundDialog, setRefundDialog] = useState<{
+    open: boolean
+    order: PaymentOrder | null
+    orderType: OrderType
+  }>({ open: false, order: null, orderType: "warehouse" })
+
+  // 续租 / 退款完成后将订单标记
+  const [renewedIds, setRenewedIds] = useState<Set<string>>(new Set())
+  const [refundedIds, setRefundedIds] = useState<Set<string>>(new Set())
+
   const openPay = (order: PaymentOrder, orderType: OrderType, defaultTab: FeeKind) => {
     setPayDialog({ open: true, order, orderType, defaultTab })
+  }
+
+  const openRenewal = (
+    order: PaymentOrder,
+    orderType: OrderType,
+    originalEndDate?: string,
+  ) => {
+    setRenewalDialog({ open: true, order, orderType, originalEndDate })
+  }
+
+  const openRefund = (order: PaymentOrder, orderType: OrderType) => {
+    setRefundDialog({ open: true, order, orderType })
+  }
+
+  const handleRenewalConfirm = () => {
+    const id = renewalDialog.order?.id
+    if (id) setRenewedIds((s) => new Set(s).add(id))
+  }
+
+  const handleRefundConfirm = () => {
+    const id = refundDialog.order?.id
+    if (id) setRefundedIds((s) => new Set(s).add(id))
   }
 
   const handlePay = (kind: FeeKind) => {
@@ -700,13 +743,31 @@ export function OrderManagement() {
         break
       }
       case "待续租":
-        primary = { label: "续租", className: ACTION_CLS.renew }
+        if (!renewedIds.has(paymentOrder.id)) {
+          primary = {
+            label: "续租",
+            className: ACTION_CLS.renew,
+            onClick: () => openRenewal(paymentOrder, orderType),
+          }
+        }
         break
       case "待退还押金":
-        primary = { label: "退还押金", className: ACTION_CLS.refund }
+        if (!refundedIds.has(paymentOrder.id)) {
+          primary = {
+            label: "退还押金",
+            className: ACTION_CLS.refund,
+            onClick: () => openRefund(paymentOrder, orderType),
+          }
+        }
         break
       case "待退还保证金":
-        primary = { label: "退还保证金", className: ACTION_CLS.refund }
+        if (!refundedIds.has(paymentOrder.id)) {
+          primary = {
+            label: "退还保证金",
+            className: ACTION_CLS.refund,
+            onClick: () => openRefund(paymentOrder, orderType),
+          }
+        }
         break
     }
 
@@ -1027,6 +1088,25 @@ export function OrderManagement() {
         defaultTab={payDialog.defaultTab}
         record={payDialog.order ? paymentRecords[payDialog.order.id] ?? {} : {}}
         onPay={handlePay}
+      />
+
+      {/* 续租弹窗 */}
+      <OrderRenewalDialog
+        open={renewalDialog.open}
+        onOpenChange={(o) => setRenewalDialog((d) => ({ ...d, open: o }))}
+        order={renewalDialog.order}
+        orderType={renewalDialog.orderType}
+        originalEndDate={renewalDialog.originalEndDate}
+        onConfirm={handleRenewalConfirm}
+      />
+
+      {/* 退还押金/保证金弹窗 */}
+      <OrderRefundDialog
+        open={refundDialog.open}
+        onOpenChange={(o) => setRefundDialog((d) => ({ ...d, open: o }))}
+        order={refundDialog.order}
+        orderType={refundDialog.orderType}
+        onConfirm={handleRefundConfirm}
       />
     </div>
   )
