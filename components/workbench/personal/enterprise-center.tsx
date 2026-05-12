@@ -7,29 +7,28 @@ import {
   MapPin,
   Truck,
   Users,
+  Handshake,
   ChevronLeft,
   ChevronRight,
   CheckCircle2,
-  Clock,
   Eye,
   Shield,
   FileText,
   Phone,
   Mail,
   Globe,
-  Sparkles,
   ArrowUpRight,
   Calendar,
   Briefcase,
   CreditCard,
   Award,
 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
-// 五种企业角色对应的实际企业数据
+// 六种企业角色对应的实际企业数据
 const enterpriseRoles = [
   {
     id: "property-owner",
@@ -160,10 +159,7 @@ const enterpriseRoles = [
         { label: "在运营物资", value: "326", unit: "类" },
         { label: "合作物权单位", value: "18", unit: "家" },
         { label: "整租金额", value: "1.28", unit: "亿元" },
-        { label: "分成结算占比", value: "62", unit: "%" },
-        { label: "出租周转率", value: "82", unit: "%" },
-        { label: "年运营收入", value: "9,860", unit: "万元" },
-      ].slice(0, 3),
+      ],
       relatedRoles: [],
     },
   },
@@ -200,12 +196,49 @@ const enterpriseRoles = [
       relatedRoles: [],
     },
   },
+  {
+    id: "service-provider",
+    role: "服务商",
+    icon: Handshake,
+    color: "text-rose-600",
+    bg: "bg-rose-500/10",
+    border: "border-rose-500/20",
+    accent: "bg-rose-500",
+    needCertify: true,
+    enterprise: {
+      shortName: "中铁华南",
+      name: "中铁华南服务有限公司",
+      code: "ZTHN-SP-2024-006",
+      type: "国有企业",
+      status: "已认证",
+      creditScore: 97,
+      registeredCapital: "3,000 万元",
+      establishDate: "2014-06-08",
+      legalPerson: "王宏志",
+      contact: "刘海燕",
+      phone: "020-3699 5888",
+      email: "service@cr-southchina.com",
+      address: "广东省广州市越秀区东风中路300号",
+      businessScope:
+        "受理客户的仓储出租委托，匹配平台仓储站点资源，撮合并促成委托出租合作，提供合同签署、履约监督、对账结算等全流程服务支持",
+      certifications: ["服务运营资质", "AAA信用企业", "ISO9001质量体系", "全国连锁服务示范单位"],
+      stats: [
+        { label: "受理委托单", value: "486", unit: "单" },
+        { label: "服务客户数", value: "62", unit: "家" },
+        { label: "委托交易金额", value: "3.86", unit: "亿元" },
+      ],
+      relatedRoles: [],
+    },
+  },
 ]
 
 export function EnterpriseCenter() {
   const [activeIndex, setActiveIndex] = useState(0)
   const active = enterpriseRoles[activeIndex]
   const Icon = active.icon
+
+  // 是否展示资质文件区域：仓储单位作为基础角色不展示
+  const showCertFiles = active.id !== "warehouse-unit"
 
   const handlePrev = () => {
     setActiveIndex((prev) => (prev === 0 ? enterpriseRoles.length - 1 : prev - 1))
@@ -283,16 +316,10 @@ export function EnterpriseCenter() {
                   </span>
                 </div>
                 <div className="mt-3">
-                  {active.needCertify ? (
-                    <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
-                      <CheckCircle2 className="w-3 h-3 mr-1" />
-                      {active.enterprise.status}
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="text-muted-foreground">
-                      无需认证 · 默认开通
-                    </Badge>
-                  )}
+                  <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
+                    <CheckCircle2 className="w-3 h-3 mr-1" />
+                    {active.enterprise.status}
+                  </Badge>
                 </div>
               </div>
             </div>
@@ -300,7 +327,7 @@ export function EnterpriseCenter() {
             {/* 联系与地址 */}
             <div className="flex-1 lg:border-l border-border lg:pl-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <InfoItem icon={Phone} label="联系���话" value={active.enterprise.phone} />
+                <InfoItem icon={Phone} label="联系电话" value={active.enterprise.phone} />
                 <InfoItem icon={Mail} label="联系邮箱" value={active.enterprise.email} />
                 <InfoItem icon={Users} label="法定代表人" value={active.enterprise.legalPerson} />
                 <InfoItem icon={Briefcase} label="对接联系人" value={active.enterprise.contact} />
@@ -371,23 +398,10 @@ export function EnterpriseCenter() {
               </Button>
             </div>
           </div>
-          <CardDescription>
-            查看与管理「{active.role}」身份下的资质文件、业务范围与认证状态
-          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* 认证状态横幅 */}
-          {!active.needCertify ? (
-            <div className="flex items-start gap-3 p-4 rounded-lg bg-muted/40 border border-border">
-              <Sparkles className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-              <div className="flex-1">
-                <p className="font-medium text-sm">无需企业资质认证</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  「{active.role}」属于基础企业角色，系统已默认开通，可直接发布与管理对应业务。
-                </p>
-              </div>
-            </div>
-          ) : (
+          {/* 认证状态横幅：仅需认证角色显示 */}
+          {active.needCertify && (
             <div className={`flex items-start gap-3 p-4 rounded-lg ${active.bg} border ${active.border}`}>
               <CheckCircle2 className={`w-5 h-5 ${active.color} shrink-0 mt-0.5`} />
               <div className="flex-1">
@@ -429,7 +443,7 @@ export function EnterpriseCenter() {
           </div>
 
           {/* 资质文件 */}
-          {active.needCertify && (
+          {showCertFiles && (
             <div>
               <h3 className="font-medium text-sm mb-3 flex items-center gap-2">
                 <FileText className="w-4 h-4 text-primary" />
