@@ -520,8 +520,10 @@ const getPrimaryAction = (
 }
 
 // 操作按钮组渲染（全部以文字呈现）
+// 履约前期（待签署合同、待确认合同）尚未生成正式合同，不展示"合同"入口
 const renderActions = (subStatus: RentSubStatus | StorageSubStatus) => {
   const primary = getPrimaryAction(subStatus)
+  const showContract = subStatus !== "待签署合同" && subStatus !== "待确认合同"
   return (
     <div className="flex items-center justify-center gap-0.5">
       {primary && (
@@ -536,13 +538,15 @@ const renderActions = (subStatus: RentSubStatus | StorageSubStatus) => {
       >
         查看
       </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 px-2 text-muted-foreground hover:text-foreground"
-      >
-        合同
-      </Button>
+      {showContract && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 px-2 text-muted-foreground hover:text-foreground"
+        >
+          合同
+        </Button>
+      )}
     </div>
   )
 }
