@@ -7,29 +7,31 @@ import {
   Clock,
   AlertCircle,
   FileText,
-  ArrowRight,
-  Filter,
-  Search,
   ChevronRight,
   Calendar,
   User,
   Building2,
-  Package,
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  BarChart3,
+  Bell,
+  MessageSquare,
+  Info,
+  CheckCircle2,
+  ArrowUpRight,
+  FilePen,
+  Handshake,
+  PackageCheck,
+  ShieldCheck,
 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
-// 待办事项数据
+// ── 数据 ────────────────────────────────────────────────────────────────────
+
 const todoItems = {
   entrust: [
     {
@@ -114,6 +116,51 @@ const todoItems = {
   ],
 }
 
+const messages = [
+  {
+    id: "M001",
+    type: "system",
+    title: "合同即将到期提醒",
+    content: "您与中铁建工集团签订的仓储租赁合同将于7天后到期，请及时跟进续签事宜。",
+    time: "10分钟前",
+    read: false,
+  },
+  {
+    id: "M002",
+    type: "business",
+    title: "新的委托运营申请",
+    content: "中铁物资北京公司提交了一笔物资托管申请，请尽快处理。",
+    time: "1小时前",
+    read: false,
+  },
+  {
+    id: "M003",
+    type: "notice",
+    title: "平台公告：服务费调整通知",
+    content: "根据平台最新规定，自2024年2月1日起，仓储出租服务费率调整为0.5%，请知悉。",
+    time: "昨天 14:30",
+    read: true,
+  },
+  {
+    id: "M004",
+    type: "business",
+    title: "订单支付成功",
+    content: "深圳前海站点租赁订单（ORD-2024-0118）已收到租金 ¥28,000.00，请查收。",
+    time: "昨天 09:15",
+    read: true,
+  },
+  {
+    id: "M005",
+    type: "system",
+    title: "账号安全提醒",
+    content: "您的账号于昨日18:32在广州登录，如非本人操作请及时修改密码。",
+    time: "2天前",
+    read: true,
+  },
+]
+
+// ── 辅助组件 ─────────────────────────────────────────────────────────────────
+
 const getPriorityBadge = (priority: string) => {
   switch (priority) {
     case "high":
@@ -130,252 +177,367 @@ const getStatusBadge = (status: string) => {
     case "pending":
       return (
         <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20">
-          <Clock className="w-3 h-3 mr-1" />
-          待处理
+          <Clock className="w-3 h-3 mr-1" />待处理
         </Badge>
       )
     case "processing":
       return (
         <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20">
-          <AlertCircle className="w-3 h-3 mr-1" />
-          处理中
+          <AlertCircle className="w-3 h-3 mr-1" />处理中
         </Badge>
       )
     default:
       return (
         <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">
-          <CheckSquare className="w-3 h-3 mr-1" />
-          已完成
+          <CheckSquare className="w-3 h-3 mr-1" />已完成
         </Badge>
       )
   }
 }
+
+const getMsgIcon = (type: string) => {
+  switch (type) {
+    case "business":
+      return <MessageSquare className="w-4 h-4 text-primary" />
+    case "notice":
+      return <Info className="w-4 h-4 text-yellow-500" />
+    default:
+      return <Bell className="w-4 h-4 text-muted-foreground" />
+  }
+}
+
+// ── 快捷入口配置 ──────────────────────────────────────────────────────────────
+
+const quickApprovalEntries = [
+  { label: "合同审批", icon: FilePen, count: 2, color: "text-blue-600", bg: "bg-blue-500/10" },
+  { label: "费用审批", icon: DollarSign, count: 1, color: "text-green-600", bg: "bg-green-500/10" },
+  { label: "资质审核", icon: ShieldCheck, count: 1, color: "text-purple-600", bg: "bg-purple-500/10" },
+  { label: "入库审批", icon: PackageCheck, count: 3, color: "text-orange-600", bg: "bg-orange-500/10" },
+]
+
+const quickBizEntries = [
+  { label: "委托受理", icon: Handshake, count: 3, color: "text-primary", bg: "bg-primary/10" },
+  { label: "业务跟进", icon: CheckCircle2, count: 5, color: "text-accent", bg: "bg-accent/10" },
+  { label: "合同签署", icon: FileText, count: 2, color: "text-blue-600", bg: "bg-blue-500/10" },
+  { label: "订单确认", icon: ClipboardList, count: 4, color: "text-orange-600", bg: "bg-orange-500/10" },
+]
+
+// ── 主组件 ───────────────────────────────────────────────────────────────────
 
 interface TodoListProps {
   activeTab?: string
   roleType?: "property" | "warehouse-unit" | "warehouse-site" | "transport" | "user"
 }
 
-export function TodoList({ activeTab: initialTab = "entrust", roleType = "property" }: TodoListProps) {
-  const [activeTab, setActiveTab] = useState(initialTab === "delegate" ? "entrust" : initialTab === "approval" ? "approval" : "entrust")
-  const [searchKeyword, setSearchKeyword] = useState("")
+export function TodoList({ roleType = "property" }: TodoListProps) {
+  const [todoTab, setTodoTab] = useState<"entrust" | "approval">("entrust")
+  const [msgTab, setMsgTab] = useState<"all" | "unread">("all")
 
-  const stats = {
-    total: todoItems.entrust.length + todoItems.approval.length,
-    entrust: todoItems.entrust.length,
-    approval: todoItems.approval.length,
-    urgent: [...todoItems.entrust, ...todoItems.approval].filter((item) => item.priority === "high").length,
-  }
+  const totalTodo = todoItems.entrust.length + todoItems.approval.length
+  const urgentCount = [...todoItems.entrust, ...todoItems.approval].filter(i => i.priority === "high").length
+  const unreadCount = messages.filter(m => !m.read).length
+
+  const displayMessages = msgTab === "unread" ? messages.filter(m => !m.read) : messages
 
   return (
     <div className="space-y-6">
-      {/* 页面标题 */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">待办事项</h1>
-          <p className="text-muted-foreground mt-1">处理委托受理和审批事项</p>
+
+      {/* ── 第一行：快捷入口 ──────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 gap-4">
+
+        {/* 申请审批快捷入口 */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-primary" />
+                申请审批
+              </span>
+              <Button variant="ghost" size="sm" className="h-6 text-xs text-primary px-2">
+                全部 <ArrowUpRight className="w-3 h-3 ml-0.5" />
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="grid grid-cols-4 gap-2">
+              {quickApprovalEntries.map((entry) => (
+                <button
+                  key={entry.label}
+                  className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-muted/60 transition-colors cursor-pointer"
+                >
+                  <div className={`relative w-10 h-10 rounded-xl ${entry.bg} flex items-center justify-center`}>
+                    <entry.icon className={`w-5 h-5 ${entry.color}`} />
+                    {entry.count > 0 && (
+                      <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+                        {entry.count}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs text-foreground whitespace-nowrap">{entry.label}</span>
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 业务处理快捷入口 */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <ClipboardList className="w-4 h-4 text-primary" />
+                业务处理
+              </span>
+              <Button variant="ghost" size="sm" className="h-6 text-xs text-primary px-2">
+                全部 <ArrowUpRight className="w-3 h-3 ml-0.5" />
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="grid grid-cols-4 gap-2">
+              {quickBizEntries.map((entry) => (
+                <button
+                  key={entry.label}
+                  className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-muted/60 transition-colors cursor-pointer"
+                >
+                  <div className={`relative w-10 h-10 rounded-xl ${entry.bg} flex items-center justify-center`}>
+                    <entry.icon className={`w-5 h-5 ${entry.color}`} />
+                    {entry.count > 0 && (
+                      <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+                        {entry.count}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs text-foreground whitespace-nowrap">{entry.label}</span>
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* ── 第二行：交易统计 + 站内消息 ──────────────────────────────────── */}
+      <div className="grid grid-cols-5 gap-4">
+
+        {/* 交易统计（占3列） */}
+        <div className="col-span-3 space-y-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <BarChart3 className="w-4 h-4 text-primary" />
+                  交易统计
+                </span>
+                <span className="text-xs text-muted-foreground font-normal">本月</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="grid grid-cols-4 gap-3 mb-4">
+                {[
+                  { label: "成交订单", value: "28", unit: "笔", trend: "+12%", up: true },
+                  { label: "成交金额", value: "156.4", unit: "万元", trend: "+8.3%", up: true },
+                  { label: "待收款项", value: "23.8", unit: "万元", trend: "-5.1%", up: false },
+                  { label: "仓储出租率", value: "87", unit: "%", trend: "+3.2%", up: true },
+                ].map((item) => (
+                  <div key={item.label} className="p-3 bg-muted/40 rounded-lg">
+                    <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-xl font-bold text-foreground">{item.value}</span>
+                      <span className="text-xs text-muted-foreground">{item.unit}</span>
+                    </div>
+                    <div className={`flex items-center gap-0.5 mt-1 text-xs ${item.up ? "text-green-600" : "text-red-500"}`}>
+                      {item.up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                      <span>{item.trend}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 近6个月趋势条形图 */}
+              <div>
+                <p className="text-xs text-muted-foreground mb-2">近6个月成交金额（万元）</p>
+                <div className="flex items-end gap-2 h-20">
+                  {[
+                    { month: "8月", val: 98 },
+                    { month: "9月", val: 112 },
+                    { month: "10月", val: 134 },
+                    { month: "11月", val: 145 },
+                    { month: "12月", val: 138 },
+                    { month: "1月", val: 156 },
+                  ].map((item) => {
+                    const pct = Math.round((item.val / 160) * 100)
+                    return (
+                      <div key={item.month} className="flex flex-col items-center gap-1 flex-1">
+                        <span className="text-[10px] text-muted-foreground">{item.val}</span>
+                        <div
+                          className="w-full rounded-t-sm bg-primary/70 hover:bg-primary transition-colors"
+                          style={{ height: `${pct}%` }}
+                        />
+                        <span className="text-[10px] text-muted-foreground">{item.month}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* 站内消息（占2列） */}
+        <div className="col-span-2">
+          <Card className="h-full flex flex-col">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <Bell className="w-4 h-4 text-primary" />
+                  站内消息
+                  {unreadCount > 0 && (
+                    <Badge className="bg-red-500 text-white text-[10px] h-4 px-1.5">{unreadCount}</Badge>
+                  )}
+                </span>
+                <Button variant="ghost" size="sm" className="h-6 text-xs text-primary px-2">
+                  全部 <ArrowUpRight className="w-3 h-3 ml-0.5" />
+                </Button>
+              </CardTitle>
+              <Tabs value={msgTab} onValueChange={(v) => setMsgTab(v as "all" | "unread")}>
+                <TabsList className="h-7 p-0.5">
+                  <TabsTrigger value="all" className="h-6 text-xs px-3">全部</TabsTrigger>
+                  <TabsTrigger value="unread" className="h-6 text-xs px-3">
+                    未读
+                    {unreadCount > 0 && <span className="ml-1 text-red-500">({unreadCount})</span>}
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </CardHeader>
+            <CardContent className="pt-0 flex-1 overflow-auto">
+              <div className="space-y-1">
+                {displayMessages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`flex gap-3 p-2.5 rounded-lg cursor-pointer transition-colors hover:bg-muted/50 ${!msg.read ? "bg-primary/5" : ""}`}
+                  >
+                    <div className="mt-0.5 shrink-0">
+                      {getMsgIcon(msg.type)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-0.5">
+                        <span className={`text-xs font-medium truncate ${!msg.read ? "text-foreground" : "text-muted-foreground"}`}>
+                          {msg.title}
+                        </span>
+                        {!msg.read && <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />}
+                      </div>
+                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                        {msg.content}
+                      </p>
+                      <span className="text-[10px] text-muted-foreground/60 mt-1 block">{msg.time}</span>
+                    </div>
+                  </div>
+                ))}
+                {displayMessages.length === 0 && (
+                  <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+                    <Bell className="w-8 h-8 mb-2 opacity-30" />
+                    <span className="text-xs">暂无未读消息</span>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
-      {/* 统计卡片 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">全部待办</p>
-                <p className="text-2xl font-bold mt-1">{stats.total}</p>
-              </div>
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                <ClipboardList className="w-6 h-6 text-primary" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">委托受理</p>
-                <p className="text-2xl font-bold mt-1">{stats.entrust}</p>
-              </div>
-              <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                <FileText className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">审批事项</p>
-                <p className="text-2xl font-bold mt-1">{stats.approval}</p>
-              </div>
-              <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center">
-                <CheckSquare className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">紧急事项</p>
-                <p className="text-2xl font-bold mt-1 text-red-600">{stats.urgent}</p>
-              </div>
-              <div className="w-12 h-12 rounded-lg bg-red-500/10 flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-red-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 待办列表 */}
+      {/* ── 第三行：待办列表 ──────────────────────────────────────────────── */}
       <Card>
-        <CardHeader>
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <CardTitle className="text-lg">待办列表</CardTitle>
-              <CardDescription>查看和处理各类待办事项</CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  placeholder="搜索待办事项..."
-                  value={searchKeyword}
-                  onChange={(e) => setSearchKeyword(e.target.value)}
-                  className="pl-9 w-[200px]"
-                />
-              </div>
-              <Select defaultValue="all">
-                <SelectTrigger className="w-[120px]">
-                  <SelectValue placeholder="优先级" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">全部</SelectItem>
-                  <SelectItem value="high">紧急</SelectItem>
-                  <SelectItem value="medium">一般</SelectItem>
-                  <SelectItem value="low">低</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5">
+              <FileText className="w-4 h-4 text-primary" />
+              待办列表
+              <Badge variant="secondary" className="ml-1">{totalTodo}</Badge>
+              {urgentCount > 0 && (
+                <Badge className="bg-red-500/10 text-red-600 border-red-500/20 ml-1">
+                  {urgentCount} 紧急
+                </Badge>
+              )}
+            </CardTitle>
           </div>
         </CardHeader>
-        <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <CardContent className="pt-0">
+          <Tabs value={todoTab} onValueChange={(v) => setTodoTab(v as "entrust" | "approval")}>
             <TabsList className="grid w-full grid-cols-2 mb-4">
               <TabsTrigger value="entrust" className="flex items-center gap-2">
-                <FileText className="w-4 h-4" />
+                <Handshake className="w-4 h-4" />
                 委托受理
-                <Badge variant="secondary" className="ml-1">
-                  {stats.entrust}
-                </Badge>
+                <Badge variant="secondary" className="ml-1">{todoItems.entrust.length}</Badge>
               </TabsTrigger>
               <TabsTrigger value="approval" className="flex items-center gap-2">
-                <CheckSquare className="w-4 h-4" />
+                <ShieldCheck className="w-4 h-4" />
                 审批事项
-                <Badge variant="secondary" className="ml-1">
-                  {stats.approval}
-                </Badge>
+                <Badge variant="secondary" className="ml-1">{todoItems.approval.length}</Badge>
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="entrust" className="mt-0">
-              <div className="space-y-3">
-                {todoItems.entrust.map((item) => (
-                  <div
-                    key={item.id}
-                    className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          {getPriorityBadge(item.priority)}
-                          {getStatusBadge(item.status)}
-                          <Badge variant="outline">{item.type}</Badge>
-                        </div>
-                        <h3 className="font-medium text-foreground mb-1">{item.title}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-1">
-                          {item.description}
-                        </p>
-                        <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Building2 className="w-3 h-3" />
-                            {item.applicant}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            截止：{item.deadline}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {item.createTime}
-                          </span>
-                        </div>
+            <TabsContent value="entrust" className="mt-0 space-y-3">
+              {todoItems.entrust.map((item) => (
+                <div key={item.id} className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                        {getPriorityBadge(item.priority)}
+                        {getStatusBadge(item.status)}
+                        <Badge variant="outline" className="text-xs">{item.type}</Badge>
                       </div>
-                      <Button variant="ghost" size="sm">
-                        处理
-                        <ChevronRight className="w-4 h-4 ml-1" />
-                      </Button>
+                      <h3 className="font-medium text-foreground text-sm mb-1">{item.title}</h3>
+                      <p className="text-xs text-muted-foreground line-clamp-1">{item.description}</p>
+                      <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Building2 className="w-3 h-3" />{item.applicant}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />截止：{item.deadline}
+                        </span>
+                      </div>
                     </div>
+                    <Button variant="ghost" size="sm" className="shrink-0">
+                      处理<ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </TabsContent>
 
-            <TabsContent value="approval" className="mt-0">
-              <div className="space-y-3">
-                {todoItems.approval.map((item) => (
-                  <div
-                    key={item.id}
-                    className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          {getPriorityBadge(item.priority)}
-                          {getStatusBadge(item.status)}
-                          <Badge variant="outline">{item.type}</Badge>
-                        </div>
-                        <h3 className="font-medium text-foreground mb-1">{item.title}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-1">
-                          {item.description}
-                        </p>
-                        <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <User className="w-3 h-3" />
-                            {item.applicant}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            截止：{item.deadline}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {item.createTime}
-                          </span>
-                        </div>
+            <TabsContent value="approval" className="mt-0 space-y-3">
+              {todoItems.approval.map((item) => (
+                <div key={item.id} className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                        {getPriorityBadge(item.priority)}
+                        {getStatusBadge(item.status)}
+                        <Badge variant="outline" className="text-xs">{item.type}</Badge>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm">
-                          驳回
-                        </Button>
-                        <Button size="sm">
-                          通过
-                        </Button>
+                      <h3 className="font-medium text-foreground text-sm mb-1">{item.title}</h3>
+                      <p className="text-xs text-muted-foreground line-clamp-1">{item.description}</p>
+                      <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <User className="w-3 h-3" />{item.applicant}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />截止：{item.deadline}
+                        </span>
                       </div>
                     </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button variant="outline" size="sm">驳回</Button>
+                      <Button size="sm">通过</Button>
+                    </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
+
     </div>
   )
 }
