@@ -26,7 +26,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -360,8 +359,8 @@ export function OrderManagement() {
                 </span>
               </CardTitle>
               <CardContent className="px-0 py-0">
-                <div className="border rounded-md overflow-x-auto">
-                  <Table className="min-w-[1280px]">
+                <div className="w-full overflow-x-auto border rounded-md">
+                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1400px" }}>
                     <TableHeader>
                       <TableRow>
                         <TableHead className="whitespace-nowrap">订单号</TableHead>
@@ -401,7 +400,7 @@ export function OrderManagement() {
                         </TableRow>
                       ))}
                     </TableBody>
-                  </Table>
+                  </table>
                 </div>
               </CardContent>
             </TabsContent>
@@ -416,8 +415,8 @@ export function OrderManagement() {
                 </span>
               </CardTitle>
               <CardContent className="px-0 py-0">
-                <div className="border rounded-md overflow-x-auto">
-                  <Table className="min-w-[1480px]">
+                <div className="w-full overflow-x-auto border rounded-md">
+                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1600px" }}>
                     <TableHeader>
                       <TableRow>
                         <TableHead className="whitespace-nowrap">订单号</TableHead>
@@ -461,7 +460,7 @@ export function OrderManagement() {
                         </TableRow>
                       ))}
                     </TableBody>
-                  </Table>
+                  </table>
                 </div>
               </CardContent>
             </TabsContent>
@@ -476,8 +475,8 @@ export function OrderManagement() {
                 </span>
               </CardTitle>
               <CardContent className="px-0 py-0">
-                <div className="border rounded-md overflow-x-auto">
-                  <Table className="min-w-[1520px]">
+                <div className="w-full overflow-x-auto border rounded-md">
+                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1700px" }}>
                     <TableHeader>
                       <TableRow>
                         <TableHead className="whitespace-nowrap">订单号</TableHead>
@@ -521,7 +520,7 @@ export function OrderManagement() {
                         </TableRow>
                       ))}
                     </TableBody>
-                  </Table>
+                  </table>
                 </div>
               </CardContent>
             </TabsContent>
