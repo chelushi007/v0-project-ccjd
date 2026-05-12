@@ -348,12 +348,17 @@ export function GenerateReconciliationDialog({
                     {businessType}
                   </Badge>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2 text-xs">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 text-xs">
                   <InfoLine label="订单号" value={order.id} mono />
                   <InfoLine label="合作方" value={order.partner} />
                   <InfoLine
                     label={businessType === "物资运营分成" ? "月运营所得" : "月单价"}
                     value={`¥ ${fmt(order.monthlyAmount)}`}
+                    accent
+                  />
+                  <InfoLine
+                    label={businessType === "物资运营分成" ? "总运营所得" : "总金额"}
+                    value={`¥ ${fmt(order.monthlyAmount * order.totalMonths)}`}
                     accent
                   />
                   <InfoLine
@@ -489,69 +494,213 @@ export function GenerateReconciliationDialog({
             </div>
           </div>
 
-          {/* 对账历史 */}
-          <div className="rounded-lg border p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <History className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium">对账历史</span>
-                <Badge variant="outline" className="text-[10px] h-5">
-                  从第 2 期起 · 共 {historyRows.length} 期已结算
-                </Badge>
-              </div>
-            </div>
+          {/* 对账全景 */}
+          {order && (() => {
+            // 单期金额（用于估算未对账金额）：分成业务按比例换算月度；其它按月单价
+            const perPeriodAmount =
+              businessType === "物资运营分成"
+                ? Math.round(order.monthlyAmount * (sharePct / 100))
+                : order.monthlyAmount
 
-            <div className="rounded-md border overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[80px]">期数</TableHead>
-                    <TableHead className="w-[140px]">对账单号</TableHead>
-                    <TableHead>对账期间</TableHead>
-                    <TableHead className="text-right">对账金额(元)</TableHead>
-                    <TableHead className="w-[120px]">结算日期</TableHead>
-                    <TableHead className="w-[90px]">状态</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {historyRows.length === 0 ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={6}
-                        className="py-6 text-center text-xs text-muted-foreground"
-                      >
-                        暂无历史对账记录
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    historyRows.map((r) => (
-                      <TableRow key={r.periodIdx} className="text-sm">
-                        <TableCell>
-                          <Badge variant="outline" className="text-[10px] h-5">
-                            第 {r.periodIdx} 期
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="font-mono text-xs">{r.billNo}</TableCell>
-                        <TableCell className="text-muted-foreground">{r.ym}</TableCell>
-                        <TableCell className="text-right font-mono tabular-nums">
-                          {fmt(r.amount)}
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          {r.confirmDate}
-                        </TableCell>
-                        <TableCell>
-                          <span className="inline-flex items-center gap-1 text-xs text-emerald-700">
-                            <CheckCircle2 className="w-3 h-3" />
-                            {r.status}
-                          </span>
-                        </TableCell>
+            const settledCount = historyRows.length // 已对账期数（第 2 期起的历史）
+            const settledAmount = historyRows.reduce((s, r) => s + r.amount, 0)
+            const totalPeriods = order.totalMonths
+            const unsettledCount = Math.max(0, totalPeriods - settledCount)
+            // 未对账金额：剩余期数 × 单期金额
+            const unsettledAmount = unsettledCount * perPeriodAmount
+            // 累计对账金额（含本期，若本期生成后将加入）
+            const totalAmountAll = totalPeriods * perPeriodAmount
+            const settledPct = Math.min(
+              100,
+              Math.round((settledAmount / Math.max(1, totalAmountAll)) * 100),
+            )
+
+            // 待对账明细：从"本期"开始，最多展示 6 行
+            const pendingRows = Array.from(
+              { length: Math.min(6, unsettledCount) },
+              (_, idx) => {
+                const periodIdx = settledCount + 2 + idx // 紧接历史末尾的下一期
+                const ym = addMonths(order.startDate, periodIdx - 1)
+                return {
+                  periodIdx,
+                  ym,
+                  amount: perPeriodAmount,
+                  isCurrent: idx === 0,
+                }
+              },
+            )
+
+            return (
+              <div className="rounded-lg border p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <History className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium">对账全景</span>
+                    <Badge variant="outline" className="text-[10px] h-5">
+                      共 {totalPeriods} 期 · 已结算 {settledCount} 期 · 待对账{" "}
+                      {unsettledCount} 期
+                    </Badge>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    累计进度{" "}
+                    <span className="text-foreground font-semibold">{settledPct}%</span>
+                  </div>
+                </div>
+
+                {/* 进度条 */}
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500 transition-all"
+                    style={{ width: `${settledPct}%` }}
+                  />
+                </div>
+
+                {/* 4 张统计卡片 */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  <StatBox
+                    label="已对账金额"
+                    value={`¥ ${fmt(settledAmount)}`}
+                    sub={`${settledCount} 期 / ${totalPeriods} 期`}
+                    tone="success"
+                  />
+                  <StatBox
+                    label="未对账金额"
+                    value={`¥ ${fmt(unsettledAmount)}`}
+                    sub={`${unsettledCount} 期待对账`}
+                    tone="warning"
+                  />
+                  <StatBox
+                    label="累计对账金额"
+                    value={`¥ ${fmt(totalAmountAll)}`}
+                    sub={`合同周期总额`}
+                    tone="primary"
+                  />
+                  <StatBox
+                    label="单期金额"
+                    value={`¥ ${fmt(perPeriodAmount)}`}
+                    sub={
+                      businessType === "物资运营分成"
+                        ? `按 ${sharePct}% 分成`
+                        : "按月对账"
+                    }
+                    tone="default"
+                  />
+                </div>
+
+                {/* 历史 + 未对账 合并表 */}
+                <div className="rounded-md border overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[80px]">期数</TableHead>
+                        <TableHead className="w-[150px]">对账单号</TableHead>
+                        <TableHead>对账期间</TableHead>
+                        <TableHead className="text-right">对账金额(元)</TableHead>
+                        <TableHead className="w-[130px]">结算/计划日期</TableHead>
+                        <TableHead className="w-[100px]">状态</TableHead>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
+                    </TableHeader>
+                    <TableBody>
+                      {/* 已结算的历史记录 */}
+                      {historyRows.map((r) => (
+                        <TableRow key={`h-${r.periodIdx}`} className="text-sm">
+                          <TableCell>
+                            <Badge variant="outline" className="text-[10px] h-5">
+                              第 {r.periodIdx} 期
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="font-mono text-xs">{r.billNo}</TableCell>
+                          <TableCell className="text-muted-foreground">{r.ym}</TableCell>
+                          <TableCell className="text-right font-mono tabular-nums">
+                            {fmt(r.amount)}
+                          </TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            {r.confirmDate}
+                          </TableCell>
+                          <TableCell>
+                            <span className="inline-flex items-center gap-1 text-xs text-emerald-700">
+                              <CheckCircle2 className="w-3 h-3" />
+                              已结算
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+
+                      {/* 待对账期数（含本期） */}
+                      {pendingRows.map((r) => (
+                        <TableRow
+                          key={`p-${r.periodIdx}`}
+                          className={`text-sm ${
+                            r.isCurrent ? "bg-primary/5" : ""
+                          }`}
+                        >
+                          <TableCell>
+                            <Badge
+                              variant="outline"
+                              className={`text-[10px] h-5 ${
+                                r.isCurrent
+                                  ? "bg-primary/10 text-primary border-primary/30"
+                                  : ""
+                              }`}
+                            >
+                              第 {r.periodIdx} 期
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="font-mono text-xs text-muted-foreground">
+                            {r.isCurrent ? "本期待生成" : "—"}
+                          </TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {r.ym}
+                            {r.isCurrent && (
+                              <Badge
+                                variant="outline"
+                                className="ml-2 text-[10px] h-5 bg-primary text-primary-foreground border-primary"
+                              >
+                                本期
+                              </Badge>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right font-mono tabular-nums text-muted-foreground">
+                            {fmt(r.amount)}
+                          </TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            {r.ym}-15（预计）
+                          </TableCell>
+                          <TableCell>
+                            <span
+                              className={`inline-flex items-center gap-1 text-xs ${
+                                r.isCurrent ? "text-primary" : "text-amber-700"
+                              }`}
+                            >
+                              <Calendar className="w-3 h-3" />
+                              {r.isCurrent ? "本期待对账" : "待对账"}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+
+                      {historyRows.length === 0 && pendingRows.length === 0 && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={6}
+                            className="py-6 text-center text-xs text-muted-foreground"
+                          >
+                            暂无对账记录
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                {unsettledCount > 6 && (
+                  <div className="text-[11px] text-muted-foreground text-center">
+                    后续还有 {unsettledCount - 6} 期未列出 · 将按周期自动生成
+                  </div>
+                )}
+              </div>
+            )
+          })()}
 
           {/* 其他信息 */}
           <div className="rounded-lg border p-4 space-y-3">
@@ -620,6 +769,46 @@ function InfoLine({
       >
         {value}
       </div>
+    </div>
+  )
+}
+
+function StatBox({
+  label,
+  value,
+  sub,
+  tone,
+}: {
+  label: string
+  value: string
+  sub?: string
+  tone: "success" | "warning" | "primary" | "default"
+}) {
+  const toneCls =
+    tone === "success"
+      ? "bg-emerald-50 border-emerald-200"
+      : tone === "warning"
+        ? "bg-amber-50 border-amber-200"
+        : tone === "primary"
+          ? "bg-primary/5 border-primary/30"
+          : "bg-muted/40 border-border"
+  const valueToneCls =
+    tone === "success"
+      ? "text-emerald-700"
+      : tone === "warning"
+        ? "text-amber-700"
+        : tone === "primary"
+          ? "text-primary"
+          : "text-foreground"
+  return (
+    <div className={`rounded-md border px-3 py-2 ${toneCls}`}>
+      <div className="text-[11px] text-muted-foreground mb-0.5">{label}</div>
+      <div
+        className={`text-base font-semibold tabular-nums leading-tight ${valueToneCls}`}
+      >
+        {value}
+      </div>
+      {sub && <div className="text-[10px] text-muted-foreground mt-0.5">{sub}</div>}
     </div>
   )
 }
