@@ -209,58 +209,92 @@ export function GenerateReconciliationDialog({
     [orderId, orders],
   )
 
-  // 历史期数：从第 2 期开始展示已完成对账（最多 6 条），本期是 currentPeriodIndex
+  // 周期换算：1 期相当于多少个月
+  const monthsPerPeriod = useMemo(() => {
+    if (!order) return 1
+    if (cycle === "按月") return 1
+    if (cycle === "按年") return 12
+    return order.totalMonths // 一次性 = 整个合同期
+  }, [cycle, order])
+
+  // 合同共有多少期（按当前 cycle 计算）
+  const totalPeriods = useMemo(() => {
+    if (!order) return 0
+    if (cycle === "按月") return order.totalMonths
+    if (cycle === "按年") return Math.max(1, Math.ceil(order.totalMonths / 12))
+    return 1
+  }, [cycle, order])
+
+  // 单期金额（含分成换算）：1 期对应 monthsPerPeriod 个月的金额
+  const perPeriodAmount = useMemo(() => {
+    if (!order) return 0
+    const base = order.monthlyAmount * monthsPerPeriod
+    return businessType === "物资运营分成"
+      ? Math.round(base * (sharePct / 100))
+      : base
+  }, [order, monthsPerPeriod, businessType, sharePct])
+
+  // 第 periodIdx 期的"对账期间"显示文本
+  const periodLabelOf = (periodIdx: number): string => {
+    if (!order) return ""
+    if (cycle === "按月") return addMonths(order.startDate, periodIdx - 1)
+    if (cycle === "按年") {
+      const startMonths = (periodIdx - 1) * 12
+      const startYM = addMonths(order.startDate, startMonths)
+      const startY = startYM.split("-")[0]
+      return `${startY} 年度`
+    }
+    return `${order.startDate} 至 ${addMonths(order.startDate, order.totalMonths - 1)}`
+  }
+
+  // 第 periodIdx 期的预计结算日：取期间末月的中旬
+  const expectedSettleDate = (periodIdx: number): string => {
+    if (!order) return ""
+    const endMonthIdx = periodIdx * monthsPerPeriod - 1
+    const endYM = addMonths(order.startDate, Math.min(endMonthIdx, order.totalMonths - 1))
+    return `${endYM}-15`
+  }
+
+  // 历史期数：从第 2 期开始（即合同已开始至少 2 个周期才有历史），最多 6 条
   const historyRows = useMemo(() => {
-    if (!order) return []
-    const seed = pseudoHash(order.id)
-    // 假设当前已对账到第 N 期（N 至少为 2，便于展示"从 2 期开始"）
-    const completed = Math.min(6, Math.max(2, (seed % 5) + 2))
-    return Array.from({ length: completed - 1 }, (_, idx) => {
+    if (!order || totalPeriods < 2) return []
+    const seed = pseudoHash(`${order.id}-${cycle}`)
+    // 已完成期数：上限 6 条、不超过总期数-1（至少留 1 期未对账）
+    const maxHist = Math.min(6, totalPeriods - 1)
+    if (maxHist < 1) return []
+    const completed = Math.max(1, (seed % maxHist) + 1)
+    return Array.from({ length: completed }, (_, idx) => {
       const periodIdx = idx + 2 // 从第 2 期开始
-      const ym = addMonths(order.startDate, periodIdx - 1)
-      const billNo = `DZ-${ym.replace("-", "")}-${String(
+      const label = periodLabelOf(periodIdx)
+      const endYM = addMonths(
+        order.startDate,
+        Math.min(periodIdx * monthsPerPeriod - 1, order.totalMonths - 1),
+      )
+      const billNo = `DZ-${endYM.replace("-", "")}-${String(
         (seed + periodIdx * 31) % 1000,
       ).padStart(3, "0")}`
-      const confirmDay = (seed + periodIdx) % 10 + 5
+      const confirmDay = ((seed + periodIdx) % 10) + 5
       return {
         periodIdx,
-        ym,
+        ym: label,
         billNo,
-        amount: order.monthlyAmount,
-        confirmDate: `${ym}-${String(confirmDay).padStart(2, "0")}`,
+        amount: perPeriodAmount,
+        confirmDate: `${endYM}-${String(confirmDay).padStart(2, "0")}`,
         status: "已结算" as const,
       }
     })
-  }, [order])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order, cycle, totalPeriods, perPeriodAmount, monthsPerPeriod])
 
-  // 本期对账（从第 2 期之后的下一期开始）
-  const currentPeriodIdx = historyRows.length + 2
-  const currentPeriodYM = order ? addMonths(order.startDate, currentPeriodIdx - 1) : ""
+  // 本期：紧接历史末尾的下一期
+  const currentPeriodIdx = historyRows.length + 2 > totalPeriods ? totalPeriods : historyRows.length + 2
+  const currentPeriodYM = periodLabelOf(currentPeriodIdx)
 
-  // 计算本期金额
-  const baseAmount = order?.monthlyAmount ?? 0
-  const currentAmount = useMemo(() => {
-    if (!order) return 0
-    if (businessType === "物资运营分成") {
-      // 分成金额 = 月运营所得 × sharePct%
-      const months = cycle === "按月" ? 1 : cycle === "按年" ? 12 : order.totalMonths
-      return Math.round(baseAmount * months * (sharePct / 100))
-    }
-    if (cycle === "按月") return baseAmount
-    if (cycle === "按年") return baseAmount * 12
-    return baseAmount * order.totalMonths
-  }, [baseAmount, cycle, businessType, sharePct, order])
+  // 本期金额 = 单期金额（与对账全景中"单期金额"完全一致）
+  const currentAmount = perPeriodAmount
 
-  // 周期标签
-  const cycleLabel = useMemo(() => {
-    if (!order) return ""
-    if (cycle === "按月") return currentPeriodYM
-    if (cycle === "按年") {
-      const [y] = currentPeriodYM.split("-")
-      return `${y} 年度`
-    }
-    return `${order.startDate} 至 ${addMonths(order.startDate, order.totalMonths - 1)} (一次性)`
-  }, [cycle, currentPeriodYM, order])
+  // 周期标签：直接复用周期感知的 periodLabelOf
+  const cycleLabel = currentPeriodYM
 
   const Icon = businessIconMap[businessType]
 
@@ -348,22 +382,17 @@ export function GenerateReconciliationDialog({
                     {businessType}
                   </Badge>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 text-xs">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2 text-xs">
                   <InfoLine label="订单号" value={order.id} mono />
                   <InfoLine label="合作方" value={order.partner} />
                   <InfoLine
-                    label={businessType === "物资运营分成" ? "月运营所得" : "月单价"}
-                    value={`¥ ${fmt(order.monthlyAmount)}`}
-                    accent
-                  />
-                  <InfoLine
-                    label={businessType === "物资运营分成" ? "总运营所得" : "总金额"}
+                    label={businessType === "物资运营分成" ? "总运营所得" : "合同总金额"}
                     value={`¥ ${fmt(order.monthlyAmount * order.totalMonths)}`}
                     accent
                   />
                   <InfoLine
-                    label="租期 / 期数"
-                    value={`${order.startDate} 起 · ${order.totalMonths} 期`}
+                    label="租期"
+                    value={`${order.startDate} 起 · 共 ${order.totalMonths} 个月`}
                   />
                 </div>
               </div>
@@ -496,19 +525,12 @@ export function GenerateReconciliationDialog({
 
           {/* 对账全景 */}
           {order && (() => {
-            // 单期金额（用于估算未对账金额）：分成业务按比例换算月度；其它按月单价
-            const perPeriodAmount =
-              businessType === "物资运营分成"
-                ? Math.round(order.monthlyAmount * (sharePct / 100))
-                : order.monthlyAmount
-
             const settledCount = historyRows.length // 已对账期数（第 2 期起的历史）
             const settledAmount = historyRows.reduce((s, r) => s + r.amount, 0)
-            const totalPeriods = order.totalMonths
             const unsettledCount = Math.max(0, totalPeriods - settledCount)
             // 未对账金额：剩余期数 × 单期金额
             const unsettledAmount = unsettledCount * perPeriodAmount
-            // 累计对账金额（含本期，若本期生成后将加入）
+            // 累计对账金额（合同周期总额，按当前对账周期换算）
             const totalAmountAll = totalPeriods * perPeriodAmount
             const settledPct = Math.min(
               100,
@@ -520,15 +542,28 @@ export function GenerateReconciliationDialog({
               { length: Math.min(6, unsettledCount) },
               (_, idx) => {
                 const periodIdx = settledCount + 2 + idx // 紧接历史末尾的下一期
-                const ym = addMonths(order.startDate, periodIdx - 1)
                 return {
                   periodIdx,
-                  ym,
+                  ym: periodLabelOf(periodIdx),
+                  expectedDate: expectedSettleDate(periodIdx),
                   amount: perPeriodAmount,
                   isCurrent: idx === 0,
                 }
               },
             )
+
+            // 周期单位名称
+            const cycleUnit = cycle === "按月" ? "月" : cycle === "按年" ? "年" : "次"
+            const perPeriodLabel =
+              cycle === "按月" ? "月对账金额" : cycle === "按年" ? "年对账金额" : "一次性对账金额"
+            const perPeriodSub =
+              businessType === "物资运营分成"
+                ? `按 ${sharePct}% 分成`
+                : cycle === "按月"
+                  ? "每月 1 次"
+                  : cycle === "按年"
+                    ? "每年 1 次"
+                    : "全周期 1 次"
 
             return (
               <div className="rounded-lg border p-4 space-y-4">
@@ -536,9 +571,15 @@ export function GenerateReconciliationDialog({
                   <div className="flex items-center gap-2">
                     <History className="w-4 h-4 text-primary" />
                     <span className="text-sm font-medium">对账全景</span>
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] h-5 bg-primary/5 text-primary border-primary/30"
+                    >
+                      {cycle}对账
+                    </Badge>
                     <Badge variant="outline" className="text-[10px] h-5">
-                      共 {totalPeriods} 期 · 已结算 {settledCount} 期 · 待对账{" "}
-                      {unsettledCount} 期
+                      共 {totalPeriods} {cycleUnit} · 已结算 {settledCount} {cycleUnit} ·
+                      待对账 {unsettledCount} {cycleUnit}
                     </Badge>
                   </div>
                   <div className="text-xs text-muted-foreground">
@@ -560,29 +601,25 @@ export function GenerateReconciliationDialog({
                   <StatBox
                     label="已对账金额"
                     value={`¥ ${fmt(settledAmount)}`}
-                    sub={`${settledCount} 期 / ${totalPeriods} 期`}
+                    sub={`${settledCount} ${cycleUnit} / ${totalPeriods} ${cycleUnit}`}
                     tone="success"
                   />
                   <StatBox
                     label="未对账金额"
                     value={`¥ ${fmt(unsettledAmount)}`}
-                    sub={`${unsettledCount} 期待对账`}
+                    sub={`${unsettledCount} ${cycleUnit}待对账`}
                     tone="warning"
                   />
                   <StatBox
                     label="累计对账金额"
                     value={`¥ ${fmt(totalAmountAll)}`}
-                    sub={`合同周期总额`}
+                    sub="合同周期总额"
                     tone="primary"
                   />
                   <StatBox
-                    label="单期金额"
+                    label={perPeriodLabel}
                     value={`¥ ${fmt(perPeriodAmount)}`}
-                    sub={
-                      businessType === "物资运营分成"
-                        ? `按 ${sharePct}% 分成`
-                        : "按月对账"
-                    }
+                    sub={perPeriodSub}
                     tone="default"
                   />
                 </div>
@@ -664,7 +701,7 @@ export function GenerateReconciliationDialog({
                             {fmt(r.amount)}
                           </TableCell>
                           <TableCell className="text-xs text-muted-foreground">
-                            {r.ym}-15（预计）
+                            {r.expectedDate}（预计）
                           </TableCell>
                           <TableCell>
                             <span
@@ -695,7 +732,7 @@ export function GenerateReconciliationDialog({
 
                 {unsettledCount > 6 && (
                   <div className="text-[11px] text-muted-foreground text-center">
-                    后续还有 {unsettledCount - 6} 期未列出 · 将按周期自动生成
+                    后续还有 {unsettledCount - 6} {cycleUnit}未列出 · 将按{cycle}周期自动生成
                   </div>
                 )}
               </div>
