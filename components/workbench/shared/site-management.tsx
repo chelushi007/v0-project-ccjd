@@ -37,8 +37,8 @@ import {
 const mockSites = [
   {
     id: "ZD-001",
-    name: "广州南站仓储站点",
-    address: "广州市番禺区南站北路168号",
+    name: "中铁建广州南沙综合仓储基地",
+    address: "广东省广州市南沙区进港大道15号铁建仓储园",
     area: 15000,
     usedArea: 12500,
     warehouseCount: 8,
@@ -50,8 +50,8 @@ const mockSites = [
   },
   {
     id: "ZD-002",
-    name: "深圳北站仓储站点",
-    address: "深圳市龙华区民治街道北站社区",
+    name: "中铁建深圳前海智慧仓储基地",
+    address: "广东省深圳市南山区前海铁建大厦旁",
     area: 12000,
     usedArea: 9800,
     warehouseCount: 6,
@@ -63,8 +63,8 @@ const mockSites = [
   },
   {
     id: "ZD-003",
-    name: "东莞虎门仓储站点",
-    address: "东莞市虎门镇铁路货运中心",
+    name: "中铁建东莞虎门港务仓储基地",
+    address: "广东省东莞市虎门镇铁路货运中心",
     area: 8000,
     usedArea: 5200,
     warehouseCount: 4,
@@ -76,8 +76,8 @@ const mockSites = [
   },
   {
     id: "ZD-004",
-    name: "佛山西站仓储站点",
-    address: "佛山市南海区狮山镇西站大道",
+    name: "中铁十六局佛山顺德钢构仓储基地",
+    address: "广东省佛山市南海区狮山镇西站大道",
     area: 10000,
     usedArea: 3500,
     warehouseCount: 5,
@@ -85,7 +85,7 @@ const mockSites = [
     status: "筹建中",
     manager: "赵经理",
     phone: "136****6666",
-    createDate: "2024-01-05",
+    createDate: "2026-01-05",
   },
 ]
 

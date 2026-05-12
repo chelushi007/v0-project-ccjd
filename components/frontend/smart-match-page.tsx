@@ -25,8 +25,8 @@ interface SmartMatchPageProps {
 const warehouseResults = [
   {
     id: 1,
-    name: "中铁物资广州综合仓储中心",
-    location: "广东省广州市番禺区",
+    name: "中铁建广州南沙综合仓储基地",
+    location: "广东省广州市南沙区",
     type: "综合仓储",
     area: "15000㎡可租",
     matchScore: 98,
@@ -37,7 +37,7 @@ const warehouseResults = [
   },
   {
     id: 2,
-    name: "深圳前海智慧物流园",
+    name: "中铁建深圳前海智慧仓储基地",
     location: "广东省深圳市南山区",
     type: "智慧仓储",
     area: "8000㎡可租",
@@ -49,7 +49,7 @@ const warehouseResults = [
   },
   {
     id: 3,
-    name: "东莞虎门港务仓储基地",
+    name: "中铁建东莞虎门港务仓储基地",
     location: "广东省东莞市虎门镇",
     type: "港口仓储",
     area: "25000㎡可租",
@@ -61,7 +61,7 @@ const warehouseResults = [
   },
   {
     id: 4,
-    name: "佛山顺德钢材专用仓库",
+    name: "中铁十六局佛山顺德钢构仓储基地",
     location: "广东省佛山市顺德区",
     type: "专业仓储",
     area: "6000㎡可租",
@@ -78,7 +78,7 @@ const materialResults = [
   {
     id: 1,
     name: "Q235B热轧H型钢",
-    provider: "中铁物资华南公司",
+    provider: "中铁十四局集团广州分公司",
     location: "广东省广州市黄埔区",
     materialType: "钢材",
     quantity: "500吨可租",
@@ -90,7 +90,7 @@ const materialResults = [
   {
     id: 2,
     name: "建筑钢管脚手架",
-    provider: "深圳前海物资站",
+    provider: "中铁建物资华南专业运营有限公司",
     location: "广东省深圳市宝安区",
     materialType: "钢材",
     quantity: "2000套可租",
@@ -102,7 +102,7 @@ const materialResults = [
   {
     id: 3,
     name: "工字钢梁",
-    provider: "东莞虎门专运站",
+    provider: "中铁十六局集团华南分公司",
     location: "广东省东莞市虎门镇",
     materialType: "钢材",
     quantity: "300吨可租",
@@ -114,7 +114,7 @@ const materialResults = [
   {
     id: 4,
     name: "塔吊设备",
-    provider: "佛山顺德机械租赁",
+    provider: "中铁二十局集团华南分公司",
     location: "广东省佛山市顺德区",
     materialType: "机械设备",
     quantity: "5台可租",

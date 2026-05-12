@@ -8,8 +8,8 @@ import { Badge } from "@/components/ui/badge"
 const recommendedWarehouses = [
   {
     id: 1,
-    name: "中铁物资广州综合仓储中心",
-    location: "广东省广州市番禺区",
+    name: "中铁建广州南沙综合仓储基地",
+    location: "广东省广州市南沙区",
     type: "综合仓储",
     totalArea: "50000㎡",
     availableArea: "15000㎡",
@@ -22,7 +22,7 @@ const recommendedWarehouses = [
   },
   {
     id: 2,
-    name: "深圳前海智慧物流园",
+    name: "中铁建深圳前海智慧仓储基地",
     location: "广东省深圳市南山区",
     type: "智慧仓储",
     totalArea: "30000㎡",
@@ -36,7 +36,7 @@ const recommendedWarehouses = [
   },
   {
     id: 3,
-    name: "东莞虎门港务仓储基地",
+    name: "中铁建东莞虎门港务仓储基地",
     location: "广东省东莞市虎门镇",
     type: "港口仓储",
     totalArea: "80000㎡",
@@ -50,7 +50,7 @@ const recommendedWarehouses = [
   },
   {
     id: 4,
-    name: "佛山顺德钢材专用仓库",
+    name: "中铁十六局佛山顺德钢构仓储基地",
     location: "广东省佛山市顺德区",
     type: "专业仓储",
     totalArea: "20000㎡",

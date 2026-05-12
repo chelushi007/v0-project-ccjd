@@ -40,7 +40,7 @@ const materialLibrary = [
     unit: "吨",
     location: "广东省广州市黄埔区",
     condition: "95成新",
-    owner: "中铁四局广州分公司",
+    owner: "中铁十一局集团广州分公司",
   },
   {
     id: "M002",
@@ -51,7 +51,7 @@ const materialLibrary = [
     unit: "套",
     location: "广东省深圳市宝安区",
     condition: "90成新",
-    owner: "中铁八局深圳项目部",
+    owner: "中铁十四局深圳地铁13号线项目部",
   },
   {
     id: "M003",
@@ -62,7 +62,7 @@ const materialLibrary = [
     unit: "吨",
     location: "广东省东莞市虎门镇",
     condition: "88成新",
-    owner: "中铁物资华南公司",
+    owner: "中铁十六局集团华南分公司",
   },
   {
     id: "M004",
@@ -73,7 +73,7 @@ const materialLibrary = [
     unit: "台",
     location: "广东省佛山市顺德区",
     condition: "良好",
-    owner: "中铁建工集团",
+    owner: "中铁建工集团广州分公司",
   },
   {
     id: "M005",
@@ -84,7 +84,7 @@ const materialLibrary = [
     unit: "环",
     location: "广东省广州市番禺区",
     condition: "95成新",
-    owner: "中铁隧道局",
+    owner: "中铁隧道局集团广州分公司",
   },
   {
     id: "M006",
@@ -95,7 +95,7 @@ const materialLibrary = [
     unit: "张",
     location: "广东省惠州市惠城区",
     condition: "85成新",
-    owner: "中铁十四局",
+    owner: "中铁十四局集团广州分公司",
   },
 ]
 

@@ -131,7 +131,7 @@ export function AppSidebar({
         {!collapsed && (
           <div className="flex flex-col">
             <span className="font-semibold text-sm">仓储基地</span>
-            <span className="text-xs text-sidebar-foreground/60">循环物资平台</span>
+            <span className="text-xs text-sidebar-foreground/60">中铁建循环物资平台</span>
           </div>
         )}
       </div>
@@ -218,7 +218,7 @@ export function AppSidebar({
           ) : (
             <>
               <ChevronLeft className="w-4 h-4 mr-2" />
-              <span>收起菜单</span>
+              <span>收起���单</span>
             </>
           )}
         </Button>

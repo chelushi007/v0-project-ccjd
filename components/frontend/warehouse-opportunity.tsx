@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 const opportunities = [
   {
     id: 1,
-    name: "深圳龙岗5000m²标准仓库",
+    name: "中铁十四局深圳龙岗标准仓储基地",
     location: "广东省深圳市龙岗区",
     type: "综合仓储",
     area: "5000",
@@ -22,7 +22,7 @@ const opportunities = [
   },
   {
     id: 2,
-    name: "广州黄埔恒温仓储中心",
+    name: "中铁建广州黄埔恒温仓储中心",
     location: "广东省广州市黄埔区",
     type: "恒温仓储",
     area: "3000",
@@ -36,7 +36,7 @@ const opportunities = [
   },
   {
     id: 3,
-    name: "东莞虎门大型堆场",
+    name: "中铁建东莞虎门大型物资堆场",
     location: "广东省东莞市虎门镇",
     type: "露天堆场",
     area: "15000",
@@ -50,7 +50,7 @@ const opportunities = [
   },
   {
     id: 4,
-    name: "佛山顺德钢材专用仓库",
+    name: "中铁十六局佛山顺德钢构仓储基地",
     location: "广东省佛山市顺德区",
     type: "专业仓储",
     area: "8000",

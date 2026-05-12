@@ -52,11 +52,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 const warehouseData = [
   {
     id: "WH001",
-    name: "广州番禺仓储中心",
+    name: "中铁建广州南沙综合仓储基地",
     type: "综合仓库",
     area: 15000,
     availableArea: 8000,
-    location: "广东省广州市番禺区",
+    location: "广东省广州市南沙区",
     status: "active",
     publishStatus: "published",
     createTime: "2023-06-15",
@@ -65,7 +65,7 @@ const warehouseData = [
   },
   {
     id: "WH002",
-    name: "深圳龙岗物流基地",
+    name: "中铁建深圳龙岗物流基地",
     type: "物流仓库",
     area: 25000,
     availableArea: 12000,
@@ -78,7 +78,7 @@ const warehouseData = [
   },
   {
     id: "WH003",
-    name: "东莞塘厦仓储站",
+    name: "中铁建东莞塘厦仓储站点",
     type: "普通仓库",
     area: 8000,
     availableArea: 3000,
@@ -91,7 +91,7 @@ const warehouseData = [
   },
   {
     id: "WH004",
-    name: "佛山南海冷链仓库",
+    name: "中铁建佛山南海冷链仓储基地",
     type: "冷链仓库",
     area: 6000,
     availableArea: 2500,
@@ -104,14 +104,14 @@ const warehouseData = [
   },
   {
     id: "WH005",
-    name: "惠州大亚湾仓储中心",
+    name: "中铁二十二局惠州大亚湾仓储基地",
     type: "综合仓库",
     area: 20000,
     availableArea: 15000,
     location: "广东省惠州市大亚湾区",
     status: "active",
     publishStatus: "published",
-    createTime: "2024-01-08",
+    createTime: "2026-01-08",
     unitPrice: 32,
     facilities: ["叉车", "货架", "监控", "消防"],
   },

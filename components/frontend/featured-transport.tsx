@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 const transportUnits = [
   {
     id: 1,
-    name: "中铁物资华南公司",
+    name: "中铁建物资华南专业运营有限公司",
     location: "广东省广州市",
     rating: 4.9,
     completedOrders: 1256,
@@ -19,7 +19,7 @@ const transportUnits = [
   },
   {
     id: 2,
-    name: "深圳前海物资运营中心",
+    name: "中铁建物资深圳前海运营中心",
     location: "广东省深圳市",
     rating: 4.8,
     completedOrders: 856,
@@ -30,7 +30,7 @@ const transportUnits = [
   },
   {
     id: 3,
-    name: "东莞虎门物资专运公司",
+    name: "中铁十四局东莞物资专运公司",
     location: "广东省东莞市",
     rating: 4.7,
     completedOrders: 623,
@@ -41,7 +41,7 @@ const transportUnits = [
   },
   {
     id: 4,
-    name: "佛山顺德物资管理中心",
+    name: "中铁十六局佛山物资管理中心",
     location: "广东省佛山市",
     rating: 4.6,
     completedOrders: 412,

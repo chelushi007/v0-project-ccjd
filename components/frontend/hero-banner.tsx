@@ -9,7 +9,7 @@ const bannerSlides = [
   {
     id: 1,
     title: "智慧仓储 · 资源共享",
-    subtitle: "打造中铁物资循环物资平台仓储基地",
+    subtitle: "打造中国铁建循环物资共享平台",
     description: "整合全国仓储资源，提供一站式仓储出租、委托运营、智能匹配服务",
     image: "linear-gradient(135deg, oklch(0.45 0.15 250) 0%, oklch(0.35 0.12 270) 100%)",
   },

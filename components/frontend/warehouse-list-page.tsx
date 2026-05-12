@@ -21,9 +21,9 @@ interface WarehouseListPageProps {
 const warehouseData = [
   {
     id: 1,
-    name: "中铁物资广州综合仓储中心",
+    name: "中铁建广州南沙综合仓储基地",
     type: "综合仓储",
-    location: "广东省广州市番禺区",
+    location: "广东省广州市南沙区",
     rentType: "委托出租",
     totalArea: "50000",
     rentableArea: "15000",
@@ -36,7 +36,7 @@ const warehouseData = [
   },
   {
     id: 2,
-    name: "深圳前海智慧物流园",
+    name: "中铁建深圳前海智慧仓储基地",
     type: "智慧仓储",
     location: "广东省深圳市南山区",
     rentType: "自主出租",
@@ -51,7 +51,7 @@ const warehouseData = [
   },
   {
     id: 3,
-    name: "东莞虎门港务仓储基地",
+    name: "中铁建东莞虎门港务仓储基地",
     type: "港口仓储",
     location: "广东省东莞市虎门镇",
     rentType: "委托出租",
@@ -66,7 +66,7 @@ const warehouseData = [
   },
   {
     id: 4,
-    name: "佛山顺德钢材专用仓库",
+    name: "中铁十六局佛山顺德钢构仓储基地",
     type: "专业仓储",
     location: "广东省佛山市顺德区",
     rentType: "自主出租",
@@ -81,7 +81,7 @@ const warehouseData = [
   },
   {
     id: 5,
-    name: "惠州大亚湾石化仓储中心",
+    name: "中铁二十二局惠州大亚湾石化仓储基地",
     type: "危化品仓储",
     location: "广东省惠州市大亚湾区",
     rentType: "委托出租",
@@ -96,7 +96,7 @@ const warehouseData = [
   },
   {
     id: 6,
-    name: "中山火炬开发区物流园",
+    name: "中铁二十四局中山火炬物资仓储基地",
     type: "综合仓储",
     location: "广东省中山市火炬开发区",
     rentType: "自主出租",

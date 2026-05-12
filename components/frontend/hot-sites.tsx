@@ -8,8 +8,8 @@ import { Badge } from "@/components/ui/badge"
 const hotSites = [
   {
     id: 1,
-    name: "广州南沙综合仓储站点",
-    company: "中铁物资华南公司",
+    name: "中铁建广州南沙综合仓储基地",
+    company: "中铁建物资华南仓储有限公司",
     location: "广东省广州市南沙区",
     warehouseCount: 12,
     totalArea: "150000",
@@ -20,8 +20,8 @@ const hotSites = [
   },
   {
     id: 2,
-    name: "深圳前海物流枢纽站点",
-    company: "深圳前海物流有限公司",
+    name: "中铁建深圳前海智慧仓储基地",
+    company: "中铁建物资华南专业运营有限公司",
     location: "广东省深圳市南山区",
     warehouseCount: 8,
     totalArea: "80000",
@@ -32,8 +32,8 @@ const hotSites = [
   },
   {
     id: 3,
-    name: "东莞虎门港务站点",
-    company: "东莞港务物流集团",
+    name: "中铁建东莞虎门港务仓储基地",
+    company: "中铁十四局集团广州分公司",
     location: "广东省东莞市虎门镇",
     warehouseCount: 15,
     totalArea: "200000",
@@ -44,8 +44,8 @@ const hotSites = [
   },
   {
     id: 4,
-    name: "佛山顺德制造业站点",
-    company: "佛山顺德仓储服务中心",
+    name: "中铁十六局佛山顺德钢构仓储基地",
+    company: "中铁十六局集团华南分公司",
     location: "广东省佛山市顺德区",
     warehouseCount: 6,
     totalArea: "45000",
