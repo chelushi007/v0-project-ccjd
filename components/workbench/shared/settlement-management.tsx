@@ -43,7 +43,18 @@ import {
   Building2,
   RefreshCw,
   Banknote,
+  XCircle,
+  Ban,
+  User,
+  CalendarClock,
 } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
 
 interface SettlementManagementProps {
   subTab?: string
@@ -83,10 +94,14 @@ const mockReconciliations = [
     type: "物资运营分成",
     period: "2026年3月",
     amount: 85000,
-    confirmedAmount: 82000,
-    status: "有差异",
+    confirmedAmount: 0,
+    status: "被驳回",
     createDate: "2026-04-01",
     confirmDate: "",
+    rejectReason:
+      "对账金额中包含 2026年2月已结算的 ¥3,000 服务费，存在重复计算；另：本期物资运营分成比例应按 6:4 而非 7:3 核算，请重新核对后再发起对账。",
+    rejectedBy: "李建国（中铁建东莞虎门港务仓储基地 · 财务部）",
+    rejectedAt: "2026-04-02 14:25:36",
   },
   {
     id: "DZ-2026-004",
@@ -111,6 +126,22 @@ const mockReconciliations = [
     status: "待确认",
     createDate: "2026-05-01",
     confirmDate: "",
+  },
+  {
+    id: "DZ-2026-006",
+    orderId: "CCJY20260315008",
+    partner: "中铁十五局集团第三工程有限公司",
+    type: "仓储租赁",
+    period: "2026年3月",
+    amount: 64000,
+    confirmedAmount: 0,
+    status: "被驳回",
+    createDate: "2026-04-01",
+    confirmDate: "",
+    rejectReason:
+      "3 月 15 日至 22 日期间仓库电力中断，物资入库被迫延迟，按合同第 6.2 条该期间租金应按 70% 计费；请按 ¥44,800 重新出具对账单。",
+    rejectedBy: "王志强（中铁十五局集团 · 项目部）",
+    rejectedAt: "2026-04-03 09:42:18",
   },
 ]
 
@@ -338,7 +369,7 @@ const reconciliationStatusConfig: Record<
 > = {
   已确认: { label: "已确认", variant: "default", icon: CheckCircle },
   待确认: { label: "待确认", variant: "secondary", icon: Clock },
-  有差异: { label: "有差异", variant: "destructive", icon: AlertCircle },
+  被驳回: { label: "被驳回", variant: "destructive", icon: XCircle },
   已结算: { label: "已结算", variant: "outline", icon: CheckCircle },
 }
 
@@ -438,6 +469,12 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
   // 生成对账单弹窗
   const [genDialogOpen, setGenDialogOpen] = useState(false)
 
+  // 驳回原因查看弹窗
+  const [rejectDialog, setRejectDialog] = useState<{
+    open: boolean
+    item: (typeof mockReconciliations)[number] | null
+  }>({ open: false, item: null })
+
   // ====== 统计 ======
   const pendingReconciliation = mockReconciliations.filter((r) => r.status === "待确认").length
 
@@ -501,12 +538,12 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-lg bg-rose-500/10">
-                  <AlertCircle className="h-6 w-6 text-rose-600" />
+                  <Ban className="h-6 w-6 text-rose-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">有差异</p>
+                  <p className="text-sm text-muted-foreground">被驳回</p>
                   <p className="text-2xl font-bold">
-                    {mockReconciliations.filter((r) => r.status === "有差异").length}
+                    {mockReconciliations.filter((r) => r.status === "被驳回").length}
                   </p>
                 </div>
               </div>
@@ -529,7 +566,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
           </Card>
         </div>
 
-        {/* 对账列�� */}
+        {/* 对账列��� */}
         <Card>
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
@@ -568,7 +605,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                   <SelectItem value="all">全部状态</SelectItem>
                   <SelectItem value="待确认">待确认</SelectItem>
                   <SelectItem value="已确认">已确认</SelectItem>
-                  <SelectItem value="有差异">有差异</SelectItem>
+                  <SelectItem value="被驳回">被驳回</SelectItem>
                   <SelectItem value="已结算">已结算</SelectItem>
                 </SelectContent>
               </Select>
@@ -593,8 +630,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                     const statusInfo = reconciliationStatusConfig[item.status]
                     const StatusIcon = statusInfo?.icon || Clock
                     const hasConfirmed = item.confirmedAmount > 0
-                    const hasDiff =
-                      hasConfirmed && item.confirmedAmount !== item.amount
+                    const isRejected = item.status === "被驳回"
                     return (
                       <TableRow key={item.id}>
                         <TableCell className="font-mono text-xs">{item.id}</TableCell>
@@ -615,12 +651,16 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                             </span>
                             <span
                               className={`text-[11px] ${
-                                hasDiff
+                                isRejected
                                   ? "text-rose-600"
                                   : "text-muted-foreground"
                               }`}
                             >
-                              {hasConfirmed ? `确认 ${fmt(item.confirmedAmount)}` : "未确认"}
+                              {isRejected
+                                ? "已被驳回"
+                                : hasConfirmed
+                                  ? `确认 ${fmt(item.confirmedAmount)}`
+                                  : "未确认"}
                             </span>
                           </div>
                         </TableCell>
@@ -635,21 +675,37 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center justify-center gap-0">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-7 px-1.5 text-xs text-muted-foreground hover:text-foreground"
-                            >
-                              查看
-                            </Button>
-                            {item.status === "待确认" && (
+                            {isRejected ? (
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-7 px-1.5 text-xs font-medium text-orange-700 hover:text-orange-800 hover:bg-orange-50"
+                                onClick={() =>
+                                  setRejectDialog({ open: true, item })
+                                }
+                                className="h-7 px-1.5 text-xs font-medium text-rose-700 hover:text-rose-800 hover:bg-rose-50"
                               >
-                                确认
+                                <AlertCircle className="h-3.5 w-3.5 mr-0.5" />
+                                驳回原因
                               </Button>
+                            ) : (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 px-1.5 text-xs text-muted-foreground hover:text-foreground"
+                                >
+                                  查看
+                                </Button>
+                                {item.status === "待确认" && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-7 px-1.5 text-xs font-medium text-orange-700 hover:text-orange-800 hover:bg-orange-50"
+                                  >
+                                    确认
+                                  </Button>
+                                )}
+                              </>
                             )}
                           </div>
                         </TableCell>
@@ -987,12 +1043,112 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
     )
   }
 
-  // 公共弹窗：生成对账单
+  // 公共弹窗：生成对账单 + 驳回原因
   const genDialog = (
-    <GenerateReconciliationDialog
-      open={genDialogOpen}
-      onOpenChange={setGenDialogOpen}
-    />
+    <>
+      <GenerateReconciliationDialog
+        open={genDialogOpen}
+        onOpenChange={setGenDialogOpen}
+      />
+
+      <Dialog
+        open={rejectDialog.open}
+        onOpenChange={(o) =>
+          setRejectDialog((d) => ({ ...d, open: o }))
+        }
+      >
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="p-1.5 rounded-md bg-rose-100">
+                <Ban className="h-4 w-4 text-rose-600" />
+              </div>
+              <span>对账单被驳回</span>
+              <Badge
+                variant="destructive"
+                className="ml-1 text-[10px] h-5"
+              >
+                {rejectDialog.item?.id}
+              </Badge>
+            </DialogTitle>
+          </DialogHeader>
+
+          {rejectDialog.item && (
+            <div className="space-y-4 pt-2">
+              {/* 对账单概要 */}
+              <div className="rounded-md border bg-muted/30 p-3 grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+                <div>
+                  <div className="text-muted-foreground">关联订单</div>
+                  <div className="font-mono mt-0.5">
+                    {rejectDialog.item.orderId}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">业务类型</div>
+                  <div className="mt-0.5">{rejectDialog.item.type}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">合作方</div>
+                  <div className="mt-0.5 truncate">
+                    {rejectDialog.item.partner}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground">对账金额</div>
+                  <div className="mt-0.5 font-semibold tabular-nums">
+                    ¥ {fmt(rejectDialog.item.amount)}
+                  </div>
+                </div>
+              </div>
+
+              {/* 驳回原因主体 */}
+              <div className="rounded-md border border-rose-200 bg-rose-50/60 p-3">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-rose-700 mb-2">
+                  <AlertCircle className="h-3.5 w-3.5" />
+                  驳回原因
+                </div>
+                <p className="text-sm text-rose-900 leading-relaxed whitespace-pre-line">
+                  {rejectDialog.item.rejectReason ?? "未填写驳回原因"}
+                </p>
+              </div>
+
+              {/* 提交人与时间 */}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1">
+                  <User className="h-3.5 w-3.5" />
+                  {rejectDialog.item.rejectedBy ?? "—"}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <CalendarClock className="h-3.5 w-3.5" />
+                  {rejectDialog.item.rejectedAt ?? "—"}
+                </span>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button
+              variant="outline"
+              onClick={() =>
+                setRejectDialog((d) => ({ ...d, open: false }))
+              }
+            >
+              关闭
+            </Button>
+            <Button
+              onClick={() => {
+                setRejectDialog((d) => ({ ...d, open: false }))
+                setGenDialogOpen(true)
+              }}
+              className="bg-orange-600 hover:bg-orange-700 text-white"
+            >
+              <RefreshCw className="h-4 w-4 mr-1" />
+              修订后重新发起
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 
   // 根据 subTab 决定显示哪个视图（兼容旧路由）
