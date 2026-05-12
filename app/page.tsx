@@ -8,12 +8,7 @@ import { WarehouseListPage } from "@/components/frontend/warehouse-list-page"
 import { SmartMatchPage } from "@/components/frontend/smart-match-page"
 import { DetailPublishPage } from "@/components/frontend/detail-publish-page"
 import { MaterialPublishPage } from "@/components/frontend/material-publish-page"
-import { PropertyOwnerWorkbench } from "@/components/workbench/roles/property-owner-workbench"
-import { WarehouseUnitWorkbench } from "@/components/workbench/roles/warehouse-unit-workbench"
-import { WarehouseSiteWorkbench } from "@/components/workbench/roles/warehouse-site-workbench"
-import { TransportUnitWorkbench } from "@/components/workbench/roles/transport-unit-workbench"
-import { UserUnitWorkbench } from "@/components/workbench/roles/user-unit-workbench"
-import { OperationWorkbench } from "@/components/workbench/operation-workbench"
+import { PersonalWorkbench } from "@/components/workbench/personal-workbench"
 import { cn } from "@/lib/utils"
 import { Bell, User, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -78,7 +73,7 @@ export default function HomePage() {
       setActiveSubTab("material-publish")
       return
     }
-    
+
     setCurrentPage(page)
     // 更新侧边栏选中状态
     if (page === "home") {
@@ -114,23 +109,12 @@ export default function HomePage() {
       }
     }
 
-    // 其他工作台页面
-    switch (activeTab) {
-      case "personal-property":
-        return <PropertyOwnerWorkbench subTab={activeSubTab} />
-      case "personal-warehouse-unit":
-        return <WarehouseUnitWorkbench subTab={activeSubTab} />
-      case "personal-warehouse-site":
-        return <WarehouseSiteWorkbench subTab={activeSubTab} />
-      case "personal-transport":
-        return <TransportUnitWorkbench subTab={activeSubTab} />
-      case "personal-user":
-        return <UserUnitWorkbench subTab={activeSubTab} />
-      case "operation":
-        return <OperationWorkbench />
-      default:
-        return <FrontendPage onNavigate={handleNavigate} />
+    // 个人工作台
+    if (activeTab === "personal") {
+      return <PersonalWorkbench activeSubTab={activeSubTab} />
     }
+
+    return <FrontendPage onNavigate={handleNavigate} />
   }
 
   return (
@@ -148,7 +132,7 @@ export default function HomePage() {
       <div
         className={cn(
           "transition-all duration-300",
-          sidebarCollapsed ? "ml-16" : "ml-72"
+          sidebarCollapsed ? "ml-16" : "ml-64"
         )}
       >
         {/* 顶部导航栏 */}

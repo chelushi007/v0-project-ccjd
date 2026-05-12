@@ -3,8 +3,10 @@
 import { EnterpriseCenter } from "./personal/enterprise-center"
 import { TodoList } from "./personal/todo-list"
 import { WarehouseInfo } from "./personal/warehouse-info"
-import { OrderManagement } from "./personal/order-management"
 import { ContractManagement } from "./personal/contract-management"
+import { DemandManagement } from "./personal/demand-management"
+import { MaterialManagement } from "./shared/material-management"
+import { SettlementManagement } from "./shared/settlement-management"
 
 interface PersonalWorkbenchProps {
   activeSubTab: string
@@ -13,18 +15,22 @@ interface PersonalWorkbenchProps {
 export function PersonalWorkbench({ activeSubTab }: PersonalWorkbenchProps) {
   const renderContent = () => {
     switch (activeSubTab) {
+      case "my-workbench":
+        return <TodoList />
       case "enterprise":
         return <EnterpriseCenter />
-      case "todo":
-        return <TodoList />
-      case "warehouse-info":
+      case "warehouse":
         return <WarehouseInfo />
-      case "order":
-        return <OrderManagement />
+      case "material":
+        return <MaterialManagement />
+      case "demand":
+        return <DemandManagement />
+      case "settlement":
+        return <SettlementManagement />
       case "contract":
         return <ContractManagement />
       default:
-        return <EnterpriseCenter />
+        return <TodoList />
     }
   }
 
