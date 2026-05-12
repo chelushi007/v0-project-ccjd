@@ -42,6 +42,7 @@ import {
   OrderRenewalDialog,
   OrderRefundDialog,
 } from "./order-renewal-refund-dialog"
+import { OrderContractDialog } from "./order-contract-dialog"
 
 // 主状态
 type MainStatus = "履约中" | "已完成" | "合同到期"
@@ -648,9 +649,16 @@ export function OrderManagement() {
     orderType: OrderType
   }>({ open: false, order: null, orderType: "warehouse" })
 
-  // 续租 / 退款完成后将订单标记
+  const [contractDialog, setContractDialog] = useState<{
+    open: boolean
+    order: PaymentOrder | null
+    orderType: OrderType
+  }>({ open: false, order: null, orderType: "warehouse" })
+
+  // 续租 / 退款 / 合同签署 完成后将订单标记
   const [renewedIds, setRenewedIds] = useState<Set<string>>(new Set())
   const [refundedIds, setRefundedIds] = useState<Set<string>>(new Set())
+  const [signedIds, setSignedIds] = useState<Set<string>>(new Set())
 
   const openPay = (order: PaymentOrder, orderType: OrderType, defaultTab: FeeKind) => {
     setPayDialog({ open: true, order, orderType, defaultTab })
@@ -668,6 +676,10 @@ export function OrderManagement() {
     setRefundDialog({ open: true, order, orderType })
   }
 
+  const openContract = (order: PaymentOrder, orderType: OrderType) => {
+    setContractDialog({ open: true, order, orderType })
+  }
+
   const handleRenewalConfirm = () => {
     const id = renewalDialog.order?.id
     if (id) setRenewedIds((s) => new Set(s).add(id))
@@ -676,6 +688,11 @@ export function OrderManagement() {
   const handleRefundConfirm = () => {
     const id = refundDialog.order?.id
     if (id) setRefundedIds((s) => new Set(s).add(id))
+  }
+
+  const handleContractConfirm = () => {
+    const id = contractDialog.order?.id
+    if (id) setSignedIds((s) => new Set(s).add(id))
   }
 
   const handlePay = (kind: FeeKind) => {
@@ -709,7 +726,13 @@ export function OrderManagement() {
         primary = { label: "确认合同", className: ACTION_CLS.contract }
         break
       case "待签署合同":
-        primary = { label: "签署合同", className: ACTION_CLS.contract }
+        if (!signedIds.has(paymentOrder.id)) {
+          primary = {
+            label: "签署合同",
+            className: ACTION_CLS.contract,
+            onClick: () => openContract(paymentOrder, orderType),
+          }
+        }
         break
       case "待支付押金":
       case "待支付保证金":
@@ -1107,6 +1130,15 @@ export function OrderManagement() {
         order={refundDialog.order}
         orderType={refundDialog.orderType}
         onConfirm={handleRefundConfirm}
+      />
+
+      {/* 合同签署弹窗 */}
+      <OrderContractDialog
+        open={contractDialog.open}
+        onOpenChange={(o) => setContractDialog((d) => ({ ...d, open: o }))}
+        order={contractDialog.order}
+        orderType={contractDialog.orderType}
+        onConfirm={handleContractConfirm}
       />
     </div>
   )
