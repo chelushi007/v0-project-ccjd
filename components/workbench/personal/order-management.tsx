@@ -3,7 +3,6 @@
 import { useState } from "react"
 import {
   Search,
-  Eye,
   FileDown,
   Printer,
   Warehouse,
@@ -12,11 +11,6 @@ import {
   TrendingUp,
   CircleDollarSign,
   ClipboardCheck,
-  FileSignature,
-  FileCheck2,
-  Wallet,
-  RotateCcw,
-  Undo2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -263,7 +257,7 @@ const materialStorageOrders: Array<{
     materialType: "机械设备",
     quantity: "86 件",
     owner: "中铁二十局集团华南分公司",
-    site: "中铁十六局佛山顺德钢构仓储基地",
+    site: "中铁十六局佛山顺德钢构��储基地",
     inDate: "2026-04-22",
     outDate: "—",
     storageFee: "4,200元/月",
@@ -484,58 +478,6 @@ const getMainStatusBadge = (status: MainStatus) => {
   }
 }
 
-// 子状态徽标（轻量内嵌样式）
-const getSubStatusBadge = (subStatus: RentSubStatus | StorageSubStatus) => {
-  // 待支付类
-  if (subStatus.startsWith("待支付")) {
-    return (
-      <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
-        {subStatus}
-      </Badge>
-    )
-  }
-  // 合同类
-  if (subStatus === "待确认合同" || subStatus === "待签署合同") {
-    return (
-      <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
-        {subStatus}
-      </Badge>
-    )
-  }
-  // 续租类
-  if (subStatus === "待续租") {
-    return (
-      <Badge variant="outline" className="bg-sky-50 text-sky-700 border-sky-200">
-        {subStatus}
-      </Badge>
-    )
-  }
-  // 退还类
-  if (subStatus === "待退还押金" || subStatus === "待退还保证金") {
-    return (
-      <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200">
-        {subStatus}
-      </Badge>
-    )
-  }
-  // 履约/已完成
-  if (subStatus === "在租履约" || subStatus === "保管履约") {
-    return (
-      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-        {subStatus}
-      </Badge>
-    )
-  }
-  if (subStatus === "已完成") {
-    return (
-      <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
-        {subStatus}
-      </Badge>
-    )
-  }
-  return <Badge variant="outline">{subStatus}</Badge>
-}
-
 const getTradeTypeBadge = (type: string) => {
   if (type === "整租") {
     return <Badge className="bg-primary/10 text-primary hover:bg-primary/10">整租</Badge>
@@ -543,32 +485,31 @@ const getTradeTypeBadge = (type: string) => {
   return <Badge variant="outline">出租</Badge>
 }
 
-// 根据子状态返回主操作按钮
-type PrimaryAction = {
-  label: string
-  icon: React.ComponentType<{ className?: string }>
-  variant?: "default" | "outline" | "secondary"
-  className?: string
-}
-
-const getPrimaryAction = (subStatus: RentSubStatus | StorageSubStatus): PrimaryAction | null => {
+// 根据子状态返回主操作按钮配色
+const getPrimaryAction = (
+  subStatus: RentSubStatus | StorageSubStatus,
+): { label: string; className: string } | null => {
+  const contractCls = "text-orange-700 hover:text-orange-800 hover:bg-orange-50"
+  const payCls = "text-amber-700 hover:text-amber-800 hover:bg-amber-50"
+  const renewCls = "text-sky-700 hover:text-sky-800 hover:bg-sky-50"
+  const refundCls = "text-rose-700 hover:text-rose-800 hover:bg-rose-50"
   switch (subStatus) {
     case "待确认合同":
-      return { label: "确认合同", icon: FileCheck2, className: "bg-orange-600 hover:bg-orange-700 text-white" }
+      return { label: "确认合同", className: contractCls }
     case "待签署合同":
-      return { label: "签署合同", icon: FileSignature, className: "bg-orange-600 hover:bg-orange-700 text-white" }
+      return { label: "签署合同", className: contractCls }
     case "待支付押金":
     case "待支付保证金":
     case "待支付服务费":
     case "待支付租金":
     case "待支付保管费":
-      return { label: subStatus.replace("待", ""), icon: Wallet, className: "bg-amber-600 hover:bg-amber-700 text-white" }
+      return { label: subStatus.replace("待", ""), className: payCls }
     case "待续租":
-      return { label: "续租", icon: RotateCcw, className: "bg-sky-600 hover:bg-sky-700 text-white" }
+      return { label: "续租", className: renewCls }
     case "待退还押金":
-      return { label: "退还押金", icon: Undo2, className: "bg-rose-600 hover:bg-rose-700 text-white" }
+      return { label: "退还押金", className: refundCls }
     case "待退还保证金":
-      return { label: "退还保证金", icon: Undo2, className: "bg-rose-600 hover:bg-rose-700 text-white" }
+      return { label: "退还保证金", className: refundCls }
     case "在租履约":
     case "保管履约":
     case "已完成":
@@ -578,22 +519,29 @@ const getPrimaryAction = (subStatus: RentSubStatus | StorageSubStatus): PrimaryA
   }
 }
 
-// 操作按钮组渲染
+// 操作按钮组渲染（全部以文字呈现）
 const renderActions = (subStatus: RentSubStatus | StorageSubStatus) => {
   const primary = getPrimaryAction(subStatus)
   return (
-    <div className="flex items-center justify-end gap-1">
+    <div className="flex items-center justify-end gap-0.5">
       {primary && (
-        <Button size="sm" className={`h-8 px-2.5 ${primary.className}`}>
-          <primary.icon className="w-3.5 h-3.5 mr-1" />
+        <Button variant="ghost" size="sm" className={`h-8 px-2 font-medium ${primary.className}`}>
           {primary.label}
         </Button>
       )}
-      <Button variant="ghost" size="icon" className="h-8 w-8" title="查看详情">
-        <Eye className="w-4 h-4" />
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-8 px-2 text-muted-foreground hover:text-foreground"
+      >
+        查看
       </Button>
-      <Button variant="ghost" size="icon" className="h-8 w-8" title="下载合同">
-        <FileDown className="w-4 h-4" />
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-8 px-2 text-muted-foreground hover:text-foreground"
+      >
+        合同
       </Button>
     </div>
   )
@@ -740,7 +688,7 @@ export function OrderManagement() {
               </CardTitle>
               <CardContent className="px-0 py-0">
                 <div className="w-full overflow-x-auto border rounded-md">
-                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1600px" }}>
+                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1500px" }}>
                     <TableHeader>
                       <TableRow>
                         <TableHead className="whitespace-nowrap">订单号</TableHead>
@@ -750,8 +698,7 @@ export function OrderManagement() {
                         <TableHead className="whitespace-nowrap">出租方</TableHead>
                         <TableHead className="whitespace-nowrap">成交金额(元)</TableHead>
                         <TableHead className="whitespace-nowrap">租期</TableHead>
-                        <TableHead className="whitespace-nowrap">主状态</TableHead>
-                        <TableHead className="whitespace-nowrap">当前节点</TableHead>
+                        <TableHead className="whitespace-nowrap">状态</TableHead>
                         <TableHead className="whitespace-nowrap text-right sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
                           操作
                         </TableHead>
@@ -768,7 +715,6 @@ export function OrderManagement() {
                           <TableCell className="text-primary font-medium whitespace-nowrap">{order.amount}</TableCell>
                           <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{order.period}</TableCell>
                           <TableCell className="whitespace-nowrap">{getMainStatusBadge(order.status)}</TableCell>
-                          <TableCell className="whitespace-nowrap">{getSubStatusBadge(order.subStatus)}</TableCell>
                           <TableCell className="whitespace-nowrap sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
                             {renderActions(order.subStatus)}
                           </TableCell>
@@ -791,7 +737,7 @@ export function OrderManagement() {
               </CardTitle>
               <CardContent className="px-0 py-0">
                 <div className="w-full overflow-x-auto border rounded-md">
-                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1800px" }}>
+                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1700px" }}>
                     <TableHeader>
                       <TableRow>
                         <TableHead className="whitespace-nowrap">订单号</TableHead>
@@ -803,8 +749,7 @@ export function OrderManagement() {
                         <TableHead className="whitespace-nowrap">占用面积</TableHead>
                         <TableHead className="whitespace-nowrap">入库时间</TableHead>
                         <TableHead className="whitespace-nowrap">保管费</TableHead>
-                        <TableHead className="whitespace-nowrap">主状态</TableHead>
-                        <TableHead className="whitespace-nowrap">当前节点</TableHead>
+                        <TableHead className="whitespace-nowrap">状态</TableHead>
                         <TableHead className="whitespace-nowrap text-right sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
                           操作
                         </TableHead>
@@ -823,7 +768,6 @@ export function OrderManagement() {
                           <TableCell className="text-muted-foreground whitespace-nowrap">{order.inDate}</TableCell>
                           <TableCell className="text-primary font-medium whitespace-nowrap">{order.storageFee}</TableCell>
                           <TableCell className="whitespace-nowrap">{getMainStatusBadge(order.status)}</TableCell>
-                          <TableCell className="whitespace-nowrap">{getSubStatusBadge(order.subStatus)}</TableCell>
                           <TableCell className="whitespace-nowrap sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
                             {renderActions(order.subStatus)}
                           </TableCell>
@@ -846,7 +790,7 @@ export function OrderManagement() {
               </CardTitle>
               <CardContent className="px-0 py-0">
                 <div className="w-full overflow-x-auto border rounded-md">
-                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1900px" }}>
+                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1800px" }}>
                     <TableHeader>
                       <TableRow>
                         <TableHead className="whitespace-nowrap">订单号</TableHead>
@@ -858,8 +802,7 @@ export function OrderManagement() {
                         <TableHead className="whitespace-nowrap">租金单价</TableHead>
                         <TableHead className="whitespace-nowrap">成交金额(元)</TableHead>
                         <TableHead className="whitespace-nowrap">租期</TableHead>
-                        <TableHead className="whitespace-nowrap">主状态</TableHead>
-                        <TableHead className="whitespace-nowrap">当前节点</TableHead>
+                        <TableHead className="whitespace-nowrap">状态</TableHead>
                         <TableHead className="whitespace-nowrap text-right sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
                           操作
                         </TableHead>
@@ -878,7 +821,6 @@ export function OrderManagement() {
                           <TableCell className="text-primary font-medium whitespace-nowrap">{order.amount}</TableCell>
                           <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{order.period}</TableCell>
                           <TableCell className="whitespace-nowrap">{getMainStatusBadge(order.status)}</TableCell>
-                          <TableCell className="whitespace-nowrap">{getSubStatusBadge(order.subStatus)}</TableCell>
                           <TableCell className="whitespace-nowrap sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
                             {renderActions(order.subStatus)}
                           </TableCell>
