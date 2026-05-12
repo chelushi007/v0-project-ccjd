@@ -18,10 +18,13 @@ import {
   Building2,
   Calendar,
   CheckCircle2,
+  Clock,
+  Hash,
   Lock,
   Receipt,
   Shield,
   Smartphone,
+  TrendingUp,
   Wallet,
 } from "lucide-react"
 
@@ -81,6 +84,37 @@ function addMonths(start: string, i: number): string {
   if (!y || !m) return start
   const date = new Date(y, m - 1 + i, 1)
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
+}
+
+// 基于订单号 + 期数生成稳定的伪随机数（0~1）
+function hashSeed(id: string, i: number): number {
+  let h = 0
+  const s = `${id}-${i}`
+  for (let k = 0; k < s.length; k++) {
+    h = (h * 31 + s.charCodeAt(k)) | 0
+  }
+  return ((h >>> 0) % 10000) / 10000
+}
+
+// 生成历史支付详情：付款日（每月 5-15 号之间）、时间、流水号
+function genPaymentDetail(orderId: string, periodIdx: number, startMonth: string) {
+  const ym = addMonths(startMonth, periodIdx)
+  const [yy, mm] = ym.split("-").map(Number)
+  const seed = hashSeed(orderId, periodIdx)
+  const day = 5 + Math.floor(seed * 11) // 5 ~ 15
+  const hour = 9 + Math.floor(seed * 9) // 9 ~ 17
+  const minute = Math.floor(seed * 60)
+  const flowSuffix = Math.floor(seed * 1_000_000)
+    .toString()
+    .padStart(6, "0")
+  return {
+    yearMonth: ym,
+    payDate: `${yy}-${String(mm).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
+    payTime: `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:${String(
+      Math.floor(seed * 60),
+    ).padStart(2, "0")}`,
+    flowNo: `ICBC${ym.replace("-", "")}${flowSuffix}`,
+  }
 }
 
 export function OrderPaymentDialog({
@@ -202,21 +236,23 @@ export function OrderPaymentDialog({
           <div className="text-xs text-muted-foreground mt-1.5">{c.desc}</div>
         </div>
 
-        {/* 租金支付进度与历史 */}
+        {/* 租金/保管费支付进度与历史 */}
         {kind === "rent" && (
-          <div className="rounded-lg border p-4">
-            <div className="flex items-center justify-between mb-3">
+          <div className="rounded-lg border p-4 space-y-3">
+            {/* 标题 + 进度比例 */}
+            <div className="flex items-center justify-between">
               <div className="text-sm font-medium flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-primary" />
+                <TrendingUp className="w-4 h-4 text-primary" />
                 {term.rent}支付进度
               </div>
               <div className="text-xs text-muted-foreground">
-                已付{" "}
                 <span className="text-primary font-semibold">{rentPaidMonths}</span> /{" "}
                 {order.totalMonths} 期
               </div>
             </div>
-            <div className="h-2 bg-muted rounded-full overflow-hidden mb-3">
+
+            {/* 进度条 */}
+            <div className="h-2 bg-muted rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary transition-all"
                 style={{
@@ -224,28 +260,94 @@ export function OrderPaymentDialog({
                 }}
               />
             </div>
-            <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
-              {rentPaidMonths === 0 ? (
-                <div className="text-xs text-muted-foreground text-center py-3">
-                  暂无{term.rent}支付记录
+
+            {/* 金额概览：已付 / 剩余 / 下期到期 */}
+            <div className="grid grid-cols-3 gap-2">
+              <StatBox
+                label="已付金额"
+                value={`¥ ${fmt(rentPaidMonths * order.monthlyAmount)}`}
+                tone="success"
+              />
+              <StatBox
+                label="剩余金额"
+                value={`¥ ${fmt(
+                  Math.max(0, order.totalMonths - rentPaidMonths) * order.monthlyAmount,
+                )}`}
+                tone="warning"
+              />
+              <StatBox
+                label={rentAllPaid ? "全部已付清" : "下期应付"}
+                value={
+                  rentAllPaid
+                    ? "—"
+                    : addMonths(order.rentStartDate, rentPaidMonths)
+                }
+                tone="default"
+              />
+            </div>
+
+            {/* 历史明细 */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-xs font-medium text-muted-foreground">
+                  支付历史明细
                 </div>
-              ) : (
-                Array.from({ length: rentPaidMonths }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between text-xs px-2 py-1.5 rounded bg-muted/50"
-                  >
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                      <span className="text-foreground">第 {i + 1} 期</span>
-                      <span className="text-muted-foreground">
-                        {addMonths(order.rentStartDate, i)}
-                      </span>
-                    </div>
-                    <span className="font-mono text-foreground">¥ {fmt(order.monthlyAmount)}</span>
+                {rentPaidMonths > 0 && (
+                  <Badge variant="outline" className="text-[10px] h-5">
+                    共 {rentPaidMonths} 笔
+                  </Badge>
+                )}
+              </div>
+              <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+                {rentPaidMonths === 0 ? (
+                  <div className="text-xs text-muted-foreground text-center py-4 rounded-md bg-muted/40">
+                    暂无{term.rent}支付记录
                   </div>
-                ))
-              )}
+                ) : (
+                  Array.from({ length: rentPaidMonths })
+                    .map((_, i) => i)
+                    .reverse()
+                    .map((i) => {
+                      const detail = genPaymentDetail(order.id, i, order.rentStartDate)
+                      return (
+                        <div
+                          key={i}
+                          className="rounded-md border bg-muted/30 px-3 py-2"
+                        >
+                          <div className="flex items-center justify-between mb-1.5">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                              <span className="text-sm font-medium">第 {i + 1} 期</span>
+                              <Badge
+                                variant="outline"
+                                className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] h-5"
+                              >
+                                {detail.yearMonth}
+                              </Badge>
+                            </div>
+                            <span className="font-mono text-sm font-semibold text-foreground tabular-nums">
+                              ¥ {fmt(order.monthlyAmount)}
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted-foreground pl-6">
+                            <span className="inline-flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {detail.payDate} {detail.payTime}
+                            </span>
+                            <span className="inline-flex items-center gap-1">
+                              <Hash className="w-3 h-3" />
+                              <span className="font-mono">{detail.flowNo}</span>
+                            </span>
+                            <span className="inline-flex items-center gap-1">
+                              <Wallet className="w-3 h-3" />
+                              工行对公
+                            </span>
+                          </div>
+                        </div>
+                      )
+                    })
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -323,7 +425,7 @@ export function OrderPaymentDialog({
             订单支付
           </DialogTitle>
           <DialogDescription>
-            请核对支付信息后完成支付，工商银行对公账户扣款，扣款成功后立即生成电子凭证
+            请核对支付信息后完成支付���工商银行对公账户扣款，扣款成功后立即生成电子凭证
           </DialogDescription>
         </DialogHeader>
 
@@ -383,6 +485,29 @@ function InfoRow({
     <div className={colSpan === 2 ? "col-span-2" : ""}>
       <div className="text-xs text-muted-foreground mb-0.5">{label}</div>
       <div className="text-sm text-foreground">{value}</div>
+    </div>
+  )
+}
+
+function StatBox({
+  label,
+  value,
+  tone,
+}: {
+  label: string
+  value: string
+  tone: "success" | "warning" | "default"
+}) {
+  const toneCls =
+    tone === "success"
+      ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+      : tone === "warning"
+        ? "bg-amber-50 border-amber-200 text-amber-700"
+        : "bg-muted/40 border-border text-foreground"
+  return (
+    <div className={`rounded-md border px-3 py-2 ${toneCls}`}>
+      <div className="text-[11px] opacity-80 mb-0.5">{label}</div>
+      <div className="text-sm font-semibold tabular-nums leading-tight">{value}</div>
     </div>
   )
 }
