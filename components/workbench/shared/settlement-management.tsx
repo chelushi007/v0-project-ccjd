@@ -529,7 +529,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
           </Card>
         </div>
 
-        {/* 对账列表 */}
+        {/* 对账列�� */}
         <Card>
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
@@ -575,51 +575,70 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
             </div>
 
             <div className="rounded-md border">
-              <Table>
+              <Table className="table-fixed [&_th]:px-2 [&_td]:px-2">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[120px]">对账单号</TableHead>
-                    <TableHead className="w-[160px]">关联订单号</TableHead>
+                    <TableHead className="w-[112px]">对账单号</TableHead>
+                    <TableHead className="w-[140px]">关联订单号</TableHead>
                     <TableHead>合作方</TableHead>
-                    <TableHead>业务类型</TableHead>
-                    <TableHead>账期</TableHead>
-                    <TableHead className="text-right">对账金额</TableHead>
-                    <TableHead className="text-right">确认金额</TableHead>
-                    <TableHead>状态</TableHead>
-                    <TableHead className="w-[140px] text-center">操作</TableHead>
+                    <TableHead className="w-[104px]">业务类型</TableHead>
+                    <TableHead className="w-[88px]">账期</TableHead>
+                    <TableHead className="w-[128px] text-right">金额（元）</TableHead>
+                    <TableHead className="w-[88px]">状态</TableHead>
+                    <TableHead className="w-[96px] text-center">操作</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.map((item) => {
                     const statusInfo = reconciliationStatusConfig[item.status]
                     const StatusIcon = statusInfo?.icon || Clock
+                    const hasConfirmed = item.confirmedAmount > 0
+                    const hasDiff =
+                      hasConfirmed && item.confirmedAmount !== item.amount
                     return (
                       <TableRow key={item.id}>
-                        <TableCell className="font-mono text-sm">{item.id}</TableCell>
-                        <TableCell className="font-mono text-xs text-muted-foreground">
+                        <TableCell className="font-mono text-xs">{item.id}</TableCell>
+                        <TableCell className="font-mono text-[11px] text-muted-foreground truncate">
                           {item.orderId}
                         </TableCell>
-                        <TableCell className="font-medium">{item.partner}</TableCell>
-                        <TableCell>{item.type}</TableCell>
-                        <TableCell>{item.period}</TableCell>
-                        <TableCell className="text-right font-medium tabular-nums">
-                          {fmt(item.amount)}
+                        <TableCell className="font-medium text-sm truncate" title={item.partner}>
+                          {item.partner}
+                        </TableCell>
+                        <TableCell className="text-sm truncate">{item.type}</TableCell>
+                        <TableCell className="text-xs text-muted-foreground">
+                          {item.period}
                         </TableCell>
                         <TableCell className="text-right tabular-nums">
-                          {item.confirmedAmount > 0 ? fmt(item.confirmedAmount) : "-"}
+                          <div className="flex flex-col leading-tight">
+                            <span className="text-sm font-semibold text-foreground">
+                              {fmt(item.amount)}
+                            </span>
+                            <span
+                              className={`text-[11px] ${
+                                hasDiff
+                                  ? "text-rose-600"
+                                  : "text-muted-foreground"
+                              }`}
+                            >
+                              {hasConfirmed ? `确认 ${fmt(item.confirmedAmount)}` : "未确认"}
+                            </span>
+                          </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={statusInfo?.variant || "default"} className="gap-1">
+                          <Badge
+                            variant={statusInfo?.variant || "default"}
+                            className="gap-1 px-1.5 py-0 text-[11px] h-5"
+                          >
                             <StatusIcon className="h-3 w-3" />
                             {item.status}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center justify-center gap-0.5">
+                          <div className="flex items-center justify-center gap-0">
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-8 px-2 text-muted-foreground hover:text-foreground"
+                              className="h-7 px-1.5 text-xs text-muted-foreground hover:text-foreground"
                             >
                               查看
                             </Button>
@@ -627,7 +646,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-8 px-2 font-medium text-orange-700 hover:text-orange-800 hover:bg-orange-50"
+                                className="h-7 px-1.5 text-xs font-medium text-orange-700 hover:text-orange-800 hover:bg-orange-50"
                               >
                                 确认
                               </Button>
