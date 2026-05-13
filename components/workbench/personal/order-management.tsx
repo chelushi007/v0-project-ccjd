@@ -212,7 +212,7 @@ const materialStorageOrders: Array<{
   {
     id: "WZCF20260512001",
     title: "Q235B 热轧 H 型钢 320 吨",
-    materialType: "钢材",
+    materialType: "型材类",
     quantity: "320 吨",
     owner: "中铁十四局集团广州分公司",
     site: "中铁建广州南沙综合仓储基地",
@@ -226,7 +226,7 @@ const materialStorageOrders: Array<{
   {
     id: "WZCF20260510002",
     title: "建筑钢管脚手架 1600 套",
-    materialType: "钢材",
+    materialType: "脚手架类",
     quantity: "1600 套",
     owner: "中铁十六局集团华南分公司",
     site: "中铁建深圳前海智慧仓储基地",
@@ -240,7 +240,7 @@ const materialStorageOrders: Array<{
   {
     id: "WZCF20260508003",
     title: "盾构机刀盘配件 24 件",
-    materialType: "机械设备",
+    materialType: "拼装类",
     quantity: "24 件",
     owner: "中铁隧道局集团广州分公司",
     site: "中铁建广州南沙综合仓储基地",
@@ -254,7 +254,7 @@ const materialStorageOrders: Array<{
   {
     id: "WZCF20260505004",
     title: "工字钢梁 220 吨",
-    materialType: "钢材",
+    materialType: "型材类",
     quantity: "220 吨",
     owner: "中铁十四局集团广州分公司",
     site: "中铁建东莞虎门港务仓储基地",
@@ -268,7 +268,7 @@ const materialStorageOrders: Array<{
   {
     id: "WZCF20260420005",
     title: "塔吊配件 86 件",
-    materialType: "机械设备",
+    materialType: "拼装类",
     quantity: "86 件",
     owner: "中铁二十局集团华南分公司",
     site: "中铁十六局佛山顺德钢构仓储基地",
@@ -282,7 +282,7 @@ const materialStorageOrders: Array<{
   {
     id: "WZCF20260301006",
     title: "Φ32 螺纹钢 540 吨",
-    materialType: "钢材",
+    materialType: "型材类",
     quantity: "540 吨",
     owner: "中铁建工集团广州分公司",
     site: "中铁建广州南沙综合仓储基地",
@@ -296,7 +296,7 @@ const materialStorageOrders: Array<{
   {
     id: "WZCF20251115007",
     title: "钢板桩 380 吨",
-    materialType: "钢材",
+    materialType: "支护类",
     quantity: "380 吨",
     owner: "中铁大桥局集团广州分公司",
     site: "中铁建东莞虎门港务仓储基地",
@@ -310,7 +310,7 @@ const materialStorageOrders: Array<{
   {
     id: "WZCF20251025008",
     title: "WJ-7 型扣件系统 4200 套",
-    materialType: "配件",
+    materialType: "拼装类",
     quantity: "4200 套",
     owner: "中铁电气化局集团广州分公司",
     site: "中铁建深圳前海智慧仓储基地",
@@ -324,7 +324,7 @@ const materialStorageOrders: Array<{
   {
     id: "WZCF20251015009",
     title: "轨枕 III型 1200 根",
-    materialType: "轨道材料",
+    materialType: "轨道类",
     quantity: "1200 根",
     owner: "中铁二十二局集团华南分公司",
     site: "中铁二十二局惠州大亚湾仓储基地",
@@ -355,7 +355,7 @@ const materialTradeOrders: Array<{
   {
     id: "WZJY20260512001",
     title: "Q235B 热轧 H 型钢 出租",
-    materialType: "钢材",
+    materialType: "型材类",
     quantity: "200 吨",
     provider: "中铁十四局集团广州分公司",
     user: "中铁十一局广深城际项目部",
@@ -369,7 +369,7 @@ const materialTradeOrders: Array<{
   {
     id: "WZJY20260511002",
     title: "建筑钢管脚手架 出租",
-    materialType: "钢材",
+    materialType: "脚手架类",
     quantity: "1200 套",
     provider: "中铁建物料华南专业运营有限公司",
     user: "中铁十八局深惠城际项目部",
@@ -383,7 +383,7 @@ const materialTradeOrders: Array<{
   {
     id: "WZJY20260509003",
     title: "工字钢梁 整租",
-    materialType: "钢材",
+    materialType: "型材类",
     quantity: "300 吨",
     provider: "中铁十四局集团广州分公司",
     user: "中铁建物料华南专业运营有限公司",
@@ -397,7 +397,7 @@ const materialTradeOrders: Array<{
   {
     id: "WZJY20260505004",
     title: "塔吊设备 出租",
-    materialType: "机械设备",
+    materialType: "其他材料",
     quantity: "5 台",
     provider: "中铁二十局集团华南分公司",
     user: "中铁二十五局深中通道项目部",
@@ -411,7 +411,7 @@ const materialTradeOrders: Array<{
   {
     id: "WZJY20260428005",
     title: "WJ-7 型扣件系统 出租",
-    materialType: "配件",
+    materialType: "拼装类",
     quantity: "8000 套",
     provider: "中铁电气化局集团广州分公司",
     user: "中铁二十二局莞惠城际项目部",
@@ -425,7 +425,7 @@ const materialTradeOrders: Array<{
   {
     id: "WZJY20260315006",
     title: "60kg/m 钢轨 整租",
-    materialType: "轨道材料",
+    materialType: "轨道类",
     quantity: "180 吨",
     provider: "中铁建物料华南专业运营有限公司",
     user: "中铁十四局深圳地铁13号线项目部",
@@ -439,7 +439,7 @@ const materialTradeOrders: Array<{
   {
     id: "WZJY20251108007",
     title: "盾构机刀盘 出租",
-    materialType: "机械设备",
+    materialType: "其他材料",
     quantity: "2 台",
     provider: "中铁隧道局集团广州分公司",
     user: "中铁建工集团广州分公司",
@@ -453,7 +453,7 @@ const materialTradeOrders: Array<{
   {
     id: "WZJY20251020008",
     title: "钢板桩 出租",
-    materialType: "钢材",
+    materialType: "支护类",
     quantity: "260 吨",
     provider: "中铁大桥局集团广州分公司",
     user: "中铁二十局广佛环线项目部",
@@ -467,7 +467,7 @@ const materialTradeOrders: Array<{
   {
     id: "WZJY20251015009",
     title: "轨枕 III型 出租",
-    materialType: "轨道材料",
+    materialType: "轨道类",
     quantity: "950 根",
     provider: "中铁二十二局集团华南分公司",
     user: "中铁二十五局深中通道项目部",

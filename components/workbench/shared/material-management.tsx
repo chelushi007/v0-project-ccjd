@@ -42,7 +42,7 @@ const mockMaterials = [
   {
     id: "WZ-2026-001",
     name: "钢轨 60kg/m",
-    category: "轨道材料",
+    category: "轨道类",
     spec: "60kg/m × 12.5m",
     quantity: 500,
     unit: "根",
@@ -54,7 +54,7 @@ const mockMaterials = [
   {
     id: "WZ-2026-002",
     name: "道岔",
-    category: "轨道材料",
+    category: "轨道类",
     spec: "60kg/m-1/12",
     quantity: 20,
     unit: "组",
@@ -66,7 +66,7 @@ const mockMaterials = [
   {
     id: "WZ-2026-003",
     name: "扣件系统",
-    category: "配件材料",
+    category: "拼装类",
     spec: "WJ-7型",
     quantity: 10000,
     unit: "套",
@@ -78,7 +78,7 @@ const mockMaterials = [
   {
     id: "WZ-2026-004",
     name: "轨枕",
-    category: "轨道材料",
+    category: "轨道类",
     spec: "III型混凝土轨枕",
     quantity: 2000,
     unit: "根",
@@ -90,7 +90,7 @@ const mockMaterials = [
   {
     id: "WZ-2026-005",
     name: "钢轨 50kg/m",
-    category: "轨道材料",
+    category: "型材类",
     spec: "50kg/m × 12.5m",
     quantity: 300,
     unit: "根",
@@ -260,9 +260,15 @@ export function MaterialManagement({ roleType = "warehouse-unit" }: MaterialMana
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">全部类别</SelectItem>
-                <SelectItem value="轨道材料">轨道材料</SelectItem>
-                <SelectItem value="配件材料">配件材料</SelectItem>
-                <SelectItem value="机械设备">机械设备</SelectItem>
+                <SelectItem value="模板类">模板类</SelectItem>
+                <SelectItem value="支护类">支护类</SelectItem>
+                <SelectItem value="脚手架类">脚手架类</SelectItem>
+                <SelectItem value="拼装类">拼装类</SelectItem>
+                <SelectItem value="轨道类">轨道类</SelectItem>
+                <SelectItem value="型材类">型材类</SelectItem>
+                <SelectItem value="电线电缆">电线电缆</SelectItem>
+                <SelectItem value="房屋建筑类">房屋建筑类</SelectItem>
+                <SelectItem value="其他材料">其他材料</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" size="sm">

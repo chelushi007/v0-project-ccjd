@@ -80,7 +80,7 @@ const materialResults = [
     name: "Q235B热轧H型钢",
     provider: "中铁十四局集团广州分公司",
     location: "广东省广州市黄埔区",
-    materialType: "钢材",
+    materialType: "型材类",
     quantity: "500吨可租",
     matchScore: 97,
     specs: ["规格齐全", "质量检测报告", "可分批提货"],
@@ -92,7 +92,7 @@ const materialResults = [
     name: "建筑钢管脚手架",
     provider: "中铁建物料华南专业运营有限公司",
     location: "广东省深圳市宝安区",
-    materialType: "钢材",
+    materialType: "脚手架类",
     quantity: "2000套可租",
     matchScore: 94,
     specs: ["48*3.5规格", "带扣件", "现场可验货"],
@@ -104,7 +104,7 @@ const materialResults = [
     name: "工字钢梁",
     provider: "中铁十六局集团华南分公司",
     location: "广东省东莞市虎门镇",
-    materialType: "钢材",
+    materialType: "型材类",
     quantity: "300吨可租",
     matchScore: 91,
     specs: ["20#工字钢", "12米定尺", "防锈处理"],
@@ -116,7 +116,7 @@ const materialResults = [
     name: "塔吊设备",
     provider: "中铁二十局集团华南分公司",
     location: "广东省佛山市顺德区",
-    materialType: "机械设备",
+    materialType: "其他材料",
     quantity: "5台可租",
     matchScore: 88,
     specs: ["QTZ63型", "臂长50m", "含安拆服务"],
@@ -216,13 +216,15 @@ export function SmartMatchPage({ onNavigate, initialType = "rent" }: SmartMatchP
                         <SelectValue placeholder="选择物料类型" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="steel">钢材</SelectItem>
-                        <SelectItem value="wood">木材</SelectItem>
-                        <SelectItem value="cement">水泥</SelectItem>
-                        <SelectItem value="equipment">机械设备</SelectItem>
-                        <SelectItem value="pipe">管材</SelectItem>
-                        <SelectItem value="electric">电气设备</SelectItem>
-                        <SelectItem value="other">其他物料</SelectItem>
+                        <SelectItem value="template">模板类</SelectItem>
+                        <SelectItem value="support">支护类</SelectItem>
+                        <SelectItem value="scaffold">脚手架类</SelectItem>
+                        <SelectItem value="assembly">拼装类</SelectItem>
+                        <SelectItem value="rail">轨道类</SelectItem>
+                        <SelectItem value="profile">型材类</SelectItem>
+                        <SelectItem value="cable">电线电缆</SelectItem>
+                        <SelectItem value="building">房屋建筑类</SelectItem>
+                        <SelectItem value="other">其他材料</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

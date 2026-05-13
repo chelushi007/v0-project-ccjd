@@ -34,7 +34,7 @@ const materialLibrary = [
   {
     id: "M001",
     name: "Q235B热轧H型钢 200×200×8×12",
-    category: "钢材",
+    category: "型材类",
     spec: "200×200×8×12，12m定尺",
     quantity: "850吨",
     unit: "吨",
@@ -45,7 +45,7 @@ const materialLibrary = [
   {
     id: "M002",
     name: "碗扣式脚手架套装",
-    category: "脚手架",
+    category: "脚手架类",
     spec: "48×3.5钢管，含扣件",
     quantity: "3200套",
     unit: "套",
@@ -56,7 +56,7 @@ const materialLibrary = [
   {
     id: "M003",
     name: "20#工字钢",
-    category: "钢材",
+    category: "型材类",
     spec: "20#，12m定尺，防锈处理",
     quantity: "420吨",
     unit: "吨",
@@ -67,7 +67,7 @@ const materialLibrary = [
   {
     id: "M004",
     name: "QTZ63塔吊",
-    category: "机械设备",
+    category: "其他材料",
     spec: "QTZ63型，臂长50m",
     quantity: "8台",
     unit: "台",
@@ -78,7 +78,7 @@ const materialLibrary = [
   {
     id: "M005",
     name: "预制混凝土管片",
-    category: "构配件",
+    category: "拼装类",
     spec: "外径6.2m，厚0.35m，标准环",
     quantity: "1200环",
     unit: "环",
@@ -89,7 +89,7 @@ const materialLibrary = [
   {
     id: "M006",
     name: "钢模板",
-    category: "模板",
+    category: "模板类",
     spec: "1.5m×0.3m，厚6mm",
     quantity: "5000张",
     unit: "张",
@@ -99,7 +99,18 @@ const materialLibrary = [
   },
 ]
 
-const categoryOptions = ["全部", "钢材", "脚手架", "机械设备", "构配件", "模板", "管材", "电气设备"]
+const categoryOptions = [
+  "全部",
+  "模板类",
+  "支护类",
+  "脚手架类",
+  "拼装类",
+  "轨道类",
+  "型材类",
+  "电线电缆",
+  "房屋建筑类",
+  "其他材料",
+]
 
 export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
   const [searchKeyword, setSearchKeyword] = useState("")
@@ -334,7 +345,7 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="ton-month">元/吨/月</SelectItem>
-                            <SelectItem value="set-day">元/套/天</SelectItem>
+                            <SelectItem value="set-day">元/���/天</SelectItem>
                             <SelectItem value="piece-month">元/件/月</SelectItem>
                             <SelectItem value="unit-month">元/台/月</SelectItem>
                             <SelectItem value="ring-month">元/环/月</SelectItem>

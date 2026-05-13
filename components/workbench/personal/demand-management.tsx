@@ -250,7 +250,7 @@ const materialRentRows: MaterialRentRow[] = [
   {
     id: "WZ20260512001",
     title: "Q235B 热轧 H 型钢出租 500 吨",
-    materialType: "钢材",
+    materialType: "型材类",
     quantity: "500吨",
     location: "广东省广州市黄埔区",
     price: "1800元/吨/月",
@@ -264,7 +264,7 @@ const materialRentRows: MaterialRentRow[] = [
   {
     id: "WZ20260511002",
     title: "建筑钢管脚手架出租 2000 套",
-    materialType: "钢材",
+    materialType: "脚手架类",
     quantity: "2000套",
     location: "广东省深圳市宝安区",
     price: "15元/套/天",
@@ -278,7 +278,7 @@ const materialRentRows: MaterialRentRow[] = [
   {
     id: "WZ20260510003",
     title: "塔吊设备出租 5 台",
-    materialType: "机械设备",
+    materialType: "其他材料",
     quantity: "5台",
     location: "广东省佛山市顺德区",
     price: "28000元/台/月",
@@ -292,7 +292,7 @@ const materialRentRows: MaterialRentRow[] = [
   {
     id: "WZ20260509004",
     title: "工地围挡板出租 800 套",
-    materialType: "围护材料",
+    materialType: "支护类",
     quantity: "800套",
     location: "广东省东莞市长安镇",
     price: "8元/套/天",

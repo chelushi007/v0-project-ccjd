@@ -9,7 +9,7 @@ const materials = [
   {
     id: 1,
     name: "二手钢管扣件 约500吨",
-    category: "钢材类",
+    category: "拼装类",
     location: "广东省广州市黄埔区",
     price: "3500",
     unit: "元/吨",
@@ -23,7 +23,7 @@ const materials = [
   {
     id: 2,
     name: "工地周转木方 约200方",
-    category: "木材类",
+    category: "房屋建筑类",
     location: "广东省深圳市龙岗区",
     price: "800",
     unit: "元/方",
@@ -37,7 +37,7 @@ const materials = [
   {
     id: 3,
     name: "塔吊标准节 10节",
-    category: "机械设备",
+    category: "其他材料",
     location: "广东省东莞市虎门镇",
     price: "面议",
     unit: "",
