@@ -57,7 +57,7 @@ const personalMenu: MenuItem[] = [
   { id: "order", label: "订单管理", icon: ShoppingCart },
   {
     id: "settlement",
-    label: "结算管理",
+    label: "费用管理",
     icon: CreditCard,
     children: [
       { id: "settlement-reconciliation", label: "对账管理", icon: Receipt },
