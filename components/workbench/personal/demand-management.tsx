@@ -41,6 +41,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { DetailPublishPage } from "@/components/frontend/detail-publish-page"
+import { EntrustAcceptancePage } from "./entrust-acceptance-page"
 import { MaterialPickerDialog, type MaterialItem } from "./material-picker-dialog"
 import { MaterialRentPublishPage } from "./material-rent-publish-page"
 
@@ -141,9 +142,35 @@ interface EntrustRow {
   submitDate: string
   acceptDate: string
   status: EntrustStatus
+  // 受理页面所需的额外字段（可选）
+  expectedRent?: string
+  expectedTerm?: string
+  expectedStart?: string
+  contactName?: string
+  contactPhone?: string
+  description?: string
 }
 
 const entrustRows: EntrustRow[] = [
+  {
+    id: "WT20260513005",
+    title: "中铁建工湛江东海岛多式联运仓储 8500m²",
+    location: "广东省湛江市东海岛经开区",
+    area: "8500m²",
+    type: "多式联运仓储",
+    entruster: "中铁建工集团第二建设有限公司",
+    trustee: "华南公司",
+    submitDate: "2026-05-13",
+    acceptDate: "—",
+    status: "待受理",
+    expectedRent: "10 - 13 元/m²/月",
+    expectedTerm: "36 个月",
+    expectedStart: "2026-07-01",
+    contactName: "周建华",
+    contactPhone: "138-7621-9930",
+    description:
+      "本仓储基地紧邻东海岛港区与铁路货运站，具备多式联运对接能力，已建成防爆通风、24h 安保、智能门禁与 6 米卸货平台。委托方期望服务商优先撮合具有港航物流、装备制造或储能新能源行业背景的承租方，并协助办理租赁备案、押金监管及消防变更登记等事项。",
+  },
   {
     id: "WT20260512001",
     title: "中铁十六局佛山顺德钢构仓储基地 6000m²",
@@ -155,6 +182,13 @@ const entrustRows: EntrustRow[] = [
     submitDate: "2026-05-11",
     acceptDate: "—",
     status: "待受理",
+    expectedRent: "12 - 15 元/m²/月",
+    expectedTerm: "24 个月（含半年免租期）",
+    expectedStart: "2026-06-15",
+    contactName: "李文涛",
+    contactPhone: "138-2814-5520",
+    description:
+      "该仓储基地位于产业集中区，紧邻物流主干道，已具备进出场地、自动消防、24h 安保等基础条件。委托方希望服务商优先撮合具备类似业态运营经验的承租企业，并协助办理租赁备案与押金监管事宜。",
   },
   {
     id: "WT20260511002",
@@ -356,25 +390,28 @@ function selfStatusActions(status: SelfStatus, onViewReject?: () => void): RowAc
   }
 }
 
-// 委托出租：基于状态的操作矩阵
-function entrustStatusActions(status: EntrustStatus): RowAction[] {
+// 委托出租：基于状态的操作矩阵（服务商视角）
+function entrustStatusActions(
+  status: EntrustStatus,
+  onAccept?: () => void,
+): RowAction[] {
   switch (status) {
     case "待受理":
       return [
         { label: "查看" },
-        { label: "催办", tone: "primary" },
-        { label: "撤回委托", tone: "destructive" },
+        { label: "受理", tone: "primary", onClick: onAccept },
+        { label: "拒绝", tone: "destructive" },
       ]
     case "已受理":
       return [
         { label: "查看" },
-        { label: "联系服务商", tone: "primary" },
-        { label: "对接进度" },
+        { label: "联系委托方", tone: "primary" },
+        { label: "推进签署" },
       ]
     case "签署中":
       return [
         { label: "查看" },
-        { label: "签署合同", tone: "primary" },
+        { label: "上传合同", tone: "primary" },
         { label: "合同详情" },
       ]
     case "已签署":
@@ -470,7 +507,7 @@ function Toolbar({
 // ============ 主组件 ============
 
 type DemandSubTab = "self-rent" | "entrust-rent" | "material-rent"
-type DemandMode = "list" | "publish-warehouse" | "publish-material"
+type DemandMode = "list" | "publish-warehouse" | "publish-material" | "accept-entrust"
 
 interface DemandManagementProps {
   subTab?: DemandSubTab
@@ -480,6 +517,7 @@ export function DemandManagement({ subTab = "self-rent" }: DemandManagementProps
   const [mode, setMode] = useState<DemandMode>("list")
   const [materialPickerOpen, setMaterialPickerOpen] = useState(false)
   const [pickedMaterials, setPickedMaterials] = useState<MaterialItem[]>([])
+  const [acceptTarget, setAcceptTarget] = useState<EntrustRow | null>(null)
   const [rejectInfo, setRejectInfo] = useState<{
     open: boolean
     id?: string
@@ -504,12 +542,29 @@ export function DemandManagement({ subTab = "self-rent" }: DemandManagementProps
     )
   }
 
+  if (mode === "accept-entrust" && acceptTarget) {
+    return (
+      <EntrustAcceptancePage
+        data={acceptTarget}
+        onBack={() => {
+          setMode("list")
+          setAcceptTarget(null)
+        }}
+      />
+    )
+  }
+
   const openReject = (id: string, reason?: string) =>
     setRejectInfo({ open: true, id, reason })
 
+  const openAccept = (row: EntrustRow) => {
+    setAcceptTarget(row)
+    setMode("accept-entrust")
+  }
+
   const renderPage = () => {
     if (subTab === "self-rent") return renderSelfRent(setMode, openReject)
-    if (subTab === "entrust-rent") return renderEntrustRent(setMode)
+    if (subTab === "entrust-rent") return renderEntrustRent(setMode, openAccept)
     return renderMaterialRent(setMaterialPickerOpen, openReject)
   }
 
@@ -700,7 +755,10 @@ function renderSelfRent(
 
 // ============ 子页：仓储委托出租 ============
 
-function renderEntrustRent(setMode: (m: DemandMode) => void) {
+function renderEntrustRent(
+  setMode: (m: DemandMode) => void,
+  openAccept: (row: EntrustRow) => void,
+) {
   const rows = entrustRows
   const pending = rows.filter((d) => d.status === "待受理").length
   const accepted = rows.filter((d) => d.status === "已受理").length
@@ -789,7 +847,9 @@ function renderEntrustRent(setMode: (m: DemandMode) => void) {
                     </TableCell>
                     <TableCell>{statusBadge(d.status)}</TableCell>
                     <TableCell>
-                      <RowActions actions={entrustStatusActions(d.status)} />
+                      <RowActions
+                        actions={entrustStatusActions(d.status, () => openAccept(d))}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}
