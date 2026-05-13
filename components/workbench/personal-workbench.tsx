@@ -6,7 +6,9 @@ import { WarehouseInfo } from "./personal/warehouse-info"
 import { ContractManagement } from "./personal/contract-management"
 import { DemandManagement } from "./personal/demand-management"
 import { OrderManagement } from "./personal/order-management"
-import { MaterialManagement } from "./shared/material-management"
+import { MaterialInventory } from "./personal/material-inventory"
+import { MaterialInbound } from "./personal/material-inbound"
+import { MaterialOutbound } from "./personal/material-outbound"
 import { SettlementManagement } from "./shared/settlement-management"
 
 interface PersonalWorkbenchProps {
@@ -23,7 +25,12 @@ export function PersonalWorkbench({ activeSubTab }: PersonalWorkbenchProps) {
       case "warehouse":
         return <WarehouseInfo />
       case "material":
-        return <MaterialManagement />
+      case "material-inventory":
+        return <MaterialInventory />
+      case "material-inbound":
+        return <MaterialInbound />
+      case "material-outbound":
+        return <MaterialOutbound />
       case "demand":
       case "demand-self":
         return <DemandManagement subTab="self-rent" />

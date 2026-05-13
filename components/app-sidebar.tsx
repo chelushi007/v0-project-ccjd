@@ -19,6 +19,9 @@ import {
   ShoppingCart,
   Receipt,
   Wallet,
+  Boxes,
+  PackagePlus,
+  PackageMinus,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -52,7 +55,16 @@ const personalMenu: MenuItem[] = [
   { id: "my-workbench", label: "我的工作台", icon: LayoutDashboard },
   { id: "enterprise", label: "企业中心", icon: Building2 },
   { id: "warehouse", label: "仓储管理", icon: Warehouse },
-  { id: "material", label: "物料管理", icon: Package },
+  {
+    id: "material",
+    label: "物料管理",
+    icon: Package,
+    children: [
+      { id: "material-inventory", label: "库存管理", icon: Boxes },
+      { id: "material-inbound", label: "入库管理", icon: PackagePlus },
+      { id: "material-outbound", label: "出库管理", icon: PackageMinus },
+    ],
+  },
   {
     id: "demand",
     label: "需求管理",
@@ -127,6 +139,7 @@ export function AppSidebar({
     "settlement",
     "demand",
     "order",
+    "material",
   ])
 
   const toggleSection = (sectionId: string) => {

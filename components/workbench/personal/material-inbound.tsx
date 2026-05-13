@@ -1,0 +1,474 @@
+"use client"
+
+import { useState } from "react"
+import {
+  Search,
+  Plus,
+  Download,
+  PackagePlus,
+  Clock,
+  Loader2,
+  CircleDollarSign,
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+type InboundType = "采购入库" | "调拨入库" | "归还入库" | "盘盈入库"
+type InboundStatus = "待入库" | "部分入库" | "已完成" | "已作废"
+
+interface InboundRow {
+  id: string
+  type: InboundType
+  source: string
+  itemTypes: number
+  plannedQty: string
+  actualQty: string
+  warehouse: string
+  planDate: string
+  finishDate: string
+  operator: string
+  amount: string
+  status: InboundStatus
+}
+
+const inboundRows: InboundRow[] = [
+  {
+    id: "RK20260513001",
+    type: "采购入库",
+    source: "广州联钢实业有限公司",
+    itemTypes: 3,
+    plannedQty: "320 吨",
+    actualQty: "—",
+    warehouse: "中铁建广州南沙基地·A区",
+    planDate: "2026-05-15",
+    finishDate: "—",
+    operator: "李文涛",
+    amount: "1,344,000",
+    status: "待入库",
+  },
+  {
+    id: "RK20260512002",
+    type: "归还入库",
+    source: "中铁十四局集团广州分公司",
+    itemTypes: 5,
+    plannedQty: "1,200 套",
+    actualQty: "860 套",
+    warehouse: "中铁建深圳前海基地·B区",
+    planDate: "2026-05-12",
+    finishDate: "—",
+    operator: "周建华",
+    amount: "326,800",
+    status: "部分入库",
+  },
+  {
+    id: "RK20260511003",
+    type: "调拨入库",
+    source: "中铁建东莞虎门基地·C区",
+    itemTypes: 2,
+    plannedQty: "4,200 套",
+    actualQty: "4,200 套",
+    warehouse: "中铁建中山翠亨基地·D区",
+    planDate: "2026-05-10",
+    finishDate: "2026-05-11",
+    operator: "陈志强",
+    amount: "235,200",
+    status: "已完成",
+  },
+  {
+    id: "RK20260509004",
+    type: "采购入库",
+    source: "佛山金辉电气有限公司",
+    itemTypes: 1,
+    plannedQty: "8,600 米",
+    actualQty: "8,600 米",
+    warehouse: "中铁建佛山顺德基地·F区",
+    planDate: "2026-05-09",
+    finishDate: "2026-05-09",
+    operator: "黄玉婷",
+    amount: "670,800",
+    status: "已完成",
+  },
+  {
+    id: "RK20260508005",
+    type: "盘盈入库",
+    source: "2026 年 5 月例行盘点",
+    itemTypes: 2,
+    plannedQty: "—",
+    actualQty: "72 套",
+    warehouse: "中铁建广州南沙基地·A区",
+    planDate: "2026-05-08",
+    finishDate: "2026-05-08",
+    operator: "李文涛",
+    amount: "37,600",
+    status: "已完成",
+  },
+  {
+    id: "RK20260507006",
+    type: "采购入库",
+    source: "中钢南方贸易有限公司",
+    itemTypes: 4,
+    plannedQty: "640 吨",
+    actualQty: "—",
+    warehouse: "中铁建广州南沙基地·E区",
+    planDate: "2026-05-07",
+    finishDate: "—",
+    operator: "孙晓东",
+    amount: "2,688,000",
+    status: "已作废",
+  },
+]
+
+function statusBadge(status: InboundStatus) {
+  const map: Record<
+    InboundStatus,
+    { bg: string; text: string; ring: string; label: string }
+  > = {
+    待入库: {
+      bg: "bg-amber-50",
+      text: "text-amber-700",
+      ring: "ring-amber-200",
+      label: "待入库",
+    },
+    部分入库: {
+      bg: "bg-blue-50",
+      text: "text-blue-700",
+      ring: "ring-blue-200",
+      label: "部分入库",
+    },
+    已完成: {
+      bg: "bg-emerald-50",
+      text: "text-emerald-700",
+      ring: "ring-emerald-200",
+      label: "已完成",
+    },
+    已作废: {
+      bg: "bg-muted",
+      text: "text-muted-foreground",
+      ring: "ring-border",
+      label: "已作废",
+    },
+  }
+  const c = map[status]
+  return (
+    <Badge
+      variant="outline"
+      className={`${c.bg} ${c.text} ${c.ring} ring-1 border-0 font-medium`}
+    >
+      {c.label}
+    </Badge>
+  )
+}
+
+function typeBadge(type: InboundType) {
+  const map: Record<InboundType, string> = {
+    采购入库: "bg-primary/10 text-primary",
+    调拨入库: "bg-indigo-100 text-indigo-700",
+    归还入库: "bg-emerald-100 text-emerald-700",
+    盘盈入库: "bg-amber-100 text-amber-700",
+  }
+  return (
+    <Badge variant="outline" className={`${map[type]} border-0 font-normal`}>
+      {type}
+    </Badge>
+  )
+}
+
+function actionsByStatus(status: InboundStatus) {
+  switch (status) {
+    case "待入库":
+      return [
+        { label: "查看" },
+        { label: "执行入库", tone: "primary" as const },
+        { label: "打印单据" },
+        { label: "作废", tone: "destructive" as const },
+      ]
+    case "部分入库":
+      return [
+        { label: "查看" },
+        { label: "继续入库", tone: "primary" as const },
+        { label: "打印单据" },
+      ]
+    case "已完成":
+      return [
+        { label: "查看" },
+        { label: "打印单据", tone: "primary" as const },
+        { label: "对账" },
+      ]
+    case "已作废":
+      return [{ label: "查看" }, { label: "复制重建" }]
+  }
+}
+
+export function MaterialInbound() {
+  const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("全部")
+  const [typeFilter, setTypeFilter] = useState("全部")
+  const [timeFilter, setTimeFilter] = useState("近30天")
+
+  const total = inboundRows.length
+  const pending = inboundRows.filter((r) => r.status === "待入库").length
+  const partial = inboundRows.filter((r) => r.status === "部分入库").length
+  const monthAmount = inboundRows
+    .filter((r) => r.status === "已完成" || r.status === "部分入库")
+    .reduce((s, r) => s + Number(r.amount.replace(/,/g, "")), 0)
+    .toLocaleString("zh-CN")
+
+  const filtered = inboundRows.filter((r) => {
+    const matchSearch =
+      !searchTerm ||
+      r.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.source.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchStatus = statusFilter === "全部" || r.status === statusFilter
+    const matchType = typeFilter === "全部" || r.type === typeFilter
+    return matchSearch && matchStatus && matchType
+  })
+
+  return (
+    <div className="space-y-4">
+      {/* 页头 */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-11 h-11 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+            <PackagePlus className="w-5 h-5 text-emerald-700" />
+          </div>
+          <div className="min-w-0">
+            <h1 className="text-2xl font-bold text-foreground truncate">入库管理</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              管理采购、调拨、归还、盘盈等入库单据，跟踪到货执行与单据状态
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm">
+            <Download className="w-4 h-4 mr-2" />
+            导出
+          </Button>
+          <Button size="sm">
+            <Plus className="w-4 h-4 mr-2" />
+            新建入库单
+          </Button>
+        </div>
+      </div>
+
+      {/* 统计卡 */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatCard
+          label="入库单总数"
+          value={total.toString()}
+          icon={PackagePlus}
+          iconBg="bg-emerald-100"
+          iconColor="text-emerald-700"
+        />
+        <StatCard
+          label="待入库"
+          value={pending.toString()}
+          icon={Clock}
+          iconBg="bg-amber-100"
+          iconColor="text-amber-700"
+        />
+        <StatCard
+          label="部分入库"
+          value={partial.toString()}
+          icon={Loader2}
+          iconBg="bg-blue-100"
+          iconColor="text-blue-700"
+        />
+        <StatCard
+          label="累计入库金额(元)"
+          value={monthAmount}
+          icon={CircleDollarSign}
+          iconBg="bg-primary/10"
+          iconColor="text-primary"
+          valueSize="xl"
+        />
+      </div>
+
+      {/* 筛选 + 表格 */}
+      <Card className="w-full min-w-0 overflow-hidden">
+        <CardContent className="p-4">
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <div className="relative flex-1 min-w-[220px] max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="搜索入库单号 / 来源单位"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="单据状态" />
+              </SelectTrigger>
+              <SelectContent>
+                {["全部", "待入库", "部分入库", "已完成", "已作废"].map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={typeFilter} onValueChange={setTypeFilter}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="入库类型" />
+              </SelectTrigger>
+              <SelectContent>
+                {["全部", "采购入库", "调拨入库", "归还入库", "盘盈入库"].map(
+                  (s) => (
+                    <SelectItem key={s} value={s}>
+                      {s}
+                    </SelectItem>
+                  ),
+                )}
+              </SelectContent>
+            </Select>
+            <Select value={timeFilter} onValueChange={setTimeFilter}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="时间范围" />
+              </SelectTrigger>
+              <SelectContent>
+                {["近7天", "近30天", "近90天", "全年"].map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span className="text-xs text-muted-foreground ml-auto">
+              共 {filtered.length} 条
+            </span>
+          </div>
+
+          <div className="w-full overflow-x-auto">
+            <Table className="min-w-[1320px]">
+              <TableHeader>
+                <TableRow className="bg-muted/40">
+                  <TableHead className="w-[150px]">入库单号</TableHead>
+                  <TableHead>入库类型</TableHead>
+                  <TableHead>来源/委托方</TableHead>
+                  <TableHead className="text-right">品种</TableHead>
+                  <TableHead className="text-right">计划数量</TableHead>
+                  <TableHead className="text-right">实际入库</TableHead>
+                  <TableHead>入库仓库</TableHead>
+                  <TableHead>计划日期</TableHead>
+                  <TableHead>完成日期</TableHead>
+                  <TableHead>经办人</TableHead>
+                  <TableHead className="text-right">金额(元)</TableHead>
+                  <TableHead>状态</TableHead>
+                  <TableHead className="w-[230px]">操作</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filtered.map((r) => (
+                  <TableRow key={r.id}>
+                    <TableCell className="font-mono text-xs">{r.id}</TableCell>
+                    <TableCell>{typeBadge(r.type)}</TableCell>
+                    <TableCell className="text-sm">{r.source}</TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {r.itemTypes}
+                    </TableCell>
+                    <TableCell className="text-right text-muted-foreground">
+                      {r.plannedQty}
+                    </TableCell>
+                    <TableCell className="text-right font-medium">
+                      {r.actualQty}
+                    </TableCell>
+                    <TableCell className="text-sm">{r.warehouse}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {r.planDate}
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {r.finishDate}
+                    </TableCell>
+                    <TableCell className="text-sm">{r.operator}</TableCell>
+                    <TableCell className="text-right tabular-nums font-medium">
+                      {r.amount}
+                    </TableCell>
+                    <TableCell>{statusBadge(r.status)}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap items-center gap-1">
+                        {actionsByStatus(r.status).map((a) => (
+                          <Button
+                            key={a.label}
+                            variant="ghost"
+                            size="sm"
+                            className={
+                              a.tone === "primary"
+                                ? "h-7 px-2 text-xs text-primary"
+                                : a.tone === "destructive"
+                                  ? "h-7 px-2 text-xs text-destructive"
+                                  : "h-7 px-2 text-xs"
+                            }
+                          >
+                            {a.label}
+                          </Button>
+                        ))}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+function StatCard({
+  label,
+  value,
+  icon: Icon,
+  iconBg,
+  iconColor,
+  valueSize = "2xl",
+}: {
+  label: string
+  value: string
+  icon: typeof PackagePlus
+  iconBg: string
+  iconColor: string
+  valueSize?: "xl" | "2xl"
+}) {
+  return (
+    <Card>
+      <CardContent className="p-4">
+        <div className="flex items-center gap-3">
+          <div
+            className={`w-12 h-12 rounded-lg ${iconBg} flex items-center justify-center shrink-0`}
+          >
+            <Icon className={`w-6 h-6 ${iconColor}`} />
+          </div>
+          <div className="min-w-0">
+            <div className="text-xs text-muted-foreground mb-1">{label}</div>
+            <div
+              className={`${
+                valueSize === "xl" ? "text-xl" : "text-2xl"
+              } font-bold text-foreground tabular-nums truncate`}
+            >
+              {value}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
