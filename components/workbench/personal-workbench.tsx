@@ -29,7 +29,10 @@ export function PersonalWorkbench({ activeSubTab }: PersonalWorkbenchProps) {
       case "order":
         return <OrderManagement />
       case "settlement":
-        return <SettlementManagement />
+      case "settlement-reconciliation":
+        return <SettlementManagement subTab="reconciliation" />
+      case "settlement-settle":
+        return <SettlementManagement subTab="settle" />
       case "contract":
         return <ContractManagement />
       default:
