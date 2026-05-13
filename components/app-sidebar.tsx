@@ -63,7 +63,16 @@ const personalMenu: MenuItem[] = [
       { id: "demand-material", label: "物资出租", icon: Package },
     ],
   },
-  { id: "order", label: "订单管理", icon: ShoppingCart },
+  {
+    id: "order",
+    label: "订单管理",
+    icon: ShoppingCart,
+    children: [
+      { id: "order-warehouse", label: "仓储交易订单", icon: Warehouse },
+      { id: "order-storage", label: "物资存放订单", icon: Package },
+      { id: "order-trade", label: "物资交易订单", icon: ShoppingCart },
+    ],
+  },
   {
     id: "settlement",
     label: "费用管理",
@@ -114,7 +123,11 @@ export function AppSidebar({
     "personal",
   ])
   // 三级展开（如：结算管理）。当前激活子项所在的父级会自动保持展开
-  const [expandedItems, setExpandedItems] = useState<string[]>(["settlement", "demand"])
+  const [expandedItems, setExpandedItems] = useState<string[]>([
+    "settlement",
+    "demand",
+    "order",
+  ])
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections((prev) =>

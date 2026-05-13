@@ -4,19 +4,20 @@ import { useState } from "react"
 import {
   Search,
   FileDown,
-  Printer,
   Warehouse,
   PackageOpen,
   Package,
   TrendingUp,
   CircleDollarSign,
   ClipboardCheck,
+  Layers,
+  ShoppingBag,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
 import {
   Select,
   SelectContent,
@@ -626,8 +627,14 @@ const INITIAL_PAYMENT_RECORDS: Record<string, PaymentRecord> = {
   WZJY20251015009: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
 }
 
-export function OrderManagement() {
-  const [activeTab, setActiveTab] = useState("warehouse")
+type OrderSubTab = "warehouse" | "storage" | "trade"
+
+interface OrderManagementProps {
+  subTab?: OrderSubTab
+}
+
+export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps = {}) {
+  const activeTab: OrderSubTab = subTab
   const [paymentRecords, setPaymentRecords] =
     useState<Record<string, PaymentRecord>>(INITIAL_PAYMENT_RECORDS)
   const [payDialog, setPayDialog] = useState<{
@@ -840,26 +847,194 @@ export function OrderManagement() {
     )
   }
 
-  const warehouseTotal = warehouseOrders.reduce(
-    (sum, o) => sum + Number(o.amount.replace(/,/g, "")),
-    0,
-  )
-  const materialTradeTotal = materialTradeOrders.reduce(
-    (sum, o) => sum + Number(o.amount.replace(/,/g, "")),
-    0,
-  )
-  const monthTotalAmount = (warehouseTotal + materialTradeTotal).toLocaleString("zh-CN")
+  // 仓储交易统计
+  const warehouseStats = {
+    total: warehouseOrders.length,
+    active: warehouseOrders.filter((o) => o.status === "履约中").length,
+    expired: warehouseOrders.filter((o) => o.status === "合同到期").length,
+    totalAmount: warehouseOrders
+      .reduce((s, o) => s + Number(o.amount.replace(/,/g, "")), 0)
+      .toLocaleString("zh-CN"),
+  }
+
+  // 物资存放统计
+  const storageStats = {
+    total: materialStorageOrders.length,
+    active: materialStorageOrders.filter((o) => o.status === "履约中").length,
+    totalArea: materialStorageOrders
+      .reduce((s, o) => s + Number(o.occupiedArea.replace(/[^\d.]/g, "")), 0)
+      .toLocaleString("zh-CN"),
+    monthlyFee: materialStorageOrders
+      .filter((o) => o.status === "履约中")
+      .reduce((s, o) => s + Number(o.storageFee.replace(/[^\d.]/g, "")), 0)
+      .toLocaleString("zh-CN"),
+  }
+
+  // 物资交易统计
+  const tradeStats = {
+    total: materialTradeOrders.length,
+    active: materialTradeOrders.filter((o) => o.status === "履约中").length,
+    fullRent: materialTradeOrders.filter((o) => o.tradeType === "整租").length,
+    totalAmount: materialTradeOrders
+      .reduce((s, o) => s + Number(o.amount.replace(/,/g, "")), 0)
+      .toLocaleString("zh-CN"),
+  }
+
+  // 子页面元信息
+  const pageMeta: Record<
+    OrderSubTab,
+    { title: string; desc: string; icon: typeof Warehouse; iconBg: string; iconColor: string }
+  > = {
+    warehouse: {
+      title: "仓储交易订单",
+      desc: "管理已签订的仓储租赁订单，跟踪合同、押金、租金与履约状态",
+      icon: Warehouse,
+      iconBg: "bg-primary/10",
+      iconColor: "text-primary",
+    },
+    storage: {
+      title: "物资存放订单",
+      desc: "管理客户委托保管的物资存放订单，跟踪保证金、保管费与出入库状态",
+      icon: PackageOpen,
+      iconBg: "bg-purple-100",
+      iconColor: "text-purple-700",
+    },
+    trade: {
+      title: "物资交易订单",
+      desc: "管理循环物资出租与整租订单，跟踪租金支付与归还流程",
+      icon: Package,
+      iconBg: "bg-accent/10",
+      iconColor: "text-accent",
+    },
+  }
+  const meta = pageMeta[activeTab]
+  const PageIcon = meta.icon
 
   return (
     <div className="space-y-4">
       {/* 页面头部 */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">订单管理</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            管理已成交并形成订单的仓储交易、物资存放与物资交易记录，跟踪履约状态与结算进度
-          </p>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div
+            className={`w-11 h-11 rounded-lg ${meta.iconBg} flex items-center justify-center shrink-0`}
+          >
+            <PageIcon className={`w-5 h-5 ${meta.iconColor}`} />
+          </div>
+          <div className="min-w-0">
+            <h1 className="text-2xl font-bold text-foreground truncate">{meta.title}</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">{meta.desc}</p>
+          </div>
         </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline">
+            <FileDown className="w-4 h-4 mr-2" />
+            导出订单
+          </Button>
+        </div>
+      </div>
+
+      {/* 数据概览（按 subTab 切换） */}
+      {activeTab === "warehouse" && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard
+            label="仓储订单总数"
+            value={warehouseStats.total.toString()}
+            icon={Warehouse}
+            iconBg="bg-primary/10"
+            iconColor="text-primary"
+          />
+          <StatCard
+            label="履约中"
+            value={warehouseStats.active.toString()}
+            icon={TrendingUp}
+            iconBg="bg-blue-100"
+            iconColor="text-blue-700"
+          />
+          <StatCard
+            label="合同到期待处理"
+            value={warehouseStats.expired.toString()}
+            icon={ClipboardCheck}
+            iconBg="bg-amber-100"
+            iconColor="text-amber-700"
+          />
+          <StatCard
+            label="累计成交金额(元)"
+            value={warehouseStats.totalAmount}
+            icon={CircleDollarSign}
+            iconBg="bg-emerald-100"
+            iconColor="text-emerald-700"
+            valueSize="xl"
+          />
+        </div>
+      )}
+
+      {activeTab === "storage" && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard
+            label="存放订单总数"
+            value={storageStats.total.toString()}
+            icon={PackageOpen}
+            iconBg="bg-purple-100"
+            iconColor="text-purple-700"
+          />
+          <StatCard
+            label="保管中订单"
+            value={storageStats.active.toString()}
+            icon={TrendingUp}
+            iconBg="bg-blue-100"
+            iconColor="text-blue-700"
+          />
+          <StatCard
+            label="累计占用面积(m²)"
+            value={storageStats.totalArea}
+            icon={Layers}
+            iconBg="bg-orange-100"
+            iconColor="text-orange-700"
+          />
+          <StatCard
+            label="月保管费收入(元)"
+            value={storageStats.monthlyFee}
+            icon={CircleDollarSign}
+            iconBg="bg-emerald-100"
+            iconColor="text-emerald-700"
+            valueSize="xl"
+          />
+        </div>
+      )}
+
+      {activeTab === "trade" && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard
+            label="交易订单总数"
+            value={tradeStats.total.toString()}
+            icon={Package}
+            iconBg="bg-accent/10"
+            iconColor="text-accent"
+          />
+          <StatCard
+            label="履约中"
+            value={tradeStats.active.toString()}
+            icon={TrendingUp}
+            iconBg="bg-blue-100"
+            iconColor="text-blue-700"
+          />
+          <StatCard
+            label="整租订单"
+            value={tradeStats.fullRent.toString()}
+            icon={ShoppingBag}
+            iconBg="bg-primary/10"
+            iconColor="text-primary"
+          />
+          <StatCard
+            label="累计成交金额(元)"
+            value={tradeStats.totalAmount}
+            icon={CircleDollarSign}
+            iconBg="bg-emerald-100"
+            iconColor="text-emerald-700"
+            valueSize="xl"
+          />
+        </div>
+      )}
         <div className="flex items-center gap-2">
           <Button variant="outline">
             <FileDown className="w-4 h-4 mr-2" />
@@ -931,23 +1106,8 @@ export function OrderManagement() {
       {/* 订单列表 */}
       <Card className="w-full min-w-0 overflow-hidden">
         <CardHeader className="pb-3">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full min-w-0">
-            <div className="flex items-center justify-between flex-wrap gap-3">
-              <TabsList>
-                <TabsTrigger value="warehouse">
-                  <Warehouse className="w-4 h-4 mr-2" />
-                  仓储交易订单
-                </TabsTrigger>
-                <TabsTrigger value="storage">
-                  <PackageOpen className="w-4 h-4 mr-2" />
-                  物资存放订单
-                </TabsTrigger>
-                <TabsTrigger value="trade">
-                  <Package className="w-4 h-4 mr-2" />
-                  物资交易订单
-                </TabsTrigger>
-              </TabsList>
-
+          <Tabs value={activeTab} className="w-full min-w-0">
+            <div className="flex items-center justify-end flex-wrap gap-3">
               <div className="flex items-center gap-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -969,12 +1129,10 @@ export function OrderManagement() {
 
             {/* 仓储交易订单 */}
             <TabsContent value="warehouse" className="mt-4 min-w-0">
-              <CardTitle className="text-base mb-3 flex items-center gap-2">
+              <CardTitle className="text-base mb-3 flex items-center gap-2 text-muted-foreground font-normal">
                 <ClipboardCheck className="w-4 h-4 text-primary" />
-                仓储交易订单
-                <span className="text-xs text-muted-foreground font-normal ml-1">
-                  共 {warehouseOrders.length} 条
-                </span>
+                <span>订单列表</span>
+                <span className="text-xs">共 {warehouseOrders.length} 条</span>
               </CardTitle>
               <CardContent className="px-0 py-0">
                 <div className="w-full overflow-x-auto border rounded-md">
@@ -1018,12 +1176,10 @@ export function OrderManagement() {
 
             {/* 物资存放订单 */}
             <TabsContent value="storage" className="mt-4 min-w-0">
-              <CardTitle className="text-base mb-3 flex items-center gap-2">
-                <PackageOpen className="w-4 h-4 text-purple-700" />
-                物资存放订单
-                <span className="text-xs text-muted-foreground font-normal ml-1">
-                  共 {materialStorageOrders.length} 条
-                </span>
+              <CardTitle className="text-base mb-3 flex items-center gap-2 text-muted-foreground font-normal">
+                <ClipboardCheck className="w-4 h-4 text-purple-700" />
+                <span>订单列表</span>
+                <span className="text-xs">共 {materialStorageOrders.length} 条</span>
               </CardTitle>
               <CardContent className="px-0 py-0">
                 <div className="w-full overflow-x-auto border rounded-md">
@@ -1071,12 +1227,10 @@ export function OrderManagement() {
 
             {/* 物资交易订单 */}
             <TabsContent value="trade" className="mt-4 min-w-0">
-              <CardTitle className="text-base mb-3 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-accent" />
-                物资交易订单
-                <span className="text-xs text-muted-foreground font-normal ml-1">
-                  共 {materialTradeOrders.length} 条
-                </span>
+              <CardTitle className="text-base mb-3 flex items-center gap-2 text-muted-foreground font-normal">
+                <ClipboardCheck className="w-4 h-4 text-accent" />
+                <span>订单列表</span>
+                <span className="text-xs">共 {materialTradeOrders.length} 条</span>
               </CardTitle>
               <CardContent className="px-0 py-0">
                 <div className="w-full overflow-x-auto border rounded-md">
@@ -1173,5 +1327,46 @@ export function OrderManagement() {
         onConfirm={handleContractConfirmAccept}
       />
     </div>
+  )
+}
+
+// 统计卡组件
+function StatCard({
+  label,
+  value,
+  icon: Icon,
+  iconBg,
+  iconColor,
+  valueSize = "2xl",
+}: {
+  label: string
+  value: string
+  icon: typeof Warehouse
+  iconBg: string
+  iconColor: string
+  valueSize?: "xl" | "2xl"
+}) {
+  return (
+    <Card>
+      <CardContent className="p-4">
+        <div className="flex items-center gap-3">
+          <div
+            className={`w-12 h-12 rounded-lg ${iconBg} flex items-center justify-center shrink-0`}
+          >
+            <Icon className={`w-6 h-6 ${iconColor}`} />
+          </div>
+          <div className="min-w-0">
+            <div className="text-xs text-muted-foreground mb-1">{label}</div>
+            <div
+              className={`${
+                valueSize === "xl" ? "text-xl" : "text-2xl"
+              } font-bold text-foreground tabular-nums truncate`}
+            >
+              {value}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
