@@ -25,7 +25,12 @@ export function PersonalWorkbench({ activeSubTab }: PersonalWorkbenchProps) {
       case "material":
         return <MaterialManagement />
       case "demand":
-        return <DemandManagement />
+      case "demand-self":
+        return <DemandManagement subTab="self-rent" />
+      case "demand-entrust":
+        return <DemandManagement subTab="entrust-rent" />
+      case "demand-material":
+        return <DemandManagement subTab="material-rent" />
       case "order":
         return <OrderManagement />
       case "settlement":
