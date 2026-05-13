@@ -39,6 +39,7 @@ interface OutboundRow {
   type: OutboundType
   customer: string
   itemTypes: number
+  materials: string[]
   plannedQty: string
   actualQty: string
   warehouse: string
@@ -56,6 +57,11 @@ const outboundRows: OutboundRow[] = [
     type: "出租出库",
     customer: "中铁十四局集团广州分公司",
     itemTypes: 3,
+    materials: [
+      "Q235B 热轧 H 型钢 HW200",
+      "20# 工字钢梁",
+      "钢板桩 IV 型",
+    ],
     plannedQty: "320 吨",
     actualQty: "—",
     warehouse: "中铁建广州南沙基地·A区",
@@ -71,6 +77,13 @@ const outboundRows: OutboundRow[] = [
     type: "出租出库",
     customer: "中铁建工集团第二建设有限公司",
     itemTypes: 5,
+    materials: [
+      "碗扣式脚手架立杆",
+      "脚手架横杆",
+      "脚手板",
+      "钢管扣件 Φ48",
+      "立柱底座",
+    ],
     plannedQty: "1,600 套",
     actualQty: "1,600 套",
     warehouse: "中铁建深圳前海基地·B区",
@@ -86,6 +99,7 @@ const outboundRows: OutboundRow[] = [
     type: "销售出库",
     customer: "广东能建第二建设有限公司",
     itemTypes: 2,
+    materials: ["Φ32 螺纹钢", "20# 工字钢梁"],
     plannedQty: "540 吨",
     actualQty: "540 吨",
     warehouse: "中铁建中山翠亨基地·D区",
@@ -101,6 +115,7 @@ const outboundRows: OutboundRow[] = [
     type: "调拨出库",
     customer: "中铁建东莞虎门基地·C区",
     itemTypes: 1,
+    materials: ["WJ-7 扣件系统"],
     plannedQty: "4,200 套",
     actualQty: "4,200 套",
     warehouse: "中铁建广州南沙基地·E区",
@@ -116,6 +131,7 @@ const outboundRows: OutboundRow[] = [
     type: "出租出库",
     customer: "中铁二十局集团第六工程有限公司",
     itemTypes: 2,
+    materials: ["工字钢梁", "组合钢模板"],
     plannedQty: "220 吨",
     actualQty: "—",
     warehouse: "中铁建广州南沙基地·A区",
@@ -131,6 +147,7 @@ const outboundRows: OutboundRow[] = [
     type: "盘亏出库",
     customer: "2026 年 5 月例行盘点",
     itemTypes: 1,
+    materials: ["QTZ63 塔吊标准节"],
     plannedQty: "—",
     actualQty: "8 套",
     warehouse: "中铁建佛山顺德基地·F区",
@@ -146,6 +163,7 @@ const outboundRows: OutboundRow[] = [
     type: "销售出库",
     customer: "深圳市鸿信钢材贸易有限公司",
     itemTypes: 1,
+    materials: ["Q235B 热轧 H 型钢"],
     plannedQty: "180 吨",
     actualQty: "—",
     warehouse: "中铁建深圳前海基地·B区",
@@ -387,12 +405,13 @@ export function MaterialOutbound() {
           </div>
 
           <div className="w-full overflow-x-auto">
-            <Table className="min-w-[1380px]">
+            <Table className="min-w-[1620px]">
               <TableHeader>
                 <TableRow className="bg-muted/40">
                   <TableHead className="w-[150px]">出库单号</TableHead>
                   <TableHead>出库类型</TableHead>
                   <TableHead>收货单位/承租方</TableHead>
+                  <TableHead className="w-[260px]">物料名称</TableHead>
                   <TableHead className="text-right">品种</TableHead>
                   <TableHead className="text-right">计划数量</TableHead>
                   <TableHead className="text-right">实际出库</TableHead>
@@ -412,6 +431,9 @@ export function MaterialOutbound() {
                     <TableCell className="font-mono text-xs">{r.id}</TableCell>
                     <TableCell>{typeBadge(r.type)}</TableCell>
                     <TableCell className="text-sm">{r.customer}</TableCell>
+                    <TableCell>
+                      <MaterialNamesCell names={r.materials} />
+                    </TableCell>
                     <TableCell className="text-right tabular-nums">
                       {r.itemTypes}
                     </TableCell>
@@ -463,6 +485,37 @@ export function MaterialOutbound() {
           </div>
         </CardContent>
       </Card>
+    </div>
+  )
+}
+
+function MaterialNamesCell({ names }: { names: string[] }) {
+  if (!names || names.length === 0) {
+    return <span className="text-xs text-muted-foreground">—</span>
+  }
+  const visible = names.slice(0, 2)
+  const rest = names.length - visible.length
+  return (
+    <div className="flex flex-wrap items-center gap-1 max-w-[260px]">
+      {visible.map((n, i) => (
+        <Badge
+          key={`${n}-${i}`}
+          variant="secondary"
+          className="font-normal text-[11px] max-w-[220px] truncate"
+          title={n}
+        >
+          {n}
+        </Badge>
+      ))}
+      {rest > 0 && (
+        <Badge
+          variant="outline"
+          className="font-normal text-[11px] text-muted-foreground"
+          title={names.join(" / ")}
+        >
+          +{rest}
+        </Badge>
+      )}
     </div>
   )
 }

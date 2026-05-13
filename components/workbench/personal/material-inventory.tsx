@@ -12,6 +12,7 @@ import {
   ArrowRightLeft,
   ClipboardCheck,
   QrCode,
+  Tag,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -187,6 +188,50 @@ const inventoryRows: InventoryRow[] = [
     status: "在库",
   },
 ]
+
+type InvActionTone = "default" | "primary" | "warning" | "destructive"
+interface InvAction {
+  label: string
+  tone?: InvActionTone
+  icon?: typeof ArrowRightLeft
+}
+
+function inventoryActions(status: InventoryRow["status"]): InvAction[] {
+  switch (status) {
+    case "在库":
+      return [
+        { label: "查看" },
+        { label: "出租", tone: "primary", icon: PackageOpen },
+        { label: "出售", tone: "warning", icon: Tag },
+        { label: "调拨", icon: ArrowRightLeft },
+        { label: "盘点", icon: ClipboardCheck },
+      ]
+    case "出租中":
+      return [
+        { label: "查看" },
+        { label: "续租", tone: "primary" },
+        { label: "调拨", icon: ArrowRightLeft },
+      ]
+    case "低库存":
+      return [
+        { label: "查看" },
+        { label: "采购入库", tone: "primary" },
+        { label: "调拨", icon: ArrowRightLeft },
+      ]
+    case "已锁定":
+      return [
+        { label: "查看" },
+        { label: "解锁", tone: "primary" },
+      ]
+  }
+}
+
+const invToneClass: Record<InvActionTone, string> = {
+  default: "h-7 px-2 text-xs",
+  primary: "h-7 px-2 text-xs text-primary",
+  warning: "h-7 px-2 text-xs text-orange-600",
+  destructive: "h-7 px-2 text-xs text-destructive",
+}
 
 function statusBadge(status: InventoryRow["status"]) {
   const map: Record<
@@ -380,7 +425,7 @@ export function MaterialInventory() {
           </div>
 
           <div className="w-full overflow-x-auto">
-            <Table className="min-w-[1320px]">
+            <Table className="min-w-[1460px]">
               <TableHeader>
                 <TableRow className="bg-muted/40">
                   <TableHead className="w-[130px]">物料编号</TableHead>
@@ -393,7 +438,7 @@ export function MaterialInventory() {
                   <TableHead>存放仓库</TableHead>
                   <TableHead>库龄</TableHead>
                   <TableHead>状态</TableHead>
-                  <TableHead className="w-[170px]">操作</TableHead>
+                  <TableHead className="w-[300px]">操作</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -435,30 +480,21 @@ export function MaterialInventory() {
                     </TableCell>
                     <TableCell>{statusBadge(r.status)}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 px-2 text-xs"
-                        >
-                          查看
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 px-2 text-xs text-primary"
-                        >
-                          <ArrowRightLeft className="w-3 h-3 mr-1" />
-                          调拨
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 px-2 text-xs"
-                        >
-                          <ClipboardCheck className="w-3 h-3 mr-1" />
-                          盘点
-                        </Button>
+                      <div className="flex flex-wrap items-center gap-1">
+                        {inventoryActions(r.status).map((a) => {
+                          const Icon = a.icon
+                          return (
+                            <Button
+                              key={a.label}
+                              variant="ghost"
+                              size="sm"
+                              className={invToneClass[a.tone ?? "default"]}
+                            >
+                              {Icon && <Icon className="w-3 h-3 mr-1" />}
+                              {a.label}
+                            </Button>
+                          )
+                        })}
                         <Button
                           variant="ghost"
                           size="icon"

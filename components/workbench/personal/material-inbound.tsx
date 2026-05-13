@@ -39,6 +39,7 @@ interface InboundRow {
   type: InboundType
   source: string
   itemTypes: number
+  materials: string[]
   plannedQty: string
   actualQty: string
   warehouse: string
@@ -55,6 +56,11 @@ const inboundRows: InboundRow[] = [
     type: "采购入库",
     source: "广州联钢实业有限公司",
     itemTypes: 3,
+    materials: [
+      "Q235B 热轧 H 型钢 HW200×200",
+      "Φ32 螺纹钢",
+      "20# 工字钢梁",
+    ],
     plannedQty: "320 吨",
     actualQty: "—",
     warehouse: "中铁建广州南沙基地·A区",
@@ -69,6 +75,13 @@ const inboundRows: InboundRow[] = [
     type: "归还入库",
     source: "中铁十四局集团广州分公司",
     itemTypes: 5,
+    materials: [
+      "碗扣式脚手架立杆",
+      "脚手架横杆",
+      "脚手板",
+      "WJ-7 扣件系统",
+      "钢管扣件 Φ48",
+    ],
     plannedQty: "1,200 套",
     actualQty: "860 套",
     warehouse: "中铁建深圳前海基地·B区",
@@ -83,6 +96,7 @@ const inboundRows: InboundRow[] = [
     type: "调拨入库",
     source: "中铁建东莞虎门基地·C区",
     itemTypes: 2,
+    materials: ["WJ-7 扣件系统", "扣件配件"],
     plannedQty: "4,200 套",
     actualQty: "4,200 套",
     warehouse: "中铁建中山翠亨基地·D区",
@@ -97,6 +111,7 @@ const inboundRows: InboundRow[] = [
     type: "采购入库",
     source: "佛山金辉电气有限公司",
     itemTypes: 1,
+    materials: ["VV 型橡套电缆 3×95+1"],
     plannedQty: "8,600 米",
     actualQty: "8,600 米",
     warehouse: "中铁建佛山顺德基地·F区",
@@ -111,6 +126,7 @@ const inboundRows: InboundRow[] = [
     type: "盘盈入库",
     source: "2026 年 5 月例行盘点",
     itemTypes: 2,
+    materials: ["QTZ63 塔吊标准节", "钢板桩 IV 型"],
     plannedQty: "—",
     actualQty: "72 套",
     warehouse: "中铁建广州南沙基地·A区",
@@ -125,6 +141,12 @@ const inboundRows: InboundRow[] = [
     type: "采购入库",
     source: "中钢南方贸易有限公司",
     itemTypes: 4,
+    materials: [
+      "Q235B 热轧 H 型钢",
+      "工字钢梁",
+      "钢板桩 IV 型",
+      "Φ32 螺纹钢",
+    ],
     plannedQty: "640 吨",
     actualQty: "—",
     warehouse: "中铁建广州南沙基地·E区",
@@ -257,7 +279,7 @@ export function MaterialInbound() {
           <div className="min-w-0">
             <h1 className="text-2xl font-bold text-foreground truncate">入库管理</h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              管理采购、调拨、归还、盘盈等入库单据，跟踪到货执行与单据状态
+              管理采购、调拨、归还、盘盈等入库单据，跟踪到货执行与���据状态
             </p>
           </div>
         </div>
@@ -363,12 +385,13 @@ export function MaterialInbound() {
           </div>
 
           <div className="w-full overflow-x-auto">
-            <Table className="min-w-[1320px]">
+            <Table className="min-w-[1560px]">
               <TableHeader>
                 <TableRow className="bg-muted/40">
                   <TableHead className="w-[150px]">入库单号</TableHead>
                   <TableHead>入库类型</TableHead>
                   <TableHead>来源/委托方</TableHead>
+                  <TableHead className="w-[260px]">物料名称</TableHead>
                   <TableHead className="text-right">品种</TableHead>
                   <TableHead className="text-right">计划数量</TableHead>
                   <TableHead className="text-right">实际入库</TableHead>
@@ -387,6 +410,9 @@ export function MaterialInbound() {
                     <TableCell className="font-mono text-xs">{r.id}</TableCell>
                     <TableCell>{typeBadge(r.type)}</TableCell>
                     <TableCell className="text-sm">{r.source}</TableCell>
+                    <TableCell>
+                      <MaterialNamesCell names={r.materials} />
+                    </TableCell>
                     <TableCell className="text-right tabular-nums">
                       {r.itemTypes}
                     </TableCell>
@@ -435,6 +461,37 @@ export function MaterialInbound() {
           </div>
         </CardContent>
       </Card>
+    </div>
+  )
+}
+
+function MaterialNamesCell({ names }: { names: string[] }) {
+  if (!names || names.length === 0) {
+    return <span className="text-xs text-muted-foreground">—</span>
+  }
+  const visible = names.slice(0, 2)
+  const rest = names.length - visible.length
+  return (
+    <div className="flex flex-wrap items-center gap-1 max-w-[260px]">
+      {visible.map((n, i) => (
+        <Badge
+          key={`${n}-${i}`}
+          variant="secondary"
+          className="font-normal text-[11px] max-w-[220px] truncate"
+          title={n}
+        >
+          {n}
+        </Badge>
+      ))}
+      {rest > 0 && (
+        <Badge
+          variant="outline"
+          className="font-normal text-[11px] text-muted-foreground"
+          title={names.join(" / ")}
+        >
+          +{rest}
+        </Badge>
+      )}
     </div>
   )
 }
