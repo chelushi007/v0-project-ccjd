@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Plus, Eye, Edit, Trash2, Warehouse, Package, FileText } from "lucide-react"
+import { Search, Plus, Eye, Edit, Trash2, Warehouse, Package, FileText, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -22,6 +22,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { DetailPublishPage } from "@/components/frontend/detail-publish-page"
+import { MaterialPickerDialog, type MaterialItem } from "./material-picker-dialog"
+import { MaterialRentPublishPage } from "./material-rent-publish-page"
 
 // 仓储自主出租需求单
 const selfRentDemands = [
@@ -149,8 +158,36 @@ const getStatusBadge = (status: string) => {
   }
 }
 
+type DemandMode = "list" | "publish-warehouse" | "publish-material"
+
 export function DemandManagement() {
   const [activeTab, setActiveTab] = useState("self-rent")
+  const [mode, setMode] = useState<DemandMode>("list")
+  const [materialPickerOpen, setMaterialPickerOpen] = useState(false)
+  const [pickedMaterials, setPickedMaterials] = useState<MaterialItem[]>([])
+
+  // 仓储出租：内嵌前台的发布出租需求单页面（同一页面、不同入口）
+  if (mode === "publish-warehouse") {
+    return (
+      <DetailPublishPage
+        defaultTab="detail"
+        onNavigate={() => setMode("list")}
+      />
+    )
+  }
+
+  // 物资出租：选完分类与物料后进入物资出租发布页
+  if (mode === "publish-material") {
+    return (
+      <MaterialRentPublishPage
+        onBack={() => {
+          setMode("list")
+          setPickedMaterials([])
+        }}
+        initialMaterials={pickedMaterials}
+      />
+    )
+  }
 
   return (
     <div className="space-y-4">
@@ -162,11 +199,54 @@ export function DemandManagement() {
             管理未形成订单之前的仓储自主出租、委托出租和物资出租需求单
           </p>
         </div>
-        <Button>
-          <Plus className="w-4 h-4 mr-2" />
-          新建需求
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+              新建需求
+              <ChevronDown className="w-4 h-4 ml-1 -mr-1" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem
+              className="cursor-pointer py-2.5"
+              onSelect={() => setMode("publish-warehouse")}
+            >
+              <Warehouse className="w-4 h-4 mr-2 text-primary" />
+              <div className="flex flex-col">
+                <span className="text-sm">仓储出租</span>
+                <span className="text-xs text-muted-foreground">
+                  发布仓储租赁需求单
+                </span>
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer py-2.5"
+              onSelect={() => setMaterialPickerOpen(true)}
+            >
+              <Package className="w-4 h-4 mr-2 text-emerald-600" />
+              <div className="flex flex-col">
+                <span className="text-sm">物资出租</span>
+                <span className="text-xs text-muted-foreground">
+                  关联循环物资库
+                </span>
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
+
+      {/* 物资分类选择弹窗 */}
+      <MaterialPickerDialog
+        open={materialPickerOpen}
+        onOpenChange={setMaterialPickerOpen}
+        onConfirm={(items) => {
+          setPickedMaterials(items)
+          setMode("publish-material")
+        }}
+        initialSelected={pickedMaterials}
+      />
+
 
       {/* 数据概览 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
