@@ -543,7 +543,7 @@ function toWarehousePaymentOrder(o: (typeof warehouseOrders)[number]): PaymentOr
   }
 }
 
-// 物资存放订单 → 支付订单视图（按 12 个月计算）
+// 物资���放订单 → 支付订单视图（按 12 个月计算）
 function toStoragePaymentOrder(o: (typeof materialStorageOrders)[number]): PaymentOrder {
   const monthly = parseAmount(o.storageFee)
   const months = 12
@@ -1035,73 +1035,6 @@ export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps =
           />
         </div>
       )}
-        <div className="flex items-center gap-2">
-          <Button variant="outline">
-            <FileDown className="w-4 h-4 mr-2" />
-            导出订单
-          </Button>
-          <Button variant="outline">
-            <Printer className="w-4 h-4 mr-2" />
-            打印汇总
-          </Button>
-        </div>
-      </div>
-
-      {/* 数据概览 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <Warehouse className="w-6 h-6 text-primary" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs text-muted-foreground mb-1">仓储交易订单</div>
-                <div className="text-2xl font-bold text-foreground">{warehouseOrders.length}</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center shrink-0">
-                <PackageOpen className="w-6 h-6 text-purple-700" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs text-muted-foreground mb-1">物资存放订单</div>
-                <div className="text-2xl font-bold text-foreground">{materialStorageOrders.length}</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
-                <Package className="w-6 h-6 text-accent" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs text-muted-foreground mb-1">物资交易订单</div>
-                <div className="text-2xl font-bold text-foreground">{materialTradeOrders.length}</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
-                <CircleDollarSign className="w-6 h-6 text-emerald-700" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs text-muted-foreground mb-1">本月成交金额（元）</div>
-                <div className="text-xl font-bold text-foreground">{monthTotalAmount}</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* 订单列表 */}
       <Card className="w-full min-w-0 overflow-hidden">
