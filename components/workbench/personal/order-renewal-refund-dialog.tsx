@@ -30,7 +30,7 @@ import {
 } from "lucide-react"
 import type { OrderType, PaymentOrder } from "./order-payment-dialog"
 
-const HUANAN_COMPANY = "中铁建物资华南专业运营有限公司"
+const HUANAN_COMPANY = "中铁建物料华南专业运营有限公司"
 const ICBC_ACCOUNT = "6212 2602 0006 1234 567"
 const ICBC_BRANCH = "工商银行 · 广州珠江支行"
 const PHONE_MASKED = "138****8888"
@@ -40,8 +40,8 @@ const TERMS: Record<
   { deposit: string; rent: string; rentMonthly: string; assetLabel: string }
 > = {
   warehouse: { deposit: "押金", rent: "租金", rentMonthly: "月租金", assetLabel: "标的仓储" },
-  storage: { deposit: "保证金", rent: "保管费", rentMonthly: "月保管费", assetLabel: "物资名称" },
-  trade: { deposit: "押金", rent: "租金", rentMonthly: "月租金", assetLabel: "标的物资" },
+  storage: { deposit: "保证金", rent: "保管费", rentMonthly: "月保管费", assetLabel: "物料名称" },
+  trade: { deposit: "押金", rent: "租金", rentMonthly: "月租金", assetLabel: "标的物料" },
 }
 
 const fmt = (n: number) => n.toLocaleString("zh-CN")

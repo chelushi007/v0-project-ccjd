@@ -8,7 +8,7 @@ const modules = [
   { icon: Building2, label: "仓储资源管理", description: "站点、库区、货位管理" },
   { icon: Users, label: "客户管理", description: "租户、委托方信息管理" },
   { icon: FileText, label: "合同管理", description: "租赁、托管合同全流程" },
-  { icon: Package, label: "物资管理", description: "入库、出库、调拨管理" },
+  { icon: Package, label: "物料管理", description: "入库、出库、调拨管理" },
   { icon: BarChart3, label: "数据统计", description: "经营数据、报表分析" },
   { icon: TrendingUp, label: "运营分析", description: "收益分析、绩效考核" },
 ]
@@ -67,14 +67,14 @@ export function OperationWorkbench() {
               <div className="flex items-start gap-2">
                 <Clock className="w-4 h-4 text-muted-foreground mt-0.5" />
                 <div>
-                  <span className="text-card-foreground">物资存放管理</span>
+                  <span className="text-card-foreground">物料存放管理</span>
                   <p className="text-xs text-muted-foreground">存放、保管、安全管理</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <Clock className="w-4 h-4 text-muted-foreground mt-0.5" />
                 <div>
-                  <span className="text-card-foreground">物资托管运营</span>
+                  <span className="text-card-foreground">物料托管运营</span>
                   <p className="text-xs text-muted-foreground">分成模式、整租模式管理</p>
                 </div>
               </div>

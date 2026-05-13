@@ -73,15 +73,15 @@ export function DemandPublish({ onNavigate }: DemandPublishProps) {
             <div className="relative">
               <div className="absolute left-0 top-0 bottom-0 w-px bg-border -ml-3" />
 
-              {/* 物资出租 */}
+              {/* 物料出租 */}
               <div>
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
                     <Package className="w-5 h-5 text-accent" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-card-foreground">物资出租</h3>
-                    <p className="text-xs text-muted-foreground">从循环物资库发布出租</p>
+                    <h3 className="font-semibold text-card-foreground">物料出租</h3>
+                    <p className="text-xs text-muted-foreground">从循环物料库发布出租</p>
                   </div>
                 </div>
                 <Card
@@ -91,10 +91,10 @@ export function DemandPublish({ onNavigate }: DemandPublishProps) {
                   <CardContent className="p-4 flex items-center justify-between">
                     <div>
                       <h4 className="font-medium text-sm text-card-foreground group-hover:text-accent transition-colors">
-                        发布物资出租
+                        发布物料出租
                       </h4>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        引用循环物资库中的物资
+                        引用循环物料库中的物料
                       </p>
                     </div>
                     <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-accent transition-colors shrink-0" />

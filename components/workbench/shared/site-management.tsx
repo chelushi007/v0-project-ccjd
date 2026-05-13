@@ -163,7 +163,7 @@ export function SiteManagement() {
                 <Package className="h-6 w-6 text-orange-500" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">托管物资</p>
+                <p className="text-sm text-muted-foreground">托管物料</p>
                 <p className="text-2xl font-bold">{totalMaterials}</p>
               </div>
             </div>
@@ -226,7 +226,7 @@ export function SiteManagement() {
                   <TableHead className="text-right">总面积(m²)</TableHead>
                   <TableHead className="text-right">使用率</TableHead>
                   <TableHead className="text-center">仓库数</TableHead>
-                  <TableHead className="text-center">物资数</TableHead>
+                  <TableHead className="text-center">物料数</TableHead>
                   <TableHead>状态</TableHead>
                   <TableHead>负责人</TableHead>
                   <TableHead className="w-[120px]">操作</TableHead>

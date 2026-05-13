@@ -52,7 +52,7 @@ interface MaterialCategory {
 const CATEGORY_TREE: MaterialCategory[] = [
   {
     id: "XH",
-    label: "XH-循环物资",
+    label: "XH-循环物料",
     children: [
       {
         id: "XH01",
@@ -327,7 +327,7 @@ export function MaterialPickerDialog({
   onConfirm,
   initialSelected = [],
 }: MaterialPickerDialogProps) {
-  // 顶部 Tab：物料信息 / 常用物料 / 物资选中信息
+  // 顶部 Tab：物料信息 / 常用物料 / 物料选中信息
   const [tab, setTab] = useState<"all" | "common" | "selected">("all")
 
   // 全屏切换
@@ -475,7 +475,7 @@ export function MaterialPickerDialog({
             {[
               { key: "all", label: "物料信息", icon: Package2 },
               { key: "common", label: "常用物料", icon: Star },
-              { key: "selected", label: "物资选中信息", icon: CheckCircle2 },
+              { key: "selected", label: "物料选中信息", icon: CheckCircle2 },
             ].map((t) => {
               const isActive = tab === t.key
               const Icon = t.icon

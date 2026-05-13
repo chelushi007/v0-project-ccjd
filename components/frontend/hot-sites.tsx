@@ -9,7 +9,7 @@ const hotSites = [
   {
     id: 1,
     name: "中铁建广州南沙综合仓储基地",
-    company: "中铁建物资华南仓储有限公司",
+    company: "中铁建物料华南仓储有限公司",
     location: "广东省广州市南沙区",
     warehouseCount: 12,
     totalArea: "150000",
@@ -21,7 +21,7 @@ const hotSites = [
   {
     id: 2,
     name: "中铁建深圳前海智慧仓储基地",
-    company: "中铁建物资华南专业运营有限公司",
+    company: "中铁建物料华南专业运营有限公司",
     location: "广东省深圳市南山区",
     warehouseCount: 8,
     totalArea: "80000",

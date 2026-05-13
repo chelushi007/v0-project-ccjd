@@ -47,10 +47,10 @@ export function SmartMatch({ onNavigate }: SmartMatchProps) {
                       <Search className="w-6 h-6 text-primary" />
                     </div>
                     <h4 className="font-medium text-card-foreground group-hover:text-primary transition-colors">
-                      物资寻找
+                      物料寻找
                     </h4>
                     <p className="text-xs text-muted-foreground mt-1">
-                      寻找合适的循环物资
+                      寻找合适的循环物料
                     </p>
                   </CardContent>
                 </Card>
@@ -78,7 +78,7 @@ export function SmartMatch({ onNavigate }: SmartMatchProps) {
             <div className="space-y-4">
               <div className="space-y-3">
                 <Textarea
-                  placeholder="用自然语言描述您的需求，例如：我需要在广州番禺区找一个3000平方米的仓库，用于存放建材物资..."
+                  placeholder="用自然语言描述您的需求，例如：我需要在广州番禺区找一个3000平方米的仓库，用于存放建材物料..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="min-h-[100px]"

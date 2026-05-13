@@ -24,7 +24,7 @@ export function PropertyOwnerWorkbench({ subTab }: PropertyOwnerWorkbenchProps) 
       return <TodoList activeTab={todoType} roleType="property" />
     }
 
-    // 物资管理
+    // 物料管理
     if (subTab === "material") {
       return <MaterialManagement roleType="property" />
     }

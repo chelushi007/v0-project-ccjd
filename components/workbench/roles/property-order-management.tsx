@@ -43,7 +43,7 @@ const mockWarehouseLeaseOrders = [
   {
     id: "CCCZ-2026-001",
     warehouseName: "中铁建广州南沙仓储基地A区",
-    warehouseOwner: "中铁建物资华南仓储有限公司",
+    warehouseOwner: "中铁建物料华南仓储有限公司",
     area: 500,
     unitPrice: 25,
     totalAmount: 75000,
@@ -55,7 +55,7 @@ const mockWarehouseLeaseOrders = [
   {
     id: "CCCZ-2026-002",
     warehouseName: "中铁建深圳前海仓储基地B区",
-    warehouseOwner: "中铁建物资华南专业运营有限公司",
+    warehouseOwner: "中铁建物料华南专业运营有限公司",
     area: 300,
     unitPrice: 30,
     totalAmount: 54000,
@@ -78,7 +78,7 @@ const mockWarehouseLeaseOrders = [
   },
 ]
 
-// 物资存储订单
+// 物料存储订单
 const mockMaterialStorageOrders = [
   {
     id: "WCCF-2026-001",
@@ -86,7 +86,7 @@ const mockMaterialStorageOrders = [
     quantity: 200,
     unit: "根",
     storageLocation: "中铁建广州南沙仓储基地A区",
-    storageOwner: "中铁建物资华南仓储有限公司",
+    storageOwner: "中铁建物料华南仓储有限公司",
     storagePrice: 5,
     totalAmount: 6000,
     entryDate: "2026-01-15",
@@ -99,7 +99,7 @@ const mockMaterialStorageOrders = [
     quantity: 10,
     unit: "组",
     storageLocation: "中铁建深圳前海仓储基地B区",
-    storageOwner: "中铁建物资华南专业运营有限公司",
+    storageOwner: "中铁建物料华南专业运营有限公司",
     storagePrice: 200,
     totalAmount: 12000,
     entryDate: "2026-02-20",
@@ -212,7 +212,7 @@ export function PropertyOrderManagement({ subTab }: PropertyOrderManagementProps
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-lg">订单管理</CardTitle>
-              <CardDescription>管理仓储承租和物资存储订单</CardDescription>
+              <CardDescription>管理仓储承租和物料存储订单</CardDescription>
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm">
@@ -231,7 +231,7 @@ export function PropertyOrderManagement({ subTab }: PropertyOrderManagementProps
               </TabsTrigger>
               <TabsTrigger value="material-storage" className="gap-2">
                 <Package className="h-4 w-4" />
-                物资存储订单列表
+                物料存储订单列表
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -322,7 +322,7 @@ export function PropertyOrderManagement({ subTab }: PropertyOrderManagementProps
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[130px]">订单编号</TableHead>
-                    <TableHead>物资名称</TableHead>
+                    <TableHead>物料名称</TableHead>
                     <TableHead className="text-right">数量</TableHead>
                     <TableHead>存放位置</TableHead>
                     <TableHead>仓储方</TableHead>

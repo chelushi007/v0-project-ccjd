@@ -100,7 +100,7 @@ const mockWarehouseRentOrders = [
   },
 ]
 
-// 物资存储订单
+// 物料存储订单
 const mockMaterialStorageOrders = [
   {
     id: "WZCF-2026-001",
@@ -249,7 +249,7 @@ export function WarehouseOrderManagement({ subTab, roleType }: WarehouseOrderMan
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-lg">订单管理</CardTitle>
-              <CardDescription>管理仓储出租和物资存储订单</CardDescription>
+              <CardDescription>管理仓储出租和物料存储订单</CardDescription>
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm">
@@ -272,7 +272,7 @@ export function WarehouseOrderManagement({ subTab, roleType }: WarehouseOrderMan
               </TabsTrigger>
               <TabsTrigger value="material-storage" className="gap-2">
                 <Package className="h-4 w-4" />
-                物资存储订单列表
+                物料存储订单列表
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -368,7 +368,7 @@ export function WarehouseOrderManagement({ subTab, roleType }: WarehouseOrderMan
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[130px]">订单编号</TableHead>
-                    <TableHead>物资名称</TableHead>
+                    <TableHead>物料名称</TableHead>
                     <TableHead className="text-right">数量</TableHead>
                     <TableHead>物权单位</TableHead>
                     <TableHead>存放位置</TableHead>

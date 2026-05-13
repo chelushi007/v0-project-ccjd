@@ -44,7 +44,7 @@ const frontendMenu: MenuItem[] = [
   { id: "warehouse-list", label: "仓储列表", icon: List },
   { id: "warehouse-map", label: "仓储地图", icon: Map },
   { id: "detail-publish", label: "仓储出租发布", icon: FilePlus },
-  { id: "material-publish", label: "物资出租发布", icon: Package },
+  { id: "material-publish", label: "物料出租发布", icon: Package },
 ]
 
 // 个人工作台菜单（结算管理含两个子级）
@@ -52,7 +52,7 @@ const personalMenu: MenuItem[] = [
   { id: "my-workbench", label: "我的工作台", icon: LayoutDashboard },
   { id: "enterprise", label: "企业中心", icon: Building2 },
   { id: "warehouse", label: "仓储管理", icon: Warehouse },
-  { id: "material", label: "物资管理", icon: Package },
+  { id: "material", label: "物料管理", icon: Package },
   {
     id: "demand",
     label: "需求管理",
@@ -60,7 +60,7 @@ const personalMenu: MenuItem[] = [
     children: [
       { id: "demand-self", label: "仓储自主出租", icon: Warehouse },
       { id: "demand-entrust", label: "仓储委托出租", icon: FileText },
-      { id: "demand-material", label: "物资出租", icon: Package },
+      { id: "demand-material", label: "物料出租", icon: Package },
     ],
   },
   {
@@ -69,8 +69,8 @@ const personalMenu: MenuItem[] = [
     icon: ShoppingCart,
     children: [
       { id: "order-warehouse", label: "仓储交易订单", icon: Warehouse },
-      { id: "order-storage", label: "物资存放订单", icon: Package },
-      { id: "order-trade", label: "物资交易订单", icon: ShoppingCart },
+      { id: "order-storage", label: "物料存放订单", icon: Package },
+      { id: "order-trade", label: "物料交易订单", icon: ShoppingCart },
     ],
   },
   {
@@ -200,7 +200,7 @@ export function AppSidebar({
           <div className="flex flex-col">
             <span className="font-semibold text-sm">仓储基地</span>
             <span className="text-xs text-sidebar-foreground/60">
-              中铁建循环物资平台
+              中铁建循环物料平台
             </span>
           </div>
         )}

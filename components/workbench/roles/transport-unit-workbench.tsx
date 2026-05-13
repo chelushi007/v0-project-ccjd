@@ -31,7 +31,7 @@ export function TransportUnitWorkbench({ subTab }: TransportUnitWorkbenchProps) 
       return <SiteManagement />
     }
 
-    // 物资管理
+    // 物料管理
     if (subTab === "material") {
       return <MaterialManagement roleType="transport" />
     }
@@ -42,7 +42,7 @@ export function TransportUnitWorkbench({ subTab }: TransportUnitWorkbenchProps) 
       return <WarehouseOrderManagement subTab={orderType} roleType="transport" />
     }
 
-    // 物资订单管理
+    // 物料订单管理
     if (subTab.startsWith("material-order-")) {
       const orderType = subTab.replace("material-order-", "")
       return <MaterialOrderManagement subTab={orderType} roleType="transport" />

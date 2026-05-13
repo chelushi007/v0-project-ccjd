@@ -38,7 +38,7 @@ export function FrontendPage({ onNavigate }: FrontendPageProps) {
       {/* 仓储商机 */}
       <WarehouseOpportunity />
 
-      {/* 物资推荐 */}
+      {/* 物料推荐 */}
       <MaterialRecommend />
 
       {/* 平台推荐 */}
@@ -59,7 +59,7 @@ export function FrontendPage({ onNavigate }: FrontendPageProps) {
       {/* 页脚 */}
       <footer className="py-8 border-t border-border">
         <div className="text-center text-sm text-muted-foreground">
-          <p>提供专业的仓储资源服务，助力物资循环利用</p>
+          <p>提供专业的仓储资源服务，助力物料循环利用</p>
         </div>
       </footer>
     </div>

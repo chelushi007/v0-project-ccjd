@@ -166,7 +166,7 @@ export function MaterialRentPublishPage({
         </Button>
         <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 gap-1">
           <Package className="w-3.5 h-3.5" />
-          物资出租
+          物料出租
         </Badge>
       </div>
 
@@ -174,9 +174,9 @@ export function MaterialRentPublishPage({
         <CardContent className="p-8 space-y-6">
           <div className="flex items-center justify-between border-b pb-4">
             <div>
-              <h2 className="text-xl font-bold">发布物资出租需求单</h2>
+              <h2 className="text-xl font-bold">发布物料出租需求单</h2>
               <p className="text-xs text-muted-foreground mt-1">
-                关联循环物资库的物料，发布物资出租需求并完成对外展示
+                关联循环物料库的物料，发布物料出租需求并完成对外展示
               </p>
             </div>
             <div className="text-xs text-muted-foreground">
@@ -227,10 +227,10 @@ export function MaterialRentPublishPage({
             </div>
           </div>
 
-          {/* 物资清单 */}
+          {/* 物料清单 */}
           <div>
             <SectionTitle
-              title="物资清单"
+              title="物料清单"
               extra={
                 <Button
                   variant="outline"
@@ -238,7 +238,7 @@ export function MaterialRentPublishPage({
                   onClick={() => setPickerOpen(true)}
                 >
                   <Plus className="w-4 h-4 mr-1" />
-                  从循环物资库添加
+                  从循环物料库添加
                 </Button>
               }
             />
@@ -249,7 +249,7 @@ export function MaterialRentPublishPage({
               >
                 <Package className="w-10 h-10 mx-auto text-muted-foreground mb-2" />
                 <p className="text-sm text-muted-foreground">
-                  暂未添加物料，点击选择物资分类并添加循环物资
+                  暂未添加物料，点击选择物料分类并添加循环物料
                 </p>
               </div>
             ) : (
@@ -492,16 +492,16 @@ export function MaterialRentPublishPage({
             </div>
           </div>
 
-          {/* 物资描述 */}
+          {/* 物料描述 */}
           <div>
-            <SectionTitle title="物资描述" />
+            <SectionTitle title="物料描述" />
             <div className="flex items-start gap-2">
               <Label className="whitespace-nowrap shrink-0 mt-2">
                 详细介绍
               </Label>
               <div className="flex-1">
                 <Textarea
-                  placeholder="请输入物资的详细描述信息，包括来源、新旧程度、使用历史、出租条件等"
+                  placeholder="请输入物料的详细描述信息，包括来源、新旧程度、使用历史、出租条件等"
                   className="min-h-[120px]"
                   maxLength={1000}
                 />
@@ -512,9 +512,9 @@ export function MaterialRentPublishPage({
             </div>
           </div>
 
-          {/* 物资图片 */}
+          {/* 物料图片 */}
           <div>
-            <SectionTitle title="物资图片" />
+            <SectionTitle title="物料图片" />
             <div className="flex items-start gap-2">
               <Label className="whitespace-nowrap shrink-0 mt-2">
                 上传图片<span className="text-destructive">*</span>
@@ -528,7 +528,7 @@ export function MaterialRentPublishPage({
                     >
                       <img
                         src={img || "/placeholder.svg"}
-                        alt={`物资图片${index + 1}`}
+                        alt={`物料图片${index + 1}`}
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute top-1 right-1 w-5 h-5 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs">
@@ -555,16 +555,16 @@ export function MaterialRentPublishPage({
                   </p>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  支持上传物资实物图片，JPG / PNG / JPEG 格式，最多 20 张，每张最大
+                  支持上传物料实物图片，JPG / PNG / JPEG 格式，最多 20 张，每张最大
                   2M
                 </p>
               </div>
             </div>
           </div>
 
-          {/* 物资所在位置 */}
+          {/* 物料所在位置 */}
           <div>
-            <SectionTitle title="物资所在位置" />
+            <SectionTitle title="物料所在位置" />
             <div className="flex items-start gap-2">
               <Label className="whitespace-nowrap shrink-0 mt-2">
                 具体位置<span className="text-destructive">*</span>
@@ -646,7 +646,7 @@ export function MaterialRentPublishPage({
           <div>
             <SectionTitle title="平台服务费说明" />
             <p className="text-sm text-muted-foreground ml-6">
-              服务费说明：物资出租订单成交后，平台将收取最终成交金额的 0.5%
+              服务费说明：物料出租订单成交后，平台将收取最终成交金额的 0.5%
               作为服务费用。
             </p>
           </div>
@@ -660,7 +660,7 @@ export function MaterialRentPublishPage({
               />
               <span className="text-sm">我已阅读并同意</span>
               <Button variant="link" className="p-0 h-auto text-primary">
-                《物资出租条例》
+                《物料出租条例》
               </Button>
             </label>
             <div className="flex gap-4">
@@ -679,7 +679,7 @@ export function MaterialRentPublishPage({
         </CardContent>
       </Card>
 
-      {/* 续选物资弹窗 */}
+      {/* 续选物料弹窗 */}
       <MaterialPickerDialog
         open={pickerOpen}
         onOpenChange={setPickerOpen}
