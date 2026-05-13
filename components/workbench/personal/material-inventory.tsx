@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { MaterialCreatePage } from "./material-create-page"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import {
@@ -229,10 +230,15 @@ function statusBadge(status: InventoryRow["status"]) {
 }
 
 export function MaterialInventory() {
+  const [mode, setMode] = useState<"list" | "create">("list")
   const [searchTerm, setSearchTerm] = useState("")
   const [category, setCategory] = useState("全部")
   const [status, setStatus] = useState("全部")
   const [warehouse, setWarehouse] = useState("全部")
+
+  if (mode === "create") {
+    return <MaterialCreatePage onBack={() => setMode("list")} />
+  }
 
   const total = inventoryRows.length
   const inStock = inventoryRows.filter((r) => r.status === "在库").length
@@ -275,7 +281,7 @@ export function MaterialInventory() {
             <Download className="w-4 h-4 mr-2" />
             导出库存
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={() => setMode("create")}>
             <Plus className="w-4 h-4 mr-2" />
             新增物料
           </Button>
@@ -285,7 +291,7 @@ export function MaterialInventory() {
       {/* 统计卡 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
-          label="物料品种总数"
+          label="物料品���总数"
           value={total.toString()}
           icon={Boxes}
           iconBg="bg-primary/10"

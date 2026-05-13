@@ -12,6 +12,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { OutboundCreatePage } from "./outbound-create-page"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import {
@@ -239,10 +240,15 @@ function actionsByStatus(status: OutboundStatus) {
 }
 
 export function MaterialOutbound() {
+  const [mode, setMode] = useState<"list" | "create">("list")
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("全部")
   const [typeFilter, setTypeFilter] = useState("全部")
   const [timeFilter, setTimeFilter] = useState("近30天")
+
+  if (mode === "create") {
+    return <OutboundCreatePage onBack={() => setMode("list")} />
+  }
 
   const total = outboundRows.length
   const pending = outboundRows.filter((r) => r.status === "待出库").length
@@ -284,7 +290,7 @@ export function MaterialOutbound() {
             <Download className="w-4 h-4 mr-2" />
             导出
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={() => setMode("create")}>
             <Plus className="w-4 h-4 mr-2" />
             新建出库单
           </Button>
