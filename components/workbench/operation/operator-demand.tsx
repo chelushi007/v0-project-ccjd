@@ -283,7 +283,7 @@ const materialRentRows: MaterialRentRow[] = [
   {
     id: "WZ20260509004",
     title: "工地围挡板出租 800 套",
-    publisher: "中铁二十二局集团第一工程有限公司",
+    publisher: "中铁二十二局集团第一工程有��公司",
     materialType: "支护类",
     quantity: "800套",
     location: "广东省东莞市长安镇",
@@ -482,55 +482,48 @@ function selfStatusOperatorActions(
       return [{ label: "查看", onClick: handlers.onView }]
     case "待审核":
       return [
-        { label: "审核通过", tone: "success", onClick: handlers.onApprove },
+        { label: "审核", tone: "success", onClick: handlers.onApprove },
         { label: "驳回", tone: "destructive", onClick: handlers.onReject },
         { label: "查看", onClick: handlers.onView },
       ]
     case "已发布":
       return [
         { label: "查看", onClick: handlers.onView },
-        { label: "约谈", tone: "primary" },
         { label: "强制下架", tone: "destructive", onClick: handlers.onForceDown },
       ]
     case "被驳回":
       return [
-        { label: "查看驳回", tone: "warning", onClick: handlers.onViewReject },
         { label: "查看", onClick: handlers.onView },
+        { label: "查看驳回", tone: "warning", onClick: handlers.onViewReject },
       ]
   }
 }
 
-// 运营方：委托出租操作矩阵
+// 运营方：委托出租操作矩阵（统一审核 / 查看 / 驳回 / 强制下架）
 function entrustOperatorActions(
   status: EntrustStatus,
   handlers: {
     onView: () => void
-    onUrgeAccept: () => void
-    onUrgeSign: () => void
+    onApprove: () => void
+    onReject: () => void
+    onForceDown: () => void
   },
 ): RowAction[] {
   switch (status) {
     case "待受理":
       return [
+        { label: "审核", tone: "success", onClick: handlers.onApprove },
+        { label: "驳回", tone: "destructive", onClick: handlers.onReject },
         { label: "查看", onClick: handlers.onView },
-        { label: "督办受理", tone: "primary", onClick: handlers.onUrgeAccept },
       ]
     case "已受理":
-      return [
-        { label: "查看", onClick: handlers.onView },
-        { label: "督办签署", tone: "primary", onClick: handlers.onUrgeSign },
-      ]
     case "签署中":
       return [
         { label: "查看", onClick: handlers.onView },
-        { label: "查看合同", tone: "primary" },
-        { label: "督办签署", tone: "primary", onClick: handlers.onUrgeSign },
+        { label: "强制下架", tone: "destructive", onClick: handlers.onForceDown },
       ]
     case "已签署":
-      return [
-        { label: "查看", onClick: handlers.onView },
-        { label: "查看合同", tone: "primary" },
-      ]
+      return [{ label: "查看", onClick: handlers.onView }]
   }
 }
 
@@ -708,7 +701,11 @@ export function OperatorDemand({ subTab = "op-demand-self" }: OperatorDemandProp
   return (
     <div className="space-y-5 min-w-0">
       {tab === "op-demand-entrust" ? (
-        <EntrustRentPage />
+        <EntrustRentPage
+          onApprove={openApprove}
+          onReject={openReject}
+          onForceDown={openForceDown}
+        />
       ) : tab === "op-demand-material" ? (
         <MaterialRentPage
           onApprove={openApprove}
@@ -896,7 +893,15 @@ function SelfRentPage({
 
 // ============ 子页：仓储委托出租 ============
 
-function EntrustRentPage() {
+function EntrustRentPage({
+  onApprove,
+  onReject,
+  onForceDown,
+}: {
+  onApprove: (id: string, title: string) => void
+  onReject: (id: string, title: string) => void
+  onForceDown: (id: string, title: string) => void
+}) {
   const rows = entrustRows
   const pending = rows.filter((d) => d.status === "待受理").length
   const accepted = rows.filter((d) => d.status === "已受理").length
@@ -989,8 +994,9 @@ function EntrustRentPage() {
                       <RowActions
                         actions={entrustOperatorActions(d.status, {
                           onView: () => {},
-                          onUrgeAccept: () => {},
-                          onUrgeSign: () => {},
+                          onApprove: () => onApprove(d.id, d.title),
+                          onReject: () => onReject(d.id, d.title),
+                          onForceDown: () => onForceDown(d.id, d.title),
                         })}
                       />
                     </TableCell>
@@ -1354,7 +1360,7 @@ function ApproveDialog({
         </DialogHeader>
         <div className="space-y-2 pt-2">
           <Label className="text-xs">审核备注（选填）</Label>
-          <Textarea placeholder="如有特殊提示或建议，可填写后通知发布方……" rows={3} />
+          <Textarea placeholder="如有特殊提示或建议，可填写后通知���布方……" rows={3} />
         </div>
         <DialogFooter className="gap-2 sm:gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
