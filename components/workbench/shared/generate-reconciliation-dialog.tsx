@@ -46,9 +46,9 @@ import {
 
 export type BusinessType =
   | "仓储租赁"
-  | "物料存放"
-  | "物料交易"
-  | "物料运营分成"
+  | "物资存放"
+  | "物资租赁"
+  | "物资销售"
 
 export type ReconCycle = "按月" | "按年" | "一次性"
 
@@ -89,7 +89,7 @@ const ORDER_BANK: Record<BusinessType, OrderOption[]> = {
       totalMonths: 24,
     },
   ],
-  物料存放: [
+  物资存放: [
     {
       id: "WZCF20260420005",
       title: "盾构机管片 ×320 套",
@@ -107,7 +107,7 @@ const ORDER_BANK: Record<BusinessType, OrderOption[]> = {
       totalMonths: 6,
     },
   ],
-  物料交易: [
+  物资租赁: [
     {
       id: "WZJY20260428005",
       title: "贝雷片 (321 型) ×420 片 · 短租",
@@ -125,22 +125,22 @@ const ORDER_BANK: Record<BusinessType, OrderOption[]> = {
       totalMonths: 12,
     },
   ],
-  物料运营分成: [
+  物资销售: [
     {
-      id: "YYFC20260301002",
-      title: "广州黄埔基地物料运营分成（钢构 + 周转材料）",
-      partner: "中铁十二局集团有限公司",
-      monthlyAmount: 165000, // 月度运营所得（含税）
-      startDate: "2026-03",
+      id: "WZXS20260513001",
+      title: "万能杆件 ×800 套 · 销售分成",
+      partner: "中铁十四局集团广州分公司",
+      monthlyAmount: 315000, // 月度销售额（销售分成基数）
+      startDate: "2026-05",
       totalMonths: 12,
     },
     {
-      id: "YYFC20251201001",
-      title: "东莞虎门基地物料运营分成（盾构管片 + 贝雷片）",
-      partner: "中铁建东莞虎门港务仓储基地",
-      monthlyAmount: 220000,
-      startDate: "2025-12",
-      totalMonths: 24,
+      id: "WZXS20260510003",
+      title: "盘扣式脚手架配件包 · 销售分成",
+      partner: "中铁建工集团第二建设有限公司",
+      monthlyAmount: 165600,
+      startDate: "2026-05",
+      totalMonths: 12,
     },
   ],
 }
@@ -177,16 +177,16 @@ const fmt = (n: number) => Math.round(n).toLocaleString("zh-CN")
 
 const businessIconMap: Record<BusinessType, typeof Building2> = {
   仓储租赁: Building2,
-  物料存放: PackageOpen,
-  物料交易: ShoppingCart,
-  物料运营分成: TrendingUp,
+  物资存放: PackageOpen,
+  物资租赁: TrendingUp,
+  物资销售: ShoppingCart,
 }
 
 const businessChipMap: Record<BusinessType, string> = {
   仓储租赁: "bg-blue-50 text-blue-700 border-blue-200",
-  物料存放: "bg-indigo-50 text-indigo-700 border-indigo-200",
-  物料交易: "bg-sky-50 text-sky-700 border-sky-200",
-  物料运营分成: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  物资存放: "bg-indigo-50 text-indigo-700 border-indigo-200",
+  物资租赁: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  物资销售: "bg-amber-50 text-amber-700 border-amber-200",
 }
 
 export function GenerateReconciliationDialog({
@@ -198,7 +198,7 @@ export function GenerateReconciliationDialog({
   const [orderId, setOrderId] = useState<string>(ORDER_BANK["仓储租赁"][0].id)
   const [cycle, setCycle] = useState<ReconCycle>("按月")
   const [period, setPeriod] = useState<string>("2026-05")
-  // 物料运营分成默认 60% 给业主单位、40% 平台运营方
+  // 物资销售默认 60% 给业主单位、40% 平台运营方
   const [sharePct, setSharePct] = useState<number>(60)
   const [remark, setRemark] = useState<string>("")
 
@@ -229,7 +229,7 @@ export function GenerateReconciliationDialog({
   const perPeriodAmount = useMemo(() => {
     if (!order) return 0
     const base = order.monthlyAmount * monthsPerPeriod
-    return businessType === "物料运营分成"
+    return businessType === "物资销售"
       ? Math.round(base * (sharePct / 100))
       : base
   }, [order, monthsPerPeriod, businessType, sharePct])
@@ -306,7 +306,7 @@ export function GenerateReconciliationDialog({
       cycle,
       period: cycleLabel,
       amount: currentAmount,
-      sharePct: businessType === "物料运营分成" ? sharePct : undefined,
+      sharePct: businessType === "物资销售" ? sharePct : undefined,
     })
     onOpenChange(false)
   }
@@ -347,9 +347,9 @@ export function GenerateReconciliationDialog({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="仓储租赁">仓储租赁</SelectItem>
-                    <SelectItem value="物料存放">物料存放</SelectItem>
-                    <SelectItem value="物料交易">物料交易</SelectItem>
-                    <SelectItem value="物料运营分成">物料运营分成</SelectItem>
+                    <SelectItem value="物资存放">物资存放</SelectItem>
+                    <SelectItem value="物资租赁">物资租赁</SelectItem>
+                    <SelectItem value="物资销售">物资销售</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -386,12 +386,12 @@ export function GenerateReconciliationDialog({
                   <InfoLine label="订单号" value={order.id} mono />
                   <InfoLine label="合作方" value={order.partner} />
                   <InfoLine
-                    label={businessType === "物料运营分成" ? "总运营所得" : "合同总金额"}
+                    label={businessType === "物资销售" ? "累计销售总额" : "合同总金额"}
                     value={`¥ ${fmt(order.monthlyAmount * order.totalMonths)}`}
                     accent
                   />
                   <InfoLine
-                    label="租期"
+                    label={businessType === "物资销售" ? "销售周期" : "租期"}
                     value={`${order.startDate} 起 · 共 ${order.totalMonths} 个月`}
                   />
                 </div>
@@ -431,20 +431,20 @@ export function GenerateReconciliationDialog({
             </div>
           </div>
 
-          {/* 物料运营分成的比例配置 */}
-          {businessType === "物料运营分成" && (
-            <div className="rounded-lg border border-emerald-200 p-4 bg-emerald-50/40 space-y-3">
+          {/* 物资销售的分成比例配置 */}
+          {businessType === "物资销售" && (
+            <div className="rounded-lg border border-amber-200 p-4 bg-amber-50/40 space-y-3">
               <div className="flex items-center gap-2">
-                <Percent className="w-4 h-4 text-emerald-700" />
-                <span className="text-sm font-medium text-emerald-900">运营分成比例</span>
-                <Badge variant="outline" className="bg-white text-emerald-700 border-emerald-200 text-[10px] h-5">
-                  基于租金运营所得分配
+                <Percent className="w-4 h-4 text-amber-700" />
+                <span className="text-sm font-medium text-amber-900">销售分成比例</span>
+                <Badge variant="outline" className="bg-white text-amber-700 border-amber-200 text-[10px] h-5">
+                  基于销售总额分配
                 </Badge>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
                 <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">业主单位（甲方）分成比例</Label>
+                  <Label className="text-xs text-muted-foreground">供货方（甲方）分成比例</Label>
                   <div className="relative">
                     <Input
                       type="number"
@@ -479,8 +479,8 @@ export function GenerateReconciliationDialog({
                         onClick={() => setSharePct(p)}
                         className={`flex-1 h-9 rounded-md border text-xs transition-colors ${
                           sharePct === p
-                            ? "border-emerald-600 bg-emerald-600 text-white"
-                            : "border-emerald-200 bg-white text-emerald-700 hover:bg-emerald-50"
+                            ? "border-amber-600 bg-amber-600 text-white"
+                            : "border-amber-200 bg-white text-amber-700 hover:bg-amber-50"
                         }`}
                       >
                         {p}/{100 - p}
@@ -491,16 +491,16 @@ export function GenerateReconciliationDialog({
               </div>
 
               {order && (
-                <div className="text-xs text-emerald-900/80 bg-white/60 rounded-md border border-emerald-200 px-3 py-2">
-                  本期运营所得 ¥{" "}
-                  <span className="font-semibold text-emerald-900">
+                <div className="text-xs text-amber-900/80 bg-white/60 rounded-md border border-amber-200 px-3 py-2">
+                  本期销售总额 ¥{" "}
+                  <span className="font-semibold text-amber-900">
                     {fmt(
                       order.monthlyAmount *
                         (cycle === "按月" ? 1 : cycle === "按年" ? 12 : order.totalMonths),
                     )}
                   </span>{" "}
                   × {sharePct}% ={" "}
-                  <span className="font-semibold text-emerald-900">¥ {fmt(currentAmount)}</span>
+                  <span className="font-semibold text-amber-900">¥ {fmt(currentAmount)}</span>
                   （甲方应得分成金额）
                 </div>
               )}
@@ -557,7 +557,7 @@ export function GenerateReconciliationDialog({
             const perPeriodLabel =
               cycle === "按月" ? "月对账金额" : cycle === "按年" ? "年对账金额" : "一次性对账金额"
             const perPeriodSub =
-              businessType === "物料运营分成"
+              businessType === "物资销售"
                 ? `按 ${sharePct}% 分成`
                 : cycle === "按月"
                   ? "每月 1 次"
