@@ -24,6 +24,8 @@ import {
   PackageMinus,
   ArrowLeftRight,
   Tags,
+  Settings2,
+  BarChart3,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -101,6 +103,18 @@ const personalMenu: MenuItem[] = [
   { id: "contract", label: "合同管理", icon: FileText },
 ]
 
+// 运营方工作台菜单
+const operationMenu: MenuItem[] = [
+  { id: "op-my-workbench", label: "我的工作台", icon: LayoutDashboard },
+  { id: "op-warehouse", label: "仓储管理", icon: Warehouse },
+  { id: "op-material", label: "物料管理", icon: Package },
+  { id: "op-demand", label: "需求管理", icon: ClipboardList },
+  { id: "op-order", label: "订单管理", icon: ShoppingCart },
+  { id: "op-fee", label: "费用管理", icon: CreditCard },
+  { id: "op-contract", label: "合同管理", icon: FileText },
+  { id: "op-analytics", label: "统计分析", icon: BarChart3 },
+]
+
 // 主导航菜单
 const menuSections: MenuSection[] = [
   {
@@ -116,6 +130,13 @@ const menuSections: MenuSection[] = [
     icon: LayoutDashboard,
     description: "业务管理中心",
     items: personalMenu,
+  },
+  {
+    id: "operation",
+    label: "运营方工作台",
+    icon: Settings2,
+    description: "平台运营管理中心",
+    items: operationMenu,
   },
 ]
 
@@ -137,6 +158,7 @@ export function AppSidebar({
   const [expandedSections, setExpandedSections] = useState<string[]>([
     "frontend",
     "personal",
+    "operation",
   ])
   // 三级展开（如：结算管理）。当前激活子项所在的父级会自动保持展开
   const [expandedItems, setExpandedItems] = useState<string[]>([
