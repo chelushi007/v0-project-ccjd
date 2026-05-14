@@ -261,20 +261,8 @@ export function AppSidebar({
         collapsed ? "w-16" : "w-64",
       )}
     >
-      {/* Logo区域 */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-sidebar-border shrink-0">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-sidebar-primary">
-          <Warehouse className="w-5 h-5 text-sidebar-primary-foreground" />
-        </div>
-        {!collapsed && (
-          <div className="flex flex-col">
-            <span className="font-semibold text-sm">仓储基地</span>
-            <span className="text-xs text-sidebar-foreground/60">
-              中铁建循环物料平台
-            </span>
-          </div>
-        )}
-      </div>
+      {/* 顶栏占位（全局顶栏覆盖此区域） */}
+      <div className="h-16 shrink-0" aria-hidden />
 
       {/* 菜单列表 */}
       <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto">
