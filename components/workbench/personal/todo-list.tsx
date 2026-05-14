@@ -384,23 +384,221 @@ export function TodoList({ roleType = "property" }: TodoListProps) {
         </Card>
       </div>
 
-      {/* ── 第二行：交易统计 + 站内消息 ──────────────────────────────────── */}
+      {/* ── 第二行：待办列表 + 站内消息 ──────────────────────────────────── */}
       <div className="grid grid-cols-5 gap-4">
 
-        {/* 交易统计（占3列） */}
-        <div className="col-span-3">
-          <Card className="h-full flex flex-col">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center justify-between">
-                <span className="flex items-center gap-1.5">
-                  <BarChart3 className="w-4 h-4 text-primary" />
-                  交易统计
-                </span>
-                <span className="text-xs text-muted-foreground font-normal">本月</span>
+        {/* 待办列表（占3列） */}
+        <Card className="col-span-3 flex flex-col">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5">
+                <FileText className="w-4 h-4 text-primary" />
+                待办列表
+                <Badge variant="secondary" className="ml-1">{totalTodo}</Badge>
+                {urgentCount > 0 && (
+                  <Badge className="bg-red-500/10 text-red-600 border-red-500/20 ml-1">
+                    {urgentCount} 紧急
+                  </Badge>
+                )}
               </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0 flex-1 flex flex-col">
-              <div className="grid grid-cols-2 gap-3 mb-4">
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0 flex-1">
+            <Tabs value={todoTab} onValueChange={(v) => setTodoTab(v as "entrust" | "approval")}>
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="entrust" className="flex items-center gap-2">
+                  <Handshake className="w-4 h-4" />
+                  委托受理
+                  <Badge variant="secondary" className="ml-1">{todoItems.entrust.length}</Badge>
+                </TabsTrigger>
+                <TabsTrigger value="approval" className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4" />
+                  审批事项
+                  <Badge variant="secondary" className="ml-1">{todoItems.approval.length}</Badge>
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="entrust" className="mt-0 space-y-3">
+                {todoItems.entrust.map((item) => (
+                  <div key={item.id} className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                          {getPriorityBadge(item.priority)}
+                          {getStatusBadge(item.status)}
+                          <Badge variant="outline" className="text-xs">{item.type}</Badge>
+                        </div>
+                        <h3 className="font-medium text-foreground text-sm mb-1">{item.title}</h3>
+                        <p className="text-xs text-muted-foreground line-clamp-1">{item.description}</p>
+                        <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <Building2 className="w-3 h-3" />{item.applicant}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />截止：{item.deadline}
+                          </span>
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="sm" className="shrink-0">
+                        处理<ChevronRight className="w-4 h-4 ml-1" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </TabsContent>
+
+              <TabsContent value="approval" className="mt-0 space-y-3">
+                {todoItems.approval.map((item) => (
+                  <div key={item.id} className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                          {getStatusBadge(item.status)}
+                          <Badge variant="outline" className="text-xs flex items-center gap-1">
+                            {getApprovalTypeIcon(item.type)}
+                            {item.type}
+                          </Badge>
+                        </div>
+                        <h3 className="font-medium text-foreground text-sm mb-1">{item.title}</h3>
+                        <p className="text-xs text-muted-foreground line-clamp-1">{item.description}</p>
+
+                        {/* 进度条 */}
+                        <div className="mt-3">
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              当前进度：<span className="font-medium text-foreground">{item.progress}</span>
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {item.progressStep}/{item.totalStep}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            {Array.from({ length: item.totalStep }).map((_, idx) => (
+                              <div
+                                key={idx}
+                                className={`h-1.5 flex-1 rounded-full ${
+                                  idx < item.progressStep
+                                    ? item.status === "completed"
+                                      ? "bg-green-500"
+                                      : "bg-primary"
+                                    : "bg-muted"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <User className="w-3 h-3" />申请人：{item.applicant}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />提交时间：{item.submitTime}
+                          </span>
+                        </div>
+                      </div>
+                      <Button variant="outline" size="sm" className="shrink-0">
+                        查看详情<ChevronRight className="w-4 h-4 ml-1" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+
+        {/* 站内消息（占2列） */}
+        <Card className="col-span-2 flex flex-col">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <Bell className="w-4 h-4 text-primary" />
+                站内消息
+                {unreadCount > 0 && (
+                  <Badge className="bg-red-500 text-white text-[10px] h-4 px-1.5">{unreadCount}</Badge>
+                )}
+              </span>
+              <Button variant="ghost" size="sm" className="h-6 text-xs text-primary px-2">
+                全部 <ArrowUpRight className="w-3 h-3 ml-0.5" />
+              </Button>
+            </CardTitle>
+            <Tabs value={msgTab} onValueChange={(v) => setMsgTab(v as "all" | "unread")}>
+              <TabsList className="h-7 p-0.5">
+                <TabsTrigger value="all" className="h-6 text-xs px-3">全部</TabsTrigger>
+                <TabsTrigger value="unread" className="h-6 text-xs px-3">
+                  未读
+                  {unreadCount > 0 && <span className="ml-1 text-red-500">({unreadCount})</span>}
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </CardHeader>
+          <CardContent className="pt-0 flex-1 overflow-auto">
+            <div className="space-y-1">
+              {displayMessages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`flex gap-3 p-2.5 rounded-lg cursor-pointer transition-colors hover:bg-muted/50 ${!msg.read ? "bg-primary/5" : ""}`}
+                >
+                  <div className="mt-0.5 shrink-0">
+                    {getMsgIcon(msg.type)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-0.5">
+                      <span className={`text-xs font-medium truncate ${!msg.read ? "text-foreground" : "text-muted-foreground"}`}>
+                        {msg.title}
+                      </span>
+                      {!msg.read && <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />}
+                    </div>
+                    {msg.type === "review" && typeof msg.rating === "number" && (
+                      <div className="flex items-center gap-0.5 mb-1">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-3 h-3 ${
+                              i < msg.rating!
+                                ? "fill-yellow-400 text-yellow-400"
+                                : "fill-transparent text-muted-foreground/40"
+                            }`}
+                          />
+                        ))}
+                        <span className="ml-1 text-[10px] text-yellow-600 font-medium tabular-nums">
+                          {msg.rating}.0
+                        </span>
+                      </div>
+                    )}
+                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      {msg.content}
+                    </p>
+                    <span className="text-[10px] text-muted-foreground/60 mt-1 block">{msg.time}</span>
+                  </div>
+                </div>
+              ))}
+              {displayMessages.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+                  <Bell className="w-8 h-8 mb-2 opacity-30" />
+                  <span className="text-xs">暂无未读消息</span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* ── 第三行：交易统计（整行） ──────────────────────────────────────── */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <BarChart3 className="w-4 h-4 text-primary" />
+              交易统计
+            </span>
+            <span className="text-xs text-muted-foreground font-normal">本月</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
                 {tradeStats.map((item) => (
                   <div key={item.label} className="p-3 bg-muted/40 rounded-lg flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center shrink-0`}>
@@ -676,208 +874,6 @@ export function TodoList({ roleType = "property" }: TodoListProps) {
               </div>
             </CardContent>
           </Card>
-        </div>
-
-        {/* 站内消息（占2列） */}
-        <div className="col-span-2">
-          <Card className="h-full flex flex-col">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center justify-between">
-                <span className="flex items-center gap-1.5">
-                  <Bell className="w-4 h-4 text-primary" />
-                  站内消息
-                  {unreadCount > 0 && (
-                    <Badge className="bg-red-500 text-white text-[10px] h-4 px-1.5">{unreadCount}</Badge>
-                  )}
-                </span>
-                <Button variant="ghost" size="sm" className="h-6 text-xs text-primary px-2">
-                  全部 <ArrowUpRight className="w-3 h-3 ml-0.5" />
-                </Button>
-              </CardTitle>
-              <Tabs value={msgTab} onValueChange={(v) => setMsgTab(v as "all" | "unread")}>
-                <TabsList className="h-7 p-0.5">
-                  <TabsTrigger value="all" className="h-6 text-xs px-3">全部</TabsTrigger>
-                  <TabsTrigger value="unread" className="h-6 text-xs px-3">
-                    未读
-                    {unreadCount > 0 && <span className="ml-1 text-red-500">({unreadCount})</span>}
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </CardHeader>
-            <CardContent className="pt-0 flex-1 overflow-auto">
-              <div className="space-y-1">
-                {displayMessages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`flex gap-3 p-2.5 rounded-lg cursor-pointer transition-colors hover:bg-muted/50 ${!msg.read ? "bg-primary/5" : ""}`}
-                  >
-                    <div className="mt-0.5 shrink-0">
-                      {getMsgIcon(msg.type)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2 mb-0.5">
-                        <span className={`text-xs font-medium truncate ${!msg.read ? "text-foreground" : "text-muted-foreground"}`}>
-                          {msg.title}
-                        </span>
-                        {!msg.read && <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />}
-                      </div>
-                      {msg.type === "review" && typeof msg.rating === "number" && (
-                        <div className="flex items-center gap-0.5 mb-1">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-3 h-3 ${
-                                i < msg.rating!
-                                  ? "fill-yellow-400 text-yellow-400"
-                                  : "fill-transparent text-muted-foreground/40"
-                              }`}
-                            />
-                          ))}
-                          <span className="ml-1 text-[10px] text-yellow-600 font-medium tabular-nums">
-                            {msg.rating}.0
-                          </span>
-                        </div>
-                      )}
-                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                        {msg.content}
-                      </p>
-                      <span className="text-[10px] text-muted-foreground/60 mt-1 block">{msg.time}</span>
-                    </div>
-                  </div>
-                ))}
-                {displayMessages.length === 0 && (
-                  <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-                    <Bell className="w-8 h-8 mb-2 opacity-30" />
-                    <span className="text-xs">暂无未读消息</span>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* ── 第三行：待办列表 ──────────────────────────────────────────────── */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5">
-              <FileText className="w-4 h-4 text-primary" />
-              待办列表
-              <Badge variant="secondary" className="ml-1">{totalTodo}</Badge>
-              {urgentCount > 0 && (
-                <Badge className="bg-red-500/10 text-red-600 border-red-500/20 ml-1">
-                  {urgentCount} 紧急
-                </Badge>
-              )}
-            </CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <Tabs value={todoTab} onValueChange={(v) => setTodoTab(v as "entrust" | "approval")}>
-            <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="entrust" className="flex items-center gap-2">
-                <Handshake className="w-4 h-4" />
-                委托受理
-                <Badge variant="secondary" className="ml-1">{todoItems.entrust.length}</Badge>
-              </TabsTrigger>
-              <TabsTrigger value="approval" className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4" />
-                审批事项
-                <Badge variant="secondary" className="ml-1">{todoItems.approval.length}</Badge>
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="entrust" className="mt-0 space-y-3">
-              {todoItems.entrust.map((item) => (
-                <div key={item.id} className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                        {getPriorityBadge(item.priority)}
-                        {getStatusBadge(item.status)}
-                        <Badge variant="outline" className="text-xs">{item.type}</Badge>
-                      </div>
-                      <h3 className="font-medium text-foreground text-sm mb-1">{item.title}</h3>
-                      <p className="text-xs text-muted-foreground line-clamp-1">{item.description}</p>
-                      <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Building2 className="w-3 h-3" />{item.applicant}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />截止：{item.deadline}
-                        </span>
-                      </div>
-                    </div>
-                    <Button variant="ghost" size="sm" className="shrink-0">
-                      处理<ChevronRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </TabsContent>
-
-            <TabsContent value="approval" className="mt-0 space-y-3">
-              {todoItems.approval.map((item) => (
-                <div key={item.id} className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                        {getStatusBadge(item.status)}
-                        <Badge variant="outline" className="text-xs flex items-center gap-1">
-                          {getApprovalTypeIcon(item.type)}
-                          {item.type}
-                        </Badge>
-                      </div>
-                      <h3 className="font-medium text-foreground text-sm mb-1">{item.title}</h3>
-                      <p className="text-xs text-muted-foreground line-clamp-1">{item.description}</p>
-
-                      {/* 进度条 */}
-                      <div className="mt-3">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            当前进度：<span className="font-medium text-foreground">{item.progress}</span>
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {item.progressStep}/{item.totalStep}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          {Array.from({ length: item.totalStep }).map((_, idx) => (
-                            <div
-                              key={idx}
-                              className={`h-1.5 flex-1 rounded-full ${
-                                idx < item.progressStep
-                                  ? item.status === "completed"
-                                    ? "bg-green-500"
-                                    : "bg-primary"
-                                  : "bg-muted"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <User className="w-3 h-3" />申请人：{item.applicant}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />提交时间：{item.submitTime}
-                        </span>
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm" className="shrink-0">
-                      查看详情<ChevronRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
 
     </div>
   )
