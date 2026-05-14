@@ -272,7 +272,7 @@ export function AppSidebar({
           <div className="flex flex-col leading-tight min-w-0">
             <span className="font-semibold text-sm truncate">中国铁建</span>
             <span className="text-[11px] text-white/70 truncate">
-              循环物资平台
+              盘古·循环资源
             </span>
           </div>
         )}

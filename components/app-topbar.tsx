@@ -23,7 +23,7 @@ interface AppTopbarProps {
 const titleMap: Record<WorkbenchKind, string> = {
   operation: "运营工作台",
   personal: "用户工作台",
-  frontend: "循环物资门户",
+  frontend: "",
 }
 
 const companyOptions = [
@@ -103,13 +103,15 @@ export function AppTopbar({
           <span className="font-medium">王庆祥</span>
         </button>
 
-        <button
-          onClick={onNavigateFrontend}
-          className="flex items-center gap-2 text-sm hover:opacity-90 transition-opacity"
-        >
-          <Home className="w-5 h-5" />
-          <span className="font-medium">循环物资门户</span>
-        </button>
+        {kind !== "frontend" && (
+          <button
+            onClick={onNavigateFrontend}
+            className="flex items-center gap-2 text-sm hover:opacity-90 transition-opacity"
+          >
+            <Home className="w-5 h-5" />
+            <span className="font-medium">循环资源门户</span>
+          </button>
+        )}
       </div>
     </header>
   )
