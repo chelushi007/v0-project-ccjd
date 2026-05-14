@@ -10,6 +10,7 @@ import {
   Building2,
   Package,
   FileText,
+  Files,
   CreditCard,
   List,
   Map,
@@ -130,7 +131,15 @@ const operationMenu: MenuItem[] = [
     ],
   },
   { id: "op-fee", label: "费用管理", icon: CreditCard },
-  { id: "op-contract", label: "合同管理", icon: FileText },
+  {
+    id: "op-contract",
+    label: "合同管理",
+    icon: FileText,
+    children: [
+      { id: "op-contract-query", label: "合同查询", icon: FileText },
+      { id: "op-contract-template", label: "模版管理", icon: Files },
+    ],
+  },
   { id: "op-analytics", label: "统计分析", icon: BarChart3 },
 ]
 
@@ -187,6 +196,7 @@ export function AppSidebar({
     "material",
     "op-demand",
     "op-order",
+    "op-contract",
   ])
 
   const toggleSection = (sectionId: string) => {

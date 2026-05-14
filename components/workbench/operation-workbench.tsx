@@ -36,7 +36,9 @@ export function OperationWorkbench({ activeSubTab }: OperationWorkbenchProps) {
       case "op-fee":
         return <OperatorFee />
       case "op-contract":
-        return <OperatorContract />
+      case "op-contract-query":
+      case "op-contract-template":
+        return <OperatorContract subTab={activeSubTab} />
       case "op-analytics":
         return <OperatorAnalytics />
       default:
