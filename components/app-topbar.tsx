@@ -17,6 +17,7 @@ type WorkbenchKind = "operation" | "personal" | "frontend"
 interface AppTopbarProps {
   activeTab: string
   onNavigateFrontend?: () => void
+  sidebarCollapsed?: boolean
 }
 
 const titleMap: Record<WorkbenchKind, string> = {
@@ -33,7 +34,11 @@ const companyOptions = [
   "中国铁建股份有限公司总部",
 ]
 
-export function AppTopbar({ activeTab, onNavigateFrontend }: AppTopbarProps) {
+export function AppTopbar({
+  activeTab,
+  onNavigateFrontend,
+  sidebarCollapsed = false,
+}: AppTopbarProps) {
   const kind: WorkbenchKind =
     activeTab === "operation"
       ? "operation"
@@ -46,42 +51,18 @@ export function AppTopbar({ activeTab, onNavigateFrontend }: AppTopbarProps) {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 h-16 flex items-center",
+        "fixed top-0 right-0 z-40 h-16 flex items-center",
+        "transition-[left] duration-300",
+        sidebarCollapsed ? "left-16" : "left-64",
         "bg-gradient-to-r from-[#0b4ea2] via-[#1864c2] to-[#2a85e0]",
         "text-white shadow-[0_2px_8px_rgba(11,78,162,0.25)]",
       )}
     >
-      {/* 左侧：Logo + 标题 + 副标 */}
-      <div className="flex items-stretch h-full pl-5 pr-6 min-w-0 flex-1">
-        {/* CRCC Logo 占位 */}
-        <div className="flex items-center gap-3 shrink-0">
-          <div className="flex items-center justify-center w-11 h-11 rounded-full bg-white/95 shadow-sm">
-            <span className="text-[10px] font-extrabold text-[#0b4ea2] leading-none tracking-tight">
-              CRCC
-            </span>
-          </div>
-          <div className="flex flex-col leading-tight">
-            <span className="text-[10px] tracking-[0.18em] text-white/80 font-medium">
-              中国铁建
-            </span>
-            <span className="text-[10px] tracking-[0.18em] text-white/60">
-              CRCC
-            </span>
-          </div>
-        </div>
-
-        {/* 竖向分割线 */}
-        <div className="mx-5 my-3 w-px bg-white/25" />
-
-        {/* 标题 + 副标 */}
-        <div className="flex flex-col justify-center min-w-0">
-          <h1 className="text-lg font-semibold leading-tight truncate">
-            {titleMap[kind]}
-          </h1>
-          <p className="text-[11px] text-white/75 truncate">
-            闲置废旧物资的管理以及同法人调拨/租赁管理
-          </p>
-        </div>
+      {/* 左侧：标题 */}
+      <div className="flex items-center h-full pl-6 pr-6 min-w-0 flex-1">
+        <h1 className="text-lg font-semibold leading-tight truncate">
+          {titleMap[kind]}
+        </h1>
       </div>
 
       {/* 右侧：公司选择 + 用户 + 门户入口 */}

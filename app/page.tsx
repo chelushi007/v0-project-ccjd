@@ -120,6 +120,7 @@ export default function HomePage() {
       <AppTopbar
         activeTab={activeTab}
         onNavigateFrontend={() => handleTabChange("frontend", "home")}
+        sidebarCollapsed={sidebarCollapsed}
       />
 
       {/* 侧边栏 */}

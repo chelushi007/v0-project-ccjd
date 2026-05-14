@@ -261,8 +261,22 @@ export function AppSidebar({
         collapsed ? "w-16" : "w-64",
       )}
     >
-      {/* 顶栏占位（全局顶栏覆盖此区域） */}
-      <div className="h-16 shrink-0" aria-hidden />
+      {/* Logo 区域（置顶） */}
+      <div className="flex items-center gap-3 px-4 h-16 border-b border-sidebar-border shrink-0 bg-gradient-to-r from-[#0b4ea2] to-[#1864c2] text-white">
+        <div className="flex items-center justify-center w-9 h-9 rounded-full bg-white shrink-0 shadow-sm">
+          <span className="text-[9px] font-extrabold text-[#0b4ea2] leading-none tracking-tight">
+            CRCC
+          </span>
+        </div>
+        {!collapsed && (
+          <div className="flex flex-col leading-tight min-w-0">
+            <span className="font-semibold text-sm truncate">中国铁建</span>
+            <span className="text-[11px] text-white/70 truncate">
+              循环物资平台
+            </span>
+          </div>
+        )}
+      </div>
 
       {/* 菜单列表 */}
       <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto">
