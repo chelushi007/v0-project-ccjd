@@ -10,7 +10,6 @@ import {
   Building2,
   Warehouse,
   Eye,
-  FileSearch,
   TrendingUp,
   AlertTriangle,
 } from "lucide-react"
@@ -436,10 +435,6 @@ export function OperatorMaterial() {
             <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-2" />
               导出明细
-            </Button>
-            <Button variant="outline" size="sm">
-              <FileSearch className="w-4 h-4 mr-2" />
-              生成报表
             </Button>
           </div>
         </div>

@@ -463,10 +463,6 @@ export function OperatorWarehouse() {
             <Download className="w-4 h-4 mr-2" />
             导出报表
           </Button>
-          <Button>
-            <ShieldCheck className="w-4 h-4 mr-2" />
-            批量审核
-          </Button>
         </div>
       </div>
 

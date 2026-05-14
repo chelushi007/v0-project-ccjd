@@ -330,12 +330,6 @@ function ContractQueryPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge
-            variant="outline"
-            className="h-6 bg-slate-50 text-slate-700 border-slate-200"
-          >
-            运营查阅模式
-          </Badge>
           <Button variant="outline">
             <Download className="w-4 h-4 mr-2" />
             导出
