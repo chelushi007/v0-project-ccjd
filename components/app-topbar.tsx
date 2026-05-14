@@ -54,8 +54,8 @@ export function AppTopbar({
         "fixed top-0 right-0 z-40 h-16 flex items-center",
         "transition-[left] duration-300",
         sidebarCollapsed ? "left-16" : "left-64",
-        "bg-gradient-to-r from-[#0b4ea2] via-[#1864c2] to-[#2a85e0]",
-        "text-white shadow-[0_2px_8px_rgba(11,78,162,0.25)]",
+        "bg-[#1e293b] text-white",
+        "border-b border-white/10 shadow-sm",
       )}
     >
       {/* 左侧：标题 */}
