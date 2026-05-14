@@ -1,385 +1,1440 @@
 "use client"
 
+import type { ReactElement } from "react"
 import { useState } from "react"
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+  Search,
+  FileDown,
+  Warehouse,
+  PackageOpen,
+  Package,
+  CircleDollarSign,
+  ClipboardCheck,
+  Layers,
+  Tags,
+  HandCoins,
+  AlertOctagon,
+  Wallet,
+  Eye,
+  ShieldCheck,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
 import {
-  Table,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
-import {
-  Search,
-  ShoppingCart,
-  AlertOctagon,
-  Eye,
-  Activity,
-  Wallet,
-  ChevronRight,
-} from "lucide-react"
 
-const overview = [
-  {
-    label: "本月新增订单",
-    value: 342,
-    sub: "GMV ¥18.46M",
-    icon: ShoppingCart,
-    tone: "text-blue-700",
-    bg: "bg-blue-50",
-  },
-  {
-    label: "进行中",
-    value: 417,
-    sub: "覆盖四大业务",
-    icon: Activity,
-    tone: "text-emerald-700",
-    bg: "bg-emerald-50",
-  },
-  {
-    label: "争议订单",
-    value: 3,
-    sub: "需运营介入",
-    icon: AlertOctagon,
-    tone: "text-red-700",
-    bg: "bg-red-50",
-  },
-  {
-    label: "本月平台交易额",
-    value: "¥18.46M",
-    sub: "服务费 ¥928K",
-    icon: Wallet,
-    tone: "text-amber-700",
-    bg: "bg-amber-50",
-  },
-]
+// ============================== 类型 ==============================
+type MainStatus = "履约中" | "已完成" | "合同到期" | "争议"
+type RentSubStatus =
+  | "待确认合同"
+  | "待签署合同"
+  | "待支付押金"
+  | "待支付服务费"
+  | "待支付租金"
+  | "在租履约"
+  | "已完成"
+  | "待续租"
+  | "待退还押金"
+  | "争议处理中"
+type StorageSubStatus =
+  | "待确认合同"
+  | "待签署合同"
+  | "待支付保证金"
+  | "待支付服务费"
+  | "待支付保管费"
+  | "保管履约"
+  | "已完成"
+  | "待续租"
+  | "待退还保证金"
+  | "争议处理中"
+type SaleSubStatus =
+  | "待确认合同"
+  | "待签署合同"
+  | "待支付货款"
+  | "待发货"
+  | "运输中"
+  | "已交付"
+  | "已分成"
+  | "已完成"
+type SaleStatus = "履约中" | "已完成" | "争议"
 
-const bizColor: Record<string, string> = {
-  仓储租赁: "bg-blue-50 text-blue-700 border-blue-200",
-  物资存放: "bg-indigo-50 text-indigo-700 border-indigo-200",
-  物资租赁: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  物资销售: "bg-amber-50 text-amber-700 border-amber-200",
-}
-
-const orders = [
+// ============================== 数据 ==============================
+const warehouseOrders: Array<{
+  id: string
+  title: string
+  area: string
+  tenant: string
+  landlord: string
+  amount: string
+  fee: string
+  period: string
+  status: MainStatus
+  subStatus: RentSubStatus
+}> = [
   {
-    id: "CCJY20260628012",
-    biz: "仓储租赁",
-    buyer: "中铁十六局集团华南分公司",
-    seller: "中铁建广州黄埔仓储基地",
-    amount: 156000,
-    fee: 7800,
+    id: "CCJY20260512001",
+    title: "中铁建广州南沙综合仓储基地 8000m²",
+    area: "8000m²",
+    tenant: "中铁十一局广深城际项目部",
+    landlord: "中铁建物料华南仓储有限公司",
+    amount: "134,400",
+    fee: "4,032",
+    period: "2026-05-15 至 2027-05-14",
     status: "履约中",
-    createDate: "2026-06-28",
+    subStatus: "待确认合同",
   },
   {
-    id: "WZXS20260628015",
-    biz: "物资销售",
-    buyer: "中铁十四局集团广州分公司",
-    seller: "中铁建工集团第二建设有限公司",
-    amount: 3780000,
-    fee: 113400,
-    status: "待付款",
-    createDate: "2026-06-28",
-  },
-  {
-    id: "WZJY20260627008",
-    biz: "物资租赁",
-    buyer: "中铁十二局物料分公司",
-    seller: "中铁建东莞虎门基地",
-    amount: 84000,
-    fee: 2520,
+    id: "CCJY20260510002",
+    title: "中铁建深圳前海智慧仓储基地 5000m²",
+    area: "5000m²",
+    tenant: "中铁十四局深圳地铁13号线项目部",
+    landlord: "中铁建物料华南专业运营有限公司",
+    amount: "78,000",
+    fee: "2,340",
+    period: "2026-05-12 至 2026-11-11",
     status: "履约中",
-    createDate: "2026-06-27",
+    subStatus: "待签署合同",
+  },
+  {
+    id: "CCJY20260508003",
+    title: "中铁建东莞虎门港务仓储基地 12000m²",
+    area: "12000m²",
+    tenant: "中铁二十二局莞惠城际项目部",
+    landlord: "中铁十四局集团广州分公司",
+    amount: "136,800",
+    fee: "4,104",
+    period: "2026-05-12 至 2026-11-11",
+    status: "履约中",
+    subStatus: "待支付押金",
+  },
+  {
+    id: "CCJY20260506004",
+    title: "中铁十六局佛山顺德钢构仓储基地 3000m²",
+    area: "3000m²",
+    tenant: "中铁二十局广佛环线项目部",
+    landlord: "中铁十六局集团华南分公司",
+    amount: "40,500",
+    fee: "1,215",
+    period: "2026-05-10 至 2026-08-09",
+    status: "履约中",
+    subStatus: "待支付服务费",
   },
   {
     id: "CCJY20260428005",
-    biz: "仓储租赁",
-    buyer: "中铁十一局广深城际项目部",
-    seller: "中铁建东莞虎门基地",
-    amount: 98000,
-    fee: 4900,
+    title: "中铁建广州黄埔恒温仓储基地 4500m²",
+    area: "4500m²",
+    tenant: "中铁十八局深惠城际项目部",
+    landlord: "中铁建物料华南仓储有限公司",
+    amount: "229,500",
+    fee: "6,885",
+    period: "2026-05-01 至 2027-04-30",
     status: "争议",
-    createDate: "2026-04-28",
+    subStatus: "争议处理中",
+  },
+  {
+    id: "CCJY20260315006",
+    title: "中铁二十二局惠州大亚湾仓储基地 6000m²",
+    area: "6000m²",
+    tenant: "中铁建工集团广州分公司",
+    landlord: "中铁二十二局集团华南分公司",
+    amount: "324,000",
+    fee: "9,720",
+    period: "2026-03-20 至 2027-03-19",
+    status: "履约中",
+    subStatus: "在租履约",
+  },
+  {
+    id: "CCJY20251015007",
+    title: "中铁建广州南沙综合仓储基地 10000m²",
+    area: "10000m²",
+    tenant: "中铁电气化局集团广州分公司",
+    landlord: "中铁建物料华南仓储有限公司",
+    amount: "270,000",
+    fee: "8,100",
+    period: "2025-10-20 至 2026-04-19",
+    status: "已完成",
+    subStatus: "已完成",
+  },
+  {
+    id: "CCJY20260420008",
+    title: "中铁建深圳龙岗物流仓储基地 4000m²",
+    area: "4000m²",
+    tenant: "中铁二十五局深中通道项目部",
+    landlord: "中铁建物料华南专业运营有限公司",
+    amount: "67,200",
+    fee: "2,016",
+    period: "2025-11-20 至 2026-05-19",
+    status: "合同到期",
+    subStatus: "待续租",
+  },
+  {
+    id: "CCJY20260425009",
+    title: "中铁二十四局中山火炬仓储基地 3500m²",
+    area: "3500m²",
+    tenant: "中铁大桥局集团广州分公司",
+    landlord: "中铁二十四局集团华南分公司",
+    amount: "47,250",
+    fee: "1,418",
+    period: "2025-10-25 至 2026-04-24",
+    status: "合同到期",
+    subStatus: "待退还押金",
+  },
+]
+
+const materialStorageOrders: Array<{
+  id: string
+  title: string
+  materialType: string
+  quantity: string
+  owner: string
+  site: string
+  inDate: string
+  outDate: string
+  storageFee: string
+  serviceFee: string
+  occupiedArea: string
+  status: MainStatus
+  subStatus: StorageSubStatus
+}> = [
+  {
+    id: "WZCF20260512001",
+    title: "Q235B 热轧 H 型钢 320 吨",
+    materialType: "型材类",
+    quantity: "320 吨",
+    owner: "中铁十四局集团广州分公司",
+    site: "中铁建广州南沙综合仓储基地",
+    inDate: "2026-05-15",
+    outDate: "—",
+    storageFee: "12,800元/月",
+    serviceFee: "384元/月",
+    occupiedArea: "480m²",
+    status: "履约中",
+    subStatus: "待确认合同",
+  },
+  {
+    id: "WZCF20260510002",
+    title: "建筑钢管脚手架 1600 套",
+    materialType: "脚手架类",
+    quantity: "1600 套",
+    owner: "中铁十六局集团华南分公司",
+    site: "中铁建深圳前海智慧仓储基地",
+    inDate: "2026-05-14",
+    outDate: "—",
+    storageFee: "9,600元/月",
+    serviceFee: "288元/月",
+    occupiedArea: "320m²",
+    status: "履约中",
+    subStatus: "待签署合同",
+  },
+  {
+    id: "WZCF20260508003",
+    title: "盾构机刀盘配件 24 件",
+    materialType: "拼装类",
+    quantity: "24 件",
+    owner: "中铁隧道局集团广州分公司",
+    site: "中铁建广州南沙综合仓储基地",
+    inDate: "2026-05-12",
+    outDate: "—",
+    storageFee: "6,500元/月",
+    serviceFee: "195元/月",
+    occupiedArea: "180m²",
+    status: "履约中",
+    subStatus: "待支付保证金",
+  },
+  {
+    id: "WZCF20260505004",
+    title: "工字钢梁 220 吨",
+    materialType: "型材类",
+    quantity: "220 吨",
+    owner: "中铁十四局集团广州分公司",
+    site: "中铁建东莞虎门港务仓储基地",
+    inDate: "2026-05-08",
+    outDate: "—",
+    storageFee: "8,800元/月",
+    serviceFee: "264元/月",
+    occupiedArea: "260m²",
+    status: "履约中",
+    subStatus: "待支付服务费",
   },
   {
     id: "WZCF20260420005",
-    biz: "物资存放",
-    buyer: "中铁十一局广深城际项目部",
-    seller: "中铁建东莞虎门基地",
-    amount: 45000,
-    fee: 1350,
-    status: "履约中",
-    createDate: "2026-04-20",
+    title: "塔吊配件 86 件",
+    materialType: "拼装类",
+    quantity: "86 件",
+    owner: "中铁二十局集团华南分公司",
+    site: "中铁十六局佛山顺德钢构仓储基地",
+    inDate: "2026-04-22",
+    outDate: "—",
+    storageFee: "4,200元/月",
+    serviceFee: "126元/月",
+    occupiedArea: "120m²",
+    status: "争议",
+    subStatus: "争议处理中",
   },
   {
-    id: "WZXS20260513001",
-    biz: "物资销售",
-    buyer: "中铁十四局集团广州分公司",
-    seller: "中铁建工集团第二建设有限公司",
-    amount: 3780000,
-    fee: 113400,
+    id: "WZCF20260301006",
+    title: "Φ32 螺纹钢 540 吨",
+    materialType: "型材类",
+    quantity: "540 吨",
+    owner: "中铁建工集团广州分公司",
+    site: "中铁建广州南沙综合仓储基地",
+    inDate: "2026-03-08",
+    outDate: "—",
+    storageFee: "21,600元/月",
+    serviceFee: "648元/月",
+    occupiedArea: "720m²",
+    status: "履约中",
+    subStatus: "保管履约",
+  },
+  {
+    id: "WZCF20251115007",
+    title: "钢板桩 380 吨",
+    materialType: "支护类",
+    quantity: "380 吨",
+    owner: "中铁大桥局集团广州分公司",
+    site: "中铁建东莞虎门港务仓储基地",
+    inDate: "2025-11-20",
+    outDate: "2026-04-30",
+    storageFee: "76,000元",
+    serviceFee: "2,280元",
+    occupiedArea: "560m²",
     status: "已完成",
-    createDate: "2026-05-13",
+    subStatus: "已完成",
+  },
+  {
+    id: "WZCF20251025008",
+    title: "WJ-7 型扣件系统 4200 套",
+    materialType: "拼装类",
+    quantity: "4200 套",
+    owner: "中铁电气化局集团广州分公司",
+    site: "中铁建深圳前海智慧仓储基地",
+    inDate: "2025-11-01",
+    outDate: "2026-05-01",
+    storageFee: "5,400元/月",
+    serviceFee: "162元/月",
+    occupiedArea: "150m²",
+    status: "合同到期",
+    subStatus: "待续租",
+  },
+  {
+    id: "WZCF20251015009",
+    title: "轨枕 III型 1200 根",
+    materialType: "轨道类",
+    quantity: "1200 根",
+    owner: "中铁二十二局集团华南分公司",
+    site: "中铁二十二局惠州大亚湾仓储基地",
+    inDate: "2025-10-20",
+    outDate: "2026-04-20",
+    storageFee: "9,000元/月",
+    serviceFee: "270元/月",
+    occupiedArea: "420m²",
+    status: "合同到期",
+    subStatus: "待退还保证金",
   },
 ]
 
-const statusColor: Record<string, string> = {
-  履约中: "bg-blue-50 text-blue-700 border-blue-200",
-  待付款: "bg-amber-50 text-amber-700 border-amber-200",
-  已完成: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  争议: "bg-red-50 text-red-700 border-red-200",
+const materialTradeOrders: Array<{
+  id: string
+  title: string
+  materialType: string
+  quantity: string
+  provider: string
+  user: string
+  tradeType: "出租" | "整租"
+  amount: string
+  fee: string
+  unitPrice: string
+  period: string
+  status: MainStatus
+  subStatus: RentSubStatus
+}> = [
+  {
+    id: "WZJY20260512001",
+    title: "Q235B 热轧 H 型钢 出租",
+    materialType: "型材类",
+    quantity: "200 吨",
+    provider: "中铁十四局集团广州分公司",
+    user: "中铁十一局广深城际项目部",
+    tradeType: "出租",
+    amount: "360,000",
+    fee: "10,800",
+    unitPrice: "1,800元/吨/月",
+    period: "2026-05-15 至 2026-11-14",
+    status: "履约中",
+    subStatus: "待确认合同",
+  },
+  {
+    id: "WZJY20260511002",
+    title: "建筑钢管脚手架 出租",
+    materialType: "脚手架类",
+    quantity: "1200 套",
+    provider: "中铁建物料华南专业运营有限公司",
+    user: "中铁十八局深惠城际项目部",
+    tradeType: "出租",
+    amount: "540,000",
+    fee: "16,200",
+    unitPrice: "15元/套/天",
+    period: "2026-05-15 至 2026-08-13",
+    status: "履约中",
+    subStatus: "待签署合同",
+  },
+  {
+    id: "WZJY20260509003",
+    title: "工字钢梁 整租",
+    materialType: "型材类",
+    quantity: "300 吨",
+    provider: "中铁十四局集团广州分公司",
+    user: "中铁建物料华南专业运营有限公司",
+    tradeType: "整租",
+    amount: "1,350,000",
+    fee: "40,500",
+    unitPrice: "1,500元/吨/月",
+    period: "2026-05-12 至 2027-05-11",
+    status: "履约中",
+    subStatus: "待支付押金",
+  },
+  {
+    id: "WZJY20260505004",
+    title: "塔吊设备 出租",
+    materialType: "其他材料",
+    quantity: "5 台",
+    provider: "中铁二十局集团华南分公司",
+    user: "中铁二十五局深中通道项目部",
+    tradeType: "出租",
+    amount: "420,000",
+    fee: "12,600",
+    unitPrice: "28,000元/台/月",
+    period: "2026-05-08 至 2026-08-07",
+    status: "履约中",
+    subStatus: "待支付服务费",
+  },
+  {
+    id: "WZJY20260428005",
+    title: "WJ-7 型扣件系统 出租",
+    materialType: "拼装类",
+    quantity: "8000 套",
+    provider: "中铁电气化局集团广州分公司",
+    user: "中铁二十二局莞惠城际项目部",
+    tradeType: "出租",
+    amount: "240,000",
+    fee: "7,200",
+    unitPrice: "1元/套/月",
+    period: "2026-05-01 至 2026-12-31",
+    status: "争议",
+    subStatus: "争议处理中",
+  },
+  {
+    id: "WZJY20260315006",
+    title: "60kg/m 钢轨 整租",
+    materialType: "轨道类",
+    quantity: "180 吨",
+    provider: "中铁建物料华南专业运营有限公司",
+    user: "中铁十四局深圳地铁13号线项目部",
+    tradeType: "整租",
+    amount: "972,000",
+    fee: "29,160",
+    unitPrice: "900元/吨/月",
+    period: "2026-03-20 至 2027-03-19",
+    status: "履约中",
+    subStatus: "在租履约",
+  },
+  {
+    id: "WZJY20251108007",
+    title: "盾构机刀盘 出租",
+    materialType: "其他材料",
+    quantity: "2 台",
+    provider: "中铁隧道局集团广州分公司",
+    user: "中铁建工集团广州分公司",
+    tradeType: "出租",
+    amount: "480,000",
+    fee: "14,400",
+    unitPrice: "40,000元/台/月",
+    period: "2025-11-15 至 2026-05-14",
+    status: "已完成",
+    subStatus: "已完成",
+  },
+  {
+    id: "WZJY20251020008",
+    title: "钢板桩 出租",
+    materialType: "支护类",
+    quantity: "260 吨",
+    provider: "中铁大桥局集团广州分公司",
+    user: "中铁二十局广佛环线项目部",
+    tradeType: "出租",
+    amount: "312,000",
+    fee: "9,360",
+    unitPrice: "200元/吨/月",
+    period: "2025-11-01 至 2026-05-01",
+    status: "合同到期",
+    subStatus: "待续租",
+  },
+  {
+    id: "WZJY20251015009",
+    title: "轨枕 III型 出租",
+    materialType: "轨道类",
+    quantity: "950 根",
+    provider: "中铁二十二局集团华南分公司",
+    user: "中铁二十五局深中通道项目部",
+    tradeType: "出租",
+    amount: "171,000",
+    fee: "5,130",
+    unitPrice: "30元/根/月",
+    period: "2025-10-20 至 2026-04-19",
+    status: "合同到期",
+    subStatus: "待退还押金",
+  },
+]
+
+interface SaleOrder {
+  id: string
+  title: string
+  materialType: string
+  quantity: string
+  propertyOwner: string
+  transportUnit: string
+  buyer: string
+  unitPrice: string
+  amount: string
+  shareRatio: string
+  transportShare: number
+  saleMode: "整批" | "分批"
+  signDate: string
+  deliveryDate: string
+  status: SaleStatus
+  subStatus: SaleSubStatus
+  paymentStatus: "未付款" | "部分付款" | "已结清"
 }
 
-const disputes = [
+const saleOrders: SaleOrder[] = [
   {
-    id: "CCJY20260428005",
-    title: "仓库电力中断导致物料入库延迟",
-    plaintiff: "中铁十五局集团 · 项目部",
-    defendant: "中铁建广州黄埔仓储基地",
-    amount: 64000,
-    raisedDate: "2026-06-25",
-    raisedTime: "1 天前",
-    severity: "high",
-    summary:
-      "买方主张 3 月 15-22 日电力中断期间应按 70% 计费，要求调减 ¥19,200。",
+    id: "WZXS20260513001",
+    title: "HRB400 螺纹钢 1200 吨整批销售",
+    materialType: "型材类",
+    quantity: "1200 吨",
+    propertyOwner: "中铁十四局集团广州分公司",
+    transportUnit: "中铁建物料华南专业运营有限公司",
+    buyer: "中铁二十三局深圳分公司",
+    unitPrice: "4,200元/吨",
+    amount: "5,040,000",
+    shareRatio: "25 : 75",
+    transportShare: 25,
+    saleMode: "整批",
+    signDate: "2026-05-13",
+    deliveryDate: "2026-05-20 至 2026-05-25",
+    status: "履约中",
+    subStatus: "运输中",
+    paymentStatus: "已结清",
+  },
+  {
+    id: "WZXS20260512002",
+    title: "WJ-7 型扣件系统 12000 套",
+    materialType: "拼装类",
+    quantity: "12000 套",
+    propertyOwner: "中铁电气化局集团广州分公司",
+    transportUnit: "中铁建物料华南专业运营有限公司",
+    buyer: "中铁十一局广深城际项目部",
+    unitPrice: "12元/套",
+    amount: "144,000",
+    shareRatio: "20 : 80",
+    transportShare: 20,
+    saleMode: "分批",
+    signDate: "2026-05-12",
+    deliveryDate: "2026-05-15 至 2026-06-30",
+    status: "履约中",
+    subStatus: "待支付货款",
+    paymentStatus: "部分付款",
+  },
+  {
+    id: "WZXS20260510003",
+    title: "Φ32 螺纹钢余料 480 吨",
+    materialType: "型材类",
+    quantity: "480 吨",
+    propertyOwner: "中铁建工集团第二建设有限公司",
+    transportUnit: "中铁建物料华南专业运营有限公司",
+    buyer: "广州市顺德建材贸易公司",
+    unitPrice: "3,950元/吨",
+    amount: "1,896,000",
+    shareRatio: "30 : 70",
+    transportShare: 30,
+    saleMode: "整批",
+    signDate: "2026-05-10",
+    deliveryDate: "2026-05-12 至 2026-05-15",
+    status: "履约中",
+    subStatus: "已交付",
+    paymentStatus: "已结清",
+  },
+  {
+    id: "WZXS20260508004",
+    title: "工字钢 320 吨 整批销售",
+    materialType: "型材类",
+    quantity: "320 吨",
+    propertyOwner: "中铁十四局集团广州分公司",
+    transportUnit: "中铁建物料华南专业运营有限公司",
+    buyer: "中铁二十二局莞惠城际项目部",
+    unitPrice: "4,600元/吨",
+    amount: "1,472,000",
+    shareRatio: "25 : 75",
+    transportShare: 25,
+    saleMode: "整批",
+    signDate: "2026-05-08",
+    deliveryDate: "2026-05-10 至 2026-05-12",
+    status: "已完成",
+    subStatus: "已分成",
+    paymentStatus: "已结清",
   },
   {
     id: "WZXS20260420005",
-    title: "销售分成比例争议",
-    plaintiff: "中铁二十二局 · 财务部",
-    defendant: "平台销售运营组",
-    amount: 202500,
-    raisedDate: "2026-06-26",
-    raisedTime: "2 天前",
-    severity: "mid",
-    summary:
-      "合同签订时约定 25:75，对账采用 30:70，买方申请按原约定核算。",
+    title: "建筑钢管 1500 套",
+    materialType: "脚手架类",
+    quantity: "1500 套",
+    propertyOwner: "中铁二十二局集团第一工程有限公司",
+    transportUnit: "中铁建物料华南专业运营有限公司",
+    buyer: "中铁二十五局深中通道项目部",
+    unitPrice: "180元/套",
+    amount: "270,000",
+    shareRatio: "25 : 75",
+    transportShare: 25,
+    saleMode: "分批",
+    signDate: "2026-04-20",
+    deliveryDate: "2026-04-25 至 2026-05-20",
+    status: "争议",
+    subStatus: "已交付",
+    paymentStatus: "部分付款",
   },
   {
-    id: "YYFC20260301002",
-    title: "物料运营分成核算重复计算",
-    plaintiff: "中铁建东莞虎门基地",
-    defendant: "中铁十二局物料分公司",
-    amount: 85000,
-    raisedDate: "2026-06-22",
-    raisedTime: "6 天前",
-    severity: "mid",
-    summary: "对账包含 2 月已结算 ¥3,000，存在重复，需重新对账。",
+    id: "WZXS20260515006",
+    title: "盾构刀片合金 36 件",
+    materialType: "其他材料",
+    quantity: "36 件",
+    propertyOwner: "中铁隧道局集团广州分公司",
+    transportUnit: "中铁建物料华南专业运营有限公司",
+    buyer: "中铁建工集团广州分公司",
+    unitPrice: "12,500元/件",
+    amount: "450,000",
+    shareRatio: "20 : 80",
+    transportShare: 20,
+    saleMode: "整批",
+    signDate: "2026-05-15",
+    deliveryDate: "2026-05-18 至 2026-05-22",
+    status: "履约中",
+    subStatus: "待签署合同",
+    paymentStatus: "未付款",
   },
 ]
 
-export function OperatorOrder() {
-  const [search, setSearch] = useState("")
-  const filtered = orders.filter(
-    (o) =>
-      o.id.toLowerCase().includes(search.toLowerCase()) ||
-      o.buyer.toLowerCase().includes(search.toLowerCase()) ||
-      o.seller.toLowerCase().includes(search.toLowerCase()),
+// ============================== 样式辅助 ==============================
+const SALE_SUB_BADGES: Record<SaleSubStatus, string> = {
+  待确认合同: "bg-orange-50 text-orange-700 border-orange-200",
+  待签署合同: "bg-orange-50 text-orange-700 border-orange-200",
+  待支付货款: "bg-amber-50 text-amber-700 border-amber-200",
+  待发货: "bg-purple-50 text-purple-700 border-purple-200",
+  运输中: "bg-sky-50 text-sky-700 border-sky-200",
+  已交付: "bg-indigo-50 text-indigo-700 border-indigo-200",
+  已分成: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  已完成: "bg-muted text-muted-foreground border-border",
+}
+
+const getPaymentBadge = (s: SaleOrder["paymentStatus"]) => {
+  const cls =
+    s === "已结清"
+      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+      : s === "部分付款"
+        ? "bg-amber-50 text-amber-700 border-amber-200"
+        : "bg-rose-50 text-rose-700 border-rose-200"
+  return (
+    <Badge variant="outline" className={cls}>
+      {s}
+    </Badge>
+  )
+}
+
+const getMainStatusBadge = (status: MainStatus) => {
+  switch (status) {
+    case "履约中":
+      return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">履约中</Badge>
+    case "已完成":
+      return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">已完成</Badge>
+    case "合同到期":
+      return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">合同到期</Badge>
+    case "争议":
+      return <Badge className="bg-red-100 text-red-700 hover:bg-red-100">争议</Badge>
+  }
+}
+
+const getSaleStatusBadge = (status: SaleStatus) => {
+  if (status === "履约中")
+    return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">履约中</Badge>
+  if (status === "争议")
+    return <Badge className="bg-red-100 text-red-700 hover:bg-red-100">争议</Badge>
+  return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">已完成</Badge>
+}
+
+const getTradeTypeBadge = (type: string) => {
+  if (type === "整租") {
+    return <Badge className="bg-primary/10 text-primary hover:bg-primary/10">整租</Badge>
+  }
+  return <Badge variant="outline">出租</Badge>
+}
+
+// ============================== 子标签解析 ==============================
+type OrderSubTab = "warehouse" | "storage" | "trade"
+
+function resolveSubTab(subTab?: string): OrderSubTab {
+  if (subTab === "op-order-storage") return "storage"
+  if (subTab === "op-order-trade") return "trade"
+  return "warehouse"
+}
+
+// ============================== 主组件 ==============================
+interface OperatorOrderProps {
+  subTab?: string
+}
+
+export function OperatorOrder({ subTab }: OperatorOrderProps = {}) {
+  const activeTab = resolveSubTab(subTab)
+  const [tradeSubTab, setTradeSubTab] = useState<"rent" | "sale">("rent")
+
+  // 仅查看操作按钮
+  const ViewAction = () => (
+    <div className="flex items-center justify-center">
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-8 px-2 text-muted-foreground hover:text-foreground"
+      >
+        <Eye className="w-3.5 h-3.5 mr-1" />
+        查看
+      </Button>
+    </div>
   )
 
+  // ====================== 运营侧统计 ======================
+  // 仓储交易：平台监管视角
+  const warehouseStats = (() => {
+    const totalGmv = warehouseOrders.reduce(
+      (s, o) => s + Number(o.amount.replace(/,/g, "")),
+      0,
+    )
+    const totalFee = warehouseOrders.reduce(
+      (s, o) => s + Number(o.fee.replace(/,/g, "")),
+      0,
+    )
+    const tenantSet = new Set(warehouseOrders.map((o) => o.tenant))
+    const landlordSet = new Set(warehouseOrders.map((o) => o.landlord))
+    return {
+      total: warehouseOrders.length,
+      active: warehouseOrders.filter((o) => o.status === "履约中").length,
+      dispute: warehouseOrders.filter((o) => o.status === "争议").length,
+      expiring: warehouseOrders.filter((o) => o.status === "合同到期").length,
+      gmv: totalGmv.toLocaleString("zh-CN"),
+      fee: totalFee.toLocaleString("zh-CN"),
+      parties: tenantSet.size + landlordSet.size,
+    }
+  })()
+
+  const storageStats = (() => {
+    const totalArea = materialStorageOrders.reduce(
+      (s, o) => s + Number(o.occupiedArea.replace(/[^\d.]/g, "")),
+      0,
+    )
+    const monthlyFee = materialStorageOrders
+      .filter((o) => o.status === "履约中")
+      .reduce((s, o) => s + Number(o.storageFee.replace(/[^\d.]/g, "")), 0)
+    const monthlyService = materialStorageOrders
+      .filter((o) => o.status === "履约中")
+      .reduce((s, o) => s + Number(o.serviceFee.replace(/[^\d.]/g, "")), 0)
+    return {
+      total: materialStorageOrders.length,
+      active: materialStorageOrders.filter((o) => o.status === "履约中").length,
+      dispute: materialStorageOrders.filter((o) => o.status === "争议").length,
+      area: totalArea.toLocaleString("zh-CN"),
+      monthlyFee: monthlyFee.toLocaleString("zh-CN"),
+      monthlyService: monthlyService.toLocaleString("zh-CN"),
+    }
+  })()
+
+  const tradeStats = (() => {
+    const totalGmv = materialTradeOrders.reduce(
+      (s, o) => s + Number(o.amount.replace(/,/g, "")),
+      0,
+    )
+    const totalFee = materialTradeOrders.reduce(
+      (s, o) => s + Number(o.fee.replace(/,/g, "")),
+      0,
+    )
+    return {
+      total: materialTradeOrders.length,
+      active: materialTradeOrders.filter((o) => o.status === "履约中").length,
+      dispute: materialTradeOrders.filter((o) => o.status === "争议").length,
+      fullRent: materialTradeOrders.filter((o) => o.tradeType === "整租").length,
+      gmv: totalGmv.toLocaleString("zh-CN"),
+      fee: totalFee.toLocaleString("zh-CN"),
+    }
+  })()
+
+  const saleStats = (() => {
+    const totalGmv = saleOrders.reduce(
+      (s, o) => s + Number(o.amount.replace(/,/g, "")),
+      0,
+    )
+    const transportShareTotal = saleOrders.reduce(
+      (s, o) =>
+        s +
+        Math.round((Number(o.amount.replace(/,/g, "")) * o.transportShare) / 100),
+      0,
+    )
+    const platformFee = Math.round(totalGmv * 0.02)
+    return {
+      total: saleOrders.length,
+      active: saleOrders.filter((o) => o.status === "履约中").length,
+      dispute: saleOrders.filter((o) => o.status === "争议").length,
+      gmv: totalGmv.toLocaleString("zh-CN"),
+      transportShare: transportShareTotal.toLocaleString("zh-CN"),
+      platformFee: platformFee.toLocaleString("zh-CN"),
+    }
+  })()
+
+  const pageMeta: Record<
+    OrderSubTab,
+    { title: string; desc: string; icon: typeof Warehouse; iconBg: string; iconColor: string }
+  > = {
+    warehouse: {
+      title: "仓储交易订单监管",
+      desc: "全平台仓储租赁订单流转监控 · 服务费跟踪 · 争议处理",
+      icon: Warehouse,
+      iconBg: "bg-primary/10",
+      iconColor: "text-primary",
+    },
+    storage: {
+      title: "物料存放订单监管",
+      desc: "全平台物料保管订单流转监控 · 占用面积统计 · 服务费跟踪",
+      icon: PackageOpen,
+      iconBg: "bg-purple-100",
+      iconColor: "text-purple-700",
+    },
+    trade: {
+      title: "物料交易订单监管",
+      desc: "全平台物料租赁与销售订单流转监控 · 服务费 / 分成跟踪",
+      icon: Package,
+      iconBg: "bg-accent/10",
+      iconColor: "text-accent",
+    },
+  }
+  const meta = pageMeta[activeTab]
+  const PageIcon = meta.icon
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">订单监管中心</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          全平台订单流转监控 · 争议处理 · 服务费跟踪
-        </p>
+    <div className="space-y-4">
+      {/* 页面头部 */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div
+            className={`w-11 h-11 rounded-lg ${meta.iconBg} flex items-center justify-center shrink-0`}
+          >
+            <PageIcon className={`w-5 h-5 ${meta.iconColor}`} />
+          </div>
+          <div className="min-w-0">
+            <h1 className="text-2xl font-bold text-foreground truncate">{meta.title}</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">{meta.desc}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline">
+            <FileDown className="w-4 h-4 mr-2" />
+            导出订单
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {overview.map((o) => {
-          const Icon = o.icon
-          return (
-            <Card key={o.label}>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div
-                  className={`w-10 h-10 rounded-lg flex items-center justify-center ${o.bg}`}
-                >
-                  <Icon className={`w-5 h-5 ${o.tone}`} />
+      {/* 数据概览 - 运营视角 */}
+      {activeTab === "warehouse" && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard
+            label="平台仓储订单总数"
+            value={warehouseStats.total.toString()}
+            sub={`履约中 ${warehouseStats.active} · 到期 ${warehouseStats.expiring}`}
+            icon={Warehouse}
+            iconBg="bg-primary/10"
+            iconColor="text-primary"
+          />
+          <StatCard
+            label="争议订单"
+            value={warehouseStats.dispute.toString()}
+            sub="需运营介入处理"
+            icon={AlertOctagon}
+            iconBg="bg-red-100"
+            iconColor="text-red-700"
+            highlight={warehouseStats.dispute > 0}
+          />
+          <StatCard
+            label="平台累计交易额(元)"
+            value={warehouseStats.gmv}
+            sub={`参与主体 ${warehouseStats.parties} 个`}
+            icon={CircleDollarSign}
+            iconBg="bg-emerald-100"
+            iconColor="text-emerald-700"
+            valueSize="xl"
+          />
+          <StatCard
+            label="平台服务费收入(元)"
+            value={warehouseStats.fee}
+            sub="按 3% 平台抽佣"
+            icon={Wallet}
+            iconBg="bg-amber-100"
+            iconColor="text-amber-700"
+            valueSize="xl"
+          />
+        </div>
+      )}
+
+      {activeTab === "storage" && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard
+            label="平台存放订单总数"
+            value={storageStats.total.toString()}
+            sub={`保管中 ${storageStats.active} · 争议 ${storageStats.dispute}`}
+            icon={PackageOpen}
+            iconBg="bg-purple-100"
+            iconColor="text-purple-700"
+          />
+          <StatCard
+            label="争议订单"
+            value={storageStats.dispute.toString()}
+            sub="需运营介入处理"
+            icon={AlertOctagon}
+            iconBg="bg-red-100"
+            iconColor="text-red-700"
+            highlight={storageStats.dispute > 0}
+          />
+          <StatCard
+            label="累计占用面积(m²)"
+            value={storageStats.area}
+            sub="跨基地汇总"
+            icon={Layers}
+            iconBg="bg-orange-100"
+            iconColor="text-orange-700"
+          />
+          <StatCard
+            label="平台月服务费(元)"
+            value={storageStats.monthlyService}
+            sub={`保管费流水 ¥${storageStats.monthlyFee}/月`}
+            icon={Wallet}
+            iconBg="bg-amber-100"
+            iconColor="text-amber-700"
+            valueSize="xl"
+          />
+        </div>
+      )}
+
+      {activeTab === "trade" && tradeSubTab === "rent" && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard
+            label="平台租赁订单总数"
+            value={tradeStats.total.toString()}
+            sub={`履约中 ${tradeStats.active} · 整租 ${tradeStats.fullRent}`}
+            icon={Package}
+            iconBg="bg-accent/10"
+            iconColor="text-accent"
+          />
+          <StatCard
+            label="争议订单"
+            value={tradeStats.dispute.toString()}
+            sub="需运营介入处理"
+            icon={AlertOctagon}
+            iconBg="bg-red-100"
+            iconColor="text-red-700"
+            highlight={tradeStats.dispute > 0}
+          />
+          <StatCard
+            label="平台累计交易额(元)"
+            value={tradeStats.gmv}
+            sub="租赁业务流水"
+            icon={CircleDollarSign}
+            iconBg="bg-emerald-100"
+            iconColor="text-emerald-700"
+            valueSize="xl"
+          />
+          <StatCard
+            label="平台服务费收入(元)"
+            value={tradeStats.fee}
+            sub="按 3% 平台抽佣"
+            icon={Wallet}
+            iconBg="bg-amber-100"
+            iconColor="text-amber-700"
+            valueSize="xl"
+          />
+        </div>
+      )}
+
+      {activeTab === "trade" && tradeSubTab === "sale" && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard
+            label="平台销售订单总数"
+            value={saleStats.total.toString()}
+            sub={`履约中 ${saleStats.active} · 争议 ${saleStats.dispute}`}
+            icon={Tags}
+            iconBg="bg-amber-100"
+            iconColor="text-amber-700"
+          />
+          <StatCard
+            label="争议订单"
+            value={saleStats.dispute.toString()}
+            sub="需运营介入处理"
+            icon={AlertOctagon}
+            iconBg="bg-red-100"
+            iconColor="text-red-700"
+            highlight={saleStats.dispute > 0}
+          />
+          <StatCard
+            label="销售总额(元)"
+            value={saleStats.gmv}
+            sub={`专运分成 ¥${saleStats.transportShare}`}
+            icon={CircleDollarSign}
+            iconBg="bg-emerald-100"
+            iconColor="text-emerald-700"
+            valueSize="xl"
+          />
+          <StatCard
+            label="平台服务费(元)"
+            value={saleStats.platformFee}
+            sub="按 2% 平台抽佣"
+            icon={ShieldCheck}
+            iconBg="bg-orange-100"
+            iconColor="text-orange-700"
+            valueSize="xl"
+          />
+        </div>
+      )}
+
+      {/* 订单列表 */}
+      <Card className="w-full min-w-0 overflow-hidden">
+        <CardHeader className="pb-3">
+          <Tabs value={activeTab} className="w-full min-w-0">
+            <div className="flex items-center justify-end flex-wrap gap-3">
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input placeholder="搜索订单号 / 主体 / 标题" className="pl-9 w-64" />
                 </div>
-                <div className="min-w-0">
-                  <div className="text-xs text-muted-foreground">{o.label}</div>
-                  <div className="text-xl font-semibold tabular-nums leading-tight">
-                    {o.value}
-                  </div>
-                  <div className="text-[11px] text-muted-foreground truncate">
-                    {o.sub}
-                  </div>
+                <Select defaultValue="all">
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">全部状态</SelectItem>
+                    <SelectItem value="processing">履约中</SelectItem>
+                    <SelectItem value="completed">已完成</SelectItem>
+                    <SelectItem value="expired">合同到期</SelectItem>
+                    <SelectItem value="dispute">争议</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* 仓储交易订单 */}
+            <TabsContent value="warehouse" className="mt-4 min-w-0">
+              <CardTitle className="text-base mb-3 flex items-center gap-2 text-muted-foreground font-normal">
+                <ClipboardCheck className="w-4 h-4 text-primary" />
+                <span>订单列表</span>
+                <span className="text-xs">共 {warehouseOrders.length} 条</span>
+              </CardTitle>
+              <CardContent className="px-0 py-0">
+                <div className="w-full overflow-x-auto border rounded-md">
+                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1700px" }}>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[56px] text-center whitespace-nowrap">序号</TableHead>
+                        <TableHead className="whitespace-nowrap">订单号</TableHead>
+                        <TableHead className="whitespace-nowrap">标的仓储</TableHead>
+                        <TableHead className="whitespace-nowrap">面积</TableHead>
+                        <TableHead className="whitespace-nowrap">承租方</TableHead>
+                        <TableHead className="whitespace-nowrap">出租方</TableHead>
+                        <TableHead className="whitespace-nowrap text-right">成交金额(元)</TableHead>
+                        <TableHead className="whitespace-nowrap text-right">平台服务费(元)</TableHead>
+                        <TableHead className="whitespace-nowrap">租期</TableHead>
+                        <TableHead className="whitespace-nowrap">状态</TableHead>
+                        <TableHead className="whitespace-nowrap text-center sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
+                          操作
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {warehouseOrders.map((order, idx) => (
+                        <TableRow key={order.id}>
+                          <TableCell className="text-center text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                            {idx + 1}
+                          </TableCell>
+                          <TableCell className="font-mono text-xs whitespace-nowrap">{order.id}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.title}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.area}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">{order.tenant}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">{order.landlord}</TableCell>
+                          <TableCell className="text-primary font-medium whitespace-nowrap text-right tabular-nums">{order.amount}</TableCell>
+                          <TableCell className="text-amber-700 font-medium whitespace-nowrap text-right tabular-nums">{order.fee}</TableCell>
+                          <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{order.period}</TableCell>
+                          <TableCell className="whitespace-nowrap">{getMainStatusBadge(order.status)}</TableCell>
+                          <TableCell className="whitespace-nowrap sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
+                            <ViewAction />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </table>
                 </div>
               </CardContent>
-            </Card>
-          )
-        })}
-      </div>
+            </TabsContent>
 
-      <Tabs defaultValue="all">
-        <TabsList>
-          <TabsTrigger value="all">全平台订单</TabsTrigger>
-          <TabsTrigger value="dispute">
-            争议处理
-            <Badge
-              variant="outline"
-              className="ml-2 h-4 text-[10px] bg-red-50 text-red-700 border-red-200"
-            >
-              {disputes.length}
-            </Badge>
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="all" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between gap-2">
-                <CardTitle className="text-base">订单流水</CardTitle>
-                <div className="relative w-72">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    placeholder="搜索订单号 / 买方 / 卖方"
-                    className="pl-9"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
+            {/* 物料存放订单 */}
+            <TabsContent value="storage" className="mt-4 min-w-0">
+              <CardTitle className="text-base mb-3 flex items-center gap-2 text-muted-foreground font-normal">
+                <ClipboardCheck className="w-4 h-4 text-purple-700" />
+                <span>订单列表</span>
+                <span className="text-xs">共 {materialStorageOrders.length} 条</span>
+              </CardTitle>
+              <CardContent className="px-0 py-0">
+                <div className="w-full overflow-x-auto border rounded-md">
+                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1900px" }}>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[56px] text-center whitespace-nowrap">序号</TableHead>
+                        <TableHead className="whitespace-nowrap">订单号</TableHead>
+                        <TableHead className="whitespace-nowrap">物料名称</TableHead>
+                        <TableHead className="whitespace-nowrap">物料类型</TableHead>
+                        <TableHead className="whitespace-nowrap">数量</TableHead>
+                        <TableHead className="whitespace-nowrap">物权单位</TableHead>
+                        <TableHead className="whitespace-nowrap">存放站点</TableHead>
+                        <TableHead className="whitespace-nowrap">占用面积</TableHead>
+                        <TableHead className="whitespace-nowrap">入库时间</TableHead>
+                        <TableHead className="whitespace-nowrap">保管费</TableHead>
+                        <TableHead className="whitespace-nowrap">平台服务费</TableHead>
+                        <TableHead className="whitespace-nowrap">状态</TableHead>
+                        <TableHead className="whitespace-nowrap text-center sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
+                          操作
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {materialStorageOrders.map((order, idx) => (
+                        <TableRow key={order.id}>
+                          <TableCell className="text-center text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                            {idx + 1}
+                          </TableCell>
+                          <TableCell className="font-mono text-xs whitespace-nowrap">{order.id}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.title}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.materialType}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.quantity}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">{order.owner}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">{order.site}</TableCell>
+                          <TableCell className="whitespace-nowrap">{order.occupiedArea}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">{order.inDate}</TableCell>
+                          <TableCell className="text-primary font-medium whitespace-nowrap">{order.storageFee}</TableCell>
+                          <TableCell className="text-amber-700 font-medium whitespace-nowrap">{order.serviceFee}</TableCell>
+                          <TableCell className="whitespace-nowrap">{getMainStatusBadge(order.status)}</TableCell>
+                          <TableCell className="whitespace-nowrap sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
+                            <ViewAction />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </table>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[170px]">订单号</TableHead>
-                    <TableHead className="w-[110px]">业务类型</TableHead>
-                    <TableHead>买方</TableHead>
-                    <TableHead>卖方/承租方</TableHead>
-                    <TableHead className="w-[140px] text-right">订单金额</TableHead>
-                    <TableHead className="w-[120px] text-right">平台服务费</TableHead>
-                    <TableHead className="w-[80px]">状态</TableHead>
-                    <TableHead className="w-[110px]">建单日期</TableHead>
-                    <TableHead className="w-[80px] text-center">操作</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filtered.map((o) => (
-                    <TableRow key={o.id}>
-                      <TableCell className="font-mono text-xs">{o.id}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={`text-[11px] h-5 ${bizColor[o.biz]}`}
-                        >
-                          {o.biz}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-xs">{o.buyer}</TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
-                        {o.seller}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums text-sm font-medium">
-                        ¥ {o.amount.toLocaleString()}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums text-sm text-amber-700">
-                        ¥ {o.fee.toLocaleString()}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={`text-[11px] h-5 ${statusColor[o.status]}`}
-                        >
-                          {o.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-xs tabular-nums">
-                        {o.createDate}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Button variant="ghost" size="sm" className="h-7 px-2">
-                          <Eye className="w-3.5 h-3.5" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
+              </CardContent>
+            </TabsContent>
 
-        <TabsContent value="dispute" className="space-y-3 mt-4">
-          {disputes.map((d) => (
-            <Card key={d.id}>
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      d.severity === "high"
-                        ? "bg-red-50 text-red-700"
-                        : "bg-amber-50 text-amber-700"
+            {/* 物料交易订单 */}
+            <TabsContent value="trade" className="mt-4 min-w-0">
+              {/* 子标签：租赁 / 销售 */}
+              <div className="inline-flex items-center gap-1 mb-3 p-1 bg-muted/60 rounded-lg">
+                <button
+                  type="button"
+                  onClick={() => setTradeSubTab("rent")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                    tradeSubTab === "rent"
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Package className="w-3.5 h-3.5" />
+                  租赁订单
+                  <span
+                    className={`tabular-nums text-[10px] rounded px-1.5 py-0.5 ${
+                      tradeSubTab === "rent"
+                        ? "bg-primary/10 text-primary"
+                        : "bg-muted text-muted-foreground"
                     }`}
                   >
-                    <AlertOctagon className="w-5 h-5" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-medium">{d.title}</span>
-                      <Badge
-                        variant="outline"
-                        className="font-mono text-[10px] h-4"
+                    {materialTradeOrders.length}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTradeSubTab("sale")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                    tradeSubTab === "sale"
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Tags className="w-3.5 h-3.5" />
+                  销售订单
+                  <span
+                    className={`tabular-nums text-[10px] rounded px-1.5 py-0.5 ${
+                      tradeSubTab === "sale"
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {saleOrders.length}
+                  </span>
+                </button>
+              </div>
+
+              {tradeSubTab === "rent" ? (
+                <>
+                  <CardTitle className="text-base mb-3 flex items-center gap-2 text-muted-foreground font-normal">
+                    <ClipboardCheck className="w-4 h-4 text-accent" />
+                    <span>租赁订单列表</span>
+                    <span className="text-xs">共 {materialTradeOrders.length} 条</span>
+                  </CardTitle>
+                  <CardContent className="px-0 py-0">
+                    <div className="w-full overflow-x-auto border rounded-md">
+                      <table
+                        className="w-full caption-bottom text-sm"
+                        style={{ minWidth: "2000px" }}
                       >
-                        {d.id}
-                      </Badge>
-                      <Badge
-                        variant="outline"
-                        className={`text-[10px] h-4 ${
-                          d.severity === "high"
-                            ? "bg-red-50 text-red-700 border-red-200"
-                            : "bg-amber-50 text-amber-700 border-amber-200"
-                        }`}
-                      >
-                        {d.severity === "high" ? "高优先级" : "中优先级"}
-                      </Badge>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-[56px] text-center whitespace-nowrap">序号</TableHead>
+                            <TableHead className="whitespace-nowrap">订单号</TableHead>
+                            <TableHead className="whitespace-nowrap">物料名称</TableHead>
+                            <TableHead className="whitespace-nowrap">数量</TableHead>
+                            <TableHead className="whitespace-nowrap">交易方式</TableHead>
+                            <TableHead className="whitespace-nowrap">出租方</TableHead>
+                            <TableHead className="whitespace-nowrap">承租方</TableHead>
+                            <TableHead className="whitespace-nowrap">租金单价</TableHead>
+                            <TableHead className="whitespace-nowrap text-right">成交金额(元)</TableHead>
+                            <TableHead className="whitespace-nowrap text-right">平台服务费(元)</TableHead>
+                            <TableHead className="whitespace-nowrap">租期</TableHead>
+                            <TableHead className="whitespace-nowrap">状态</TableHead>
+                            <TableHead className="whitespace-nowrap text-center sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
+                              操作
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {materialTradeOrders.map((order, idx) => (
+                            <TableRow key={order.id}>
+                              <TableCell className="text-center text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                                {idx + 1}
+                              </TableCell>
+                              <TableCell className="font-mono text-xs whitespace-nowrap">{order.id}</TableCell>
+                              <TableCell className="whitespace-nowrap">{order.title}</TableCell>
+                              <TableCell className="whitespace-nowrap">{order.quantity}</TableCell>
+                              <TableCell className="whitespace-nowrap">{getTradeTypeBadge(order.tradeType)}</TableCell>
+                              <TableCell className="text-muted-foreground whitespace-nowrap">{order.provider}</TableCell>
+                              <TableCell className="text-muted-foreground whitespace-nowrap">{order.user}</TableCell>
+                              <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{order.unitPrice}</TableCell>
+                              <TableCell className="text-primary font-medium whitespace-nowrap text-right tabular-nums">{order.amount}</TableCell>
+                              <TableCell className="text-amber-700 font-medium whitespace-nowrap text-right tabular-nums">{order.fee}</TableCell>
+                              <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{order.period}</TableCell>
+                              <TableCell className="whitespace-nowrap">{getMainStatusBadge(order.status)}</TableCell>
+                              <TableCell className="whitespace-nowrap sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
+                                <ViewAction />
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </table>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1.5">
-                      {d.summary}
-                    </p>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground flex-wrap">
-                      <span>申诉方：{d.plaintiff}</span>
-                      <span>被申诉方：{d.defendant}</span>
-                      <span>涉及金额 ¥{d.amount.toLocaleString()}</span>
-                      <span>{d.raisedTime}</span>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2 shrink-0">
-                    <Button variant="outline" size="sm">
-                      <Eye className="w-3.5 h-3.5 mr-1" />
-                      查看证据
-                    </Button>
-                    <Button size="sm">
-                      处理仲裁
-                      <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </TabsContent>
-      </Tabs>
+                  </CardContent>
+                </>
+              ) : (
+                <SaleOrdersTable orders={saleOrders} ViewAction={ViewAction} />
+              )}
+            </TabsContent>
+          </Tabs>
+        </CardHeader>
+      </Card>
     </div>
+  )
+}
+
+// ============================== 销售订单表 ==============================
+function SaleOrdersTable({
+  orders,
+  ViewAction,
+}: {
+  orders: SaleOrder[]
+  ViewAction: () => ReactElement
+}) {
+  return (
+    <>
+      <CardTitle className="text-base mb-3 flex items-center gap-2 text-muted-foreground font-normal">
+        <Tags className="w-4 h-4 text-amber-700" />
+        <span>销售订单列表</span>
+        <span className="text-xs">共 {orders.length} 条</span>
+        <Badge
+          variant="outline"
+          className="ml-2 border-amber-200 text-amber-700 bg-amber-50 text-[10px] h-5"
+        >
+          <HandCoins className="w-3 h-3 mr-1" />
+          专运代销
+        </Badge>
+      </CardTitle>
+      <CardContent className="px-0 py-0">
+        <div className="w-full overflow-x-auto border rounded-md">
+          <table className="w-full caption-bottom text-sm" style={{ minWidth: "2100px" }}>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[56px] text-center whitespace-nowrap">序号</TableHead>
+                <TableHead className="whitespace-nowrap">订单号</TableHead>
+                <TableHead className="whitespace-nowrap">物料名称</TableHead>
+                <TableHead className="whitespace-nowrap">数量</TableHead>
+                <TableHead className="whitespace-nowrap">销售模式</TableHead>
+                <TableHead className="whitespace-nowrap">物权单位</TableHead>
+                <TableHead className="whitespace-nowrap">买方</TableHead>
+                <TableHead className="whitespace-nowrap">销售单价</TableHead>
+                <TableHead className="whitespace-nowrap text-right">销售总额(元)</TableHead>
+                <TableHead className="whitespace-nowrap">分成 (专运:物权)</TableHead>
+                <TableHead className="whitespace-nowrap">付款</TableHead>
+                <TableHead className="whitespace-nowrap">业务节点</TableHead>
+                <TableHead className="whitespace-nowrap">主状态</TableHead>
+                <TableHead className="whitespace-nowrap text-center sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
+                  操作
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {orders.map((o, idx) => {
+                const totalNumber = Number(o.amount.replace(/,/g, ""))
+                const transportAmount = Math.round(
+                  (totalNumber * o.transportShare) / 100,
+                )
+                const propertyAmount = totalNumber - transportAmount
+                const [tShare, pShare] = o.shareRatio.split(":").map((s) => s.trim())
+                return (
+                  <TableRow key={o.id}>
+                    <TableCell className="text-center text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                      {idx + 1}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs whitespace-nowrap">{o.id}</TableCell>
+                    <TableCell className="whitespace-nowrap">{o.title}</TableCell>
+                    <TableCell className="whitespace-nowrap">{o.quantity}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <Badge
+                        variant="outline"
+                        className={
+                          o.saleMode === "整批"
+                            ? "border-primary/40 text-primary"
+                            : "border-accent/40 text-accent"
+                        }
+                      >
+                        {o.saleMode}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground whitespace-nowrap">{o.propertyOwner}</TableCell>
+                    <TableCell className="text-muted-foreground whitespace-nowrap">{o.buyer}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{o.unitPrice}</TableCell>
+                    <TableCell className="text-primary font-medium whitespace-nowrap tabular-nums text-right">
+                      <div className="flex flex-col leading-tight items-end">
+                        <span>{o.amount}</span>
+                        <span className="text-[10px] text-muted-foreground font-normal">
+                          专运 ¥{transportAmount.toLocaleString("zh-CN")} · 物权 ¥
+                          {propertyAmount.toLocaleString("zh-CN")}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <div className="flex items-center gap-1 text-xs tabular-nums">
+                        <span className="rounded bg-primary/10 text-primary px-1.5 py-0.5 font-medium">
+                          {tShare}
+                        </span>
+                        <span className="text-muted-foreground">:</span>
+                        <span className="rounded bg-orange-100 text-orange-700 px-1.5 py-0.5 font-medium">
+                          {pShare}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">{getPaymentBadge(o.paymentStatus)}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <Badge variant="outline" className={SALE_SUB_BADGES[o.subStatus]}>
+                        {o.subStatus}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">{getSaleStatusBadge(o.status)}</TableCell>
+                    <TableCell className="whitespace-nowrap sticky right-0 bg-card shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.08)]">
+                      <ViewAction />
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </table>
+        </div>
+      </CardContent>
+    </>
+  )
+}
+
+// ============================== 统计卡组件 ==============================
+function StatCard({
+  label,
+  value,
+  sub,
+  icon: Icon,
+  iconBg,
+  iconColor,
+  valueSize = "2xl",
+  highlight = false,
+}: {
+  label: string
+  value: string
+  sub?: string
+  icon: typeof Warehouse
+  iconBg: string
+  iconColor: string
+  valueSize?: "xl" | "2xl"
+  highlight?: boolean
+}) {
+  return (
+    <Card className={highlight ? "border-red-200" : undefined}>
+      <CardContent className="p-4">
+        <div className="flex items-center gap-3">
+          <div
+            className={`w-12 h-12 rounded-lg ${iconBg} flex items-center justify-center shrink-0`}
+          >
+            <Icon className={`w-6 h-6 ${iconColor}`} />
+          </div>
+          <div className="min-w-0">
+            <div className="text-xs text-muted-foreground mb-1">{label}</div>
+            <div
+              className={`${
+                valueSize === "xl" ? "text-xl" : "text-2xl"
+              } font-bold text-foreground tabular-nums truncate`}
+            >
+              {value}
+            </div>
+            {sub && (
+              <div className="text-[11px] text-muted-foreground mt-0.5 truncate">{sub}</div>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

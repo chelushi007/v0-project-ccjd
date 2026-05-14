@@ -29,7 +29,10 @@ export function OperationWorkbench({ activeSubTab }: OperationWorkbenchProps) {
       case "op-demand-material-sale":
         return <OperatorDemand subTab={activeSubTab} />
       case "op-order":
-        return <OperatorOrder />
+      case "op-order-warehouse":
+      case "op-order-storage":
+      case "op-order-trade":
+        return <OperatorOrder subTab={activeSubTab} />
       case "op-fee":
         return <OperatorFee />
       case "op-contract":

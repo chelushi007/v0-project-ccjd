@@ -119,7 +119,16 @@ const operationMenu: MenuItem[] = [
       { id: "op-demand-material-sale", label: "物资出售", icon: Tags },
     ],
   },
-  { id: "op-order", label: "订单管理", icon: ShoppingCart },
+  {
+    id: "op-order",
+    label: "订单管理",
+    icon: ShoppingCart,
+    children: [
+      { id: "op-order-warehouse", label: "仓储交易订单", icon: Warehouse },
+      { id: "op-order-storage", label: "物料存放订单", icon: Package },
+      { id: "op-order-trade", label: "物料交易订单", icon: ShoppingCart },
+    ],
+  },
   { id: "op-fee", label: "费用管理", icon: CreditCard },
   { id: "op-contract", label: "合同管理", icon: FileText },
   { id: "op-analytics", label: "统计分析", icon: BarChart3 },
@@ -177,6 +186,7 @@ export function AppSidebar({
     "order",
     "material",
     "op-demand",
+    "op-order",
   ])
 
   const toggleSection = (sectionId: string) => {
