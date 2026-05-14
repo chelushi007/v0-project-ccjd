@@ -15,6 +15,13 @@ import {
   Wallet,
   Clock,
   Package,
+  MapPin,
+  ShieldCheck,
+  PackagePlus,
+  Handshake,
+  FileCheck2,
+  FileSignature,
+  type LucideIcon,
   ChevronRight,
   ClipboardList,
   FileText,
@@ -44,102 +51,29 @@ import {
   Legend,
 } from "recharts"
 
+type Shortcut = {
+  key: string
+  label: string
+  pending: number
+  icon: LucideIcon
+  bg: string
+  color: string
+}
+
 // ─────────────────────────── 申请审批快捷入口 ───────────────────────────
-const approvalShortcuts = [
-  {
-    key: "warehouse",
-    label: "仓储入驻审核",
-    pending: 6,
-    desc: "新基地入驻 · 资质核验",
-    icon: Warehouse,
-    color: "bg-blue-50 text-blue-700 border-blue-200",
-    dot: "bg-blue-500",
-  },
-  {
-    key: "material",
-    label: "物料目录审核",
-    pending: 12,
-    desc: "新 SKU 上架 / 信息变更",
-    icon: Package,
-    color: "bg-indigo-50 text-indigo-700 border-indigo-200",
-    dot: "bg-indigo-500",
-  },
-  {
-    key: "demand",
-    label: "需求发布审核",
-    pending: 18,
-    desc: "覆盖五类需求挂牌申请",
-    icon: ClipboardList,
-    color: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    dot: "bg-emerald-500",
-  },
-  {
-    key: "contract",
-    label: "合同合规审核",
-    pending: 4,
-    desc: "金额 ≥ 500 万元须复核",
-    icon: FileText,
-    color: "bg-amber-50 text-amber-700 border-amber-200",
-    dot: "bg-amber-500",
-  },
+const approvalShortcuts: Shortcut[] = [
+  { key: "contract", label: "合同审批", pending: 2, icon: FileText, bg: "bg-blue-50", color: "text-blue-600" },
+  { key: "site", label: "站点申请", pending: 1, icon: MapPin, bg: "bg-emerald-50", color: "text-emerald-600" },
+  { key: "qualification", label: "资质审核", pending: 1, icon: ShieldCheck, bg: "bg-indigo-50", color: "text-indigo-600" },
+  { key: "inbound", label: "入库申请", pending: 3, icon: PackagePlus, bg: "bg-amber-50", color: "text-amber-600" },
 ]
 
 // ─────────────────────────── 业务处理快捷入口 ───────────────────────────
-const businessShortcuts = [
-  {
-    key: "service-fee",
-    label: "服务费收款确认",
-    badge: "12 笔",
-    desc: "本月待确认 ¥312,500",
-    icon: Wallet,
-    color: "text-amber-700",
-    bg: "bg-amber-50",
-  },
-  {
-    key: "order-dispute",
-    label: "订单争议处理",
-    badge: "3 单",
-    desc: "用户单位申请仲裁",
-    icon: HandCoins,
-    color: "text-red-700",
-    bg: "bg-red-50",
-  },
-  {
-    key: "force-down",
-    label: "信息强制下架",
-    badge: "2 项",
-    desc: "违规需求 / 异常报价",
-    icon: XCircle,
-    color: "text-slate-700",
-    bg: "bg-slate-100",
-  },
-  {
-    key: "match",
-    label: "需求撮合调度",
-    badge: "8 单",
-    desc: "智能推荐 · 等待派发",
-    icon: TrendingUp,
-    color: "text-blue-700",
-    bg: "bg-blue-50",
-  },
-  {
-    key: "template",
-    label: "模板版本维护",
-    badge: "1 草稿",
-    desc: "物资销售模板待发布",
-    icon: FileText,
-    color: "text-indigo-700",
-    bg: "bg-indigo-50",
-  },
-  {
-    key: "reconcile",
-    label: "对账复核",
-    badge: "9 张",
-    desc: "超 48 小时待回执",
-    icon: CircleDollarSign,
-    color: "text-emerald-700",
-    bg: "bg-emerald-50",
-  },
+const businessShortcuts: Shortcut[] = [
+  { key: "entrust", label: "委托受理", pending: 3, icon: Handshake, bg: "bg-blue-50", color: "text-blue-600" },
+  { key: "reconcile", label: "对账确认", pending: 5, icon: FileCheck2, bg: "bg-emerald-50", color: "text-emerald-600" },
+  { key: "sign", label: "合同签署", pending: 2, icon: FileSignature, bg: "bg-indigo-50", color: "text-indigo-600" },
+  { key: "order", label: "订单确认", pending: 4, icon: ClipboardList, bg: "bg-amber-50", color: "text-amber-600" },
 ]
 
 // ─────────────────────────── 待办列表 ───────────────────────────
@@ -328,7 +262,6 @@ const txBreakdown = [
 ]
 
 export function OperatorDashboard() {
-  const totalApprovals = approvalShortcuts.reduce((s, a) => s + a.pending, 0)
   const unreadMsg = messages.filter((m) => m.unread).length
 
   return (
@@ -358,110 +291,21 @@ export function OperatorDashboard() {
         </div>
       </div>
 
-      {/* 1. 申请审批快捷入口 */}
-      <Card>
-        <CardHeader className="flex-row items-center justify-between pb-3">
-          <div>
-            <CardTitle className="text-base flex items-center gap-2">
-              <ClipboardList className="w-4 h-4 text-blue-600" />
-              申请审批快捷入口
-              {totalApprovals > 0 && (
-                <Badge className="bg-red-500 hover:bg-red-500 text-white border-0 h-5 px-1.5 text-[11px]">
-                  {totalApprovals}
-                </Badge>
-              )}
-            </CardTitle>
-            <CardDescription className="text-xs">
-              按业务模块聚合 · 点击进入审核列表
-            </CardDescription>
-          </div>
-          <Button variant="ghost" size="sm" className="text-xs h-7">
-            全部待审 <ChevronRight className="w-3 h-3 ml-0.5" />
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {approvalShortcuts.map((a) => {
-              const Icon = a.icon
-              return (
-                <button
-                  key={a.key}
-                  className="group relative text-left p-4 rounded-lg border bg-card hover:border-blue-300 hover:shadow-sm transition-all"
-                >
-                  <div className="flex items-start justify-between">
-                    <div
-                      className={`w-9 h-9 rounded-lg flex items-center justify-center border ${a.color}`}
-                    >
-                      <Icon className="w-4.5 h-4.5" />
-                    </div>
-                    {a.pending > 0 && (
-                      <span className="inline-flex items-center justify-center min-w-[24px] h-5 px-1.5 rounded-full bg-red-500 text-white text-[11px] font-medium tabular-nums">
-                        {a.pending}
-                      </span>
-                    )}
-                  </div>
-                  <div className="mt-3">
-                    <div className="text-sm font-medium">{a.label}</div>
-                    <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                      <span className={`w-1 h-1 rounded-full ${a.dot}`} />
-                      {a.desc}
-                    </div>
-                  </div>
-                  <ChevronRight className="w-3.5 h-3.5 absolute bottom-3 right-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                </button>
-              )
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* 2. 业务处理快捷入口 */}
-      <Card>
-        <CardHeader className="flex-row items-center justify-between pb-3">
-          <div>
-            <CardTitle className="text-base flex items-center gap-2">
-              <HandCoins className="w-4 h-4 text-amber-600" />
-              业务处理快捷入口
-            </CardTitle>
-            <CardDescription className="text-xs">
-              覆盖运营高频操作 · 一键跳转处理
-            </CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-            {businessShortcuts.map((b) => {
-              const Icon = b.icon
-              return (
-                <button
-                  key={b.key}
-                  className="group p-3 rounded-lg border bg-card hover:border-amber-300 hover:shadow-sm transition-all text-left"
-                >
-                  <div
-                    className={`w-9 h-9 rounded-lg flex items-center justify-center ${b.bg}`}
-                  >
-                    <Icon className={`w-4.5 h-4.5 ${b.color}`} />
-                  </div>
-                  <div className="mt-2.5 text-sm font-medium leading-tight">
-                    {b.label}
-                  </div>
-                  <div className="flex items-center justify-between mt-1.5">
-                    <span className="text-[11px] text-muted-foreground truncate">
-                      {b.desc}
-                    </span>
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] h-4 px-1.5 shrink-0 ml-1"
-                    >
-                      {b.badge}
-                    </Badge>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-        </CardContent>
-      </Card>
+      {/* 1 & 2. 申请审批 + 业务处理 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <ShortcutPanel
+          title="申请审批"
+          titleIcon={ShieldCheck}
+          titleIconColor="text-blue-600"
+          items={approvalShortcuts}
+        />
+        <ShortcutPanel
+          title="业务处理"
+          titleIcon={ClipboardList}
+          titleIconColor="text-emerald-600"
+          items={businessShortcuts}
+        />
+      </div>
 
       {/* 3 & 4. 待办列表 + 站内信 */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -791,5 +635,66 @@ export function OperatorDashboard() {
       {/* 底部留白占位 */}
       <div className="h-2" />
     </div>
+  )
+}
+
+// ─────────────────────────── 快捷入口面板 ───────────────────────────
+function ShortcutPanel({
+  title,
+  titleIcon: TitleIcon,
+  titleIconColor,
+  items,
+}: {
+  title: string
+  titleIcon: LucideIcon
+  titleIconColor: string
+  items: Shortcut[]
+}) {
+  return (
+    <Card className="overflow-hidden">
+      <CardHeader className="flex-row items-center justify-between pb-4">
+        <CardTitle className="text-base flex items-center gap-2">
+          <TitleIcon className={`w-4 h-4 ${titleIconColor}`} />
+          {title}
+        </CardTitle>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+        >
+          全部
+          <ArrowUpRight className="w-3.5 h-3.5 ml-0.5" />
+        </Button>
+      </CardHeader>
+      <CardContent className="pt-1 pb-5">
+        <div className="grid grid-cols-4 gap-2">
+          {items.map((it) => {
+            const Icon = it.icon
+            return (
+              <button
+                key={it.key}
+                className="group flex flex-col items-center gap-2 py-2 rounded-lg hover:bg-muted/50 transition-colors"
+              >
+                <div className="relative">
+                  <div
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center ${it.bg} group-hover:scale-105 transition-transform`}
+                  >
+                    <Icon className={`w-5 h-5 ${it.color}`} />
+                  </div>
+                  {it.pending > 0 && (
+                    <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-medium tabular-nums leading-none ring-2 ring-white shadow-sm">
+                      {it.pending}
+                    </span>
+                  )}
+                </div>
+                <div className="text-xs text-foreground/90 font-medium">
+                  {it.label}
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      </CardContent>
+    </Card>
   )
 }
