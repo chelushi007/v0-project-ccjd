@@ -337,6 +337,7 @@ export function OperatorFee() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[60px] text-center">序号</TableHead>
                     <TableHead className="w-[170px]">服务费单号</TableHead>
                     <TableHead className="w-[160px]">关联订单</TableHead>
                     <TableHead className="w-[110px]">业务类型</TableHead>
@@ -350,8 +351,11 @@ export function OperatorFee() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filtered.map((f) => (
+                  {filtered.map((f, idx) => (
                     <TableRow key={f.id}>
+                      <TableCell className="text-center text-xs tabular-nums text-muted-foreground">
+                        {idx + 1}
+                      </TableCell>
                       <TableCell className="font-mono text-xs">{f.id}</TableCell>
                       <TableCell className="font-mono text-xs text-muted-foreground">
                         {f.orderId}
