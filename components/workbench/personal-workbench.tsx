@@ -2,7 +2,7 @@
 
 import { EnterpriseCenter } from "./personal/enterprise-center"
 import { TodoList } from "./personal/todo-list"
-import { WarehouseInfo } from "./personal/warehouse-info"
+import { WarehouseManagement } from "./personal/warehouse-management"
 import { ContractManagement } from "./personal/contract-management"
 import { DemandManagement } from "./personal/demand-management"
 import { OrderManagement } from "./personal/order-management"
@@ -24,7 +24,7 @@ export function PersonalWorkbench({ activeSubTab }: PersonalWorkbenchProps) {
       case "enterprise":
         return <EnterpriseCenter />
       case "warehouse":
-        return <WarehouseInfo />
+        return <WarehouseManagement />
       case "material":
       case "material-inventory":
         return <MaterialInventory />
