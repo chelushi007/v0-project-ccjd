@@ -9,6 +9,7 @@ import { OrderManagement } from "./personal/order-management"
 import { MaterialInventory } from "./personal/material-inventory"
 import { MaterialInbound } from "./personal/material-inbound"
 import { MaterialOutbound } from "./personal/material-outbound"
+import { MaterialTransfer } from "./personal/material-transfer"
 import { SettlementManagement } from "./shared/settlement-management"
 
 interface PersonalWorkbenchProps {
@@ -31,6 +32,8 @@ export function PersonalWorkbench({ activeSubTab }: PersonalWorkbenchProps) {
         return <MaterialInbound />
       case "material-outbound":
         return <MaterialOutbound />
+      case "material-transfer":
+        return <MaterialTransfer />
       case "demand":
       case "demand-self":
         return <DemandManagement subTab="self-rent" />

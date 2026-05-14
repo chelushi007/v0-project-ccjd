@@ -22,6 +22,7 @@ import {
   Boxes,
   PackagePlus,
   PackageMinus,
+  ArrowLeftRight,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -63,6 +64,7 @@ const personalMenu: MenuItem[] = [
       { id: "material-inventory", label: "库存管理", icon: Boxes },
       { id: "material-inbound", label: "入库管理", icon: PackagePlus },
       { id: "material-outbound", label: "出库管理", icon: PackageMinus },
+      { id: "material-transfer", label: "过户管理", icon: ArrowLeftRight },
     ],
   },
   {
