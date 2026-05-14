@@ -23,7 +23,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {
-  CreditCard,
   Search,
   Download,
   Eye,
@@ -33,7 +32,6 @@ import {
   Receipt,
   Wallet,
   TrendingUp,
-  TrendingDown,
   FileText,
   ArrowUpRight,
   ArrowDownLeft,
@@ -61,13 +59,56 @@ interface SettlementManagementProps {
   roleType?: "property" | "warehouse-unit" | "warehouse-site" | "transport" | "user"
 }
 
-// ============ 对账数据（保留原数据 + 关联订单号） ============
-const mockReconciliations = [
+// ============ 业务类型（四大业务） ============
+type BusinessType = "仓储租赁" | "物资存放" | "物资租赁" | "物资销售"
+
+const businessTypeConfig: Record<
+  BusinessType,
+  { chip: string; dot: string }
+> = {
+  仓储租赁: {
+    chip: "bg-blue-50 text-blue-700 border-blue-200",
+    dot: "bg-blue-500",
+  },
+  物资存放: {
+    chip: "bg-indigo-50 text-indigo-700 border-indigo-200",
+    dot: "bg-indigo-500",
+  },
+  物资租赁: {
+    chip: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    dot: "bg-emerald-500",
+  },
+  物资销售: {
+    chip: "bg-amber-50 text-amber-700 border-amber-200",
+    dot: "bg-amber-500",
+  },
+}
+
+// ============ 对账数据（按四大业务统一归类） ============
+interface ReconciliationItem {
+  id: string
+  orderId: string
+  partner: string
+  businessType: BusinessType // 四大业务类型
+  subType: string // 细分（如：月租金、保管费、销售分成）
+  period: string
+  amount: number
+  confirmedAmount: number
+  status: "已确认" | "待确认" | "被驳回" | "已结算"
+  createDate: string
+  confirmDate: string
+  rejectReason?: string
+  rejectedBy?: string
+  rejectedAt?: string
+}
+
+const mockReconciliations: ReconciliationItem[] = [
   {
     id: "DZ-2026-001",
     orderId: "CCJY20260315006",
     partner: "中铁十四局集团广州分公司",
-    type: "仓储租赁",
+    businessType: "仓储租赁",
+    subType: "月度租金对账",
     period: "2026年3月",
     amount: 125000,
     confirmedAmount: 125000,
@@ -79,7 +120,8 @@ const mockReconciliations = [
     id: "DZ-2026-002",
     orderId: "WZCF20260420005",
     partner: "中铁十一局广深城际项目部",
-    type: "物料存放",
+    businessType: "物资存放",
+    subType: "保管费对账",
     period: "2026年3月",
     amount: 45000,
     confirmedAmount: 0,
@@ -91,7 +133,8 @@ const mockReconciliations = [
     id: "DZ-2026-003",
     orderId: "YYFC20260301002",
     partner: "中铁建东莞虎门港务仓储基地",
-    type: "物料运营分成",
+    businessType: "物资租赁",
+    subType: "运营分成对账",
     period: "2026年3月",
     amount: 85000,
     confirmedAmount: 0,
@@ -107,7 +150,8 @@ const mockReconciliations = [
     id: "DZ-2026-004",
     orderId: "CCJY20260428005",
     partner: "中铁十六局集团华南分公司",
-    type: "仓储租赁",
+    businessType: "仓储租赁",
+    subType: "月度租金对账",
     period: "2026年2月",
     amount: 98000,
     confirmedAmount: 98000,
@@ -119,7 +163,8 @@ const mockReconciliations = [
     id: "DZ-2026-005",
     orderId: "WZJY20260428005",
     partner: "中铁十二局物料分公司",
-    type: "物料交易",
+    businessType: "物资租赁",
+    subType: "租金对账",
     period: "2026年4月",
     amount: 28000,
     confirmedAmount: 0,
@@ -131,7 +176,8 @@ const mockReconciliations = [
     id: "DZ-2026-006",
     orderId: "CCJY20260315008",
     partner: "中铁十五局集团第三工程有限公司",
-    type: "仓储租赁",
+    businessType: "仓储租赁",
+    subType: "月度租金对账",
     period: "2026年3月",
     amount: 64000,
     confirmedAmount: 0,
@@ -147,7 +193,8 @@ const mockReconciliations = [
     id: "DZ-2026-007",
     orderId: "WZXS20260513001",
     partner: "中铁十四局集团广州分公司",
-    type: "物资销售分成",
+    businessType: "物资销售",
+    subType: "销售分成对账",
     period: "2026年5月",
     amount: 3780000,
     confirmedAmount: 3780000,
@@ -159,7 +206,8 @@ const mockReconciliations = [
     id: "DZ-2026-008",
     orderId: "WZXS20260510003",
     partner: "中铁建工集团第二建设有限公司",
-    type: "物资销售分成",
+    businessType: "物资销售",
+    subType: "销售分成对账",
     period: "2026年5月",
     amount: 1327200,
     confirmedAmount: 0,
@@ -171,7 +219,8 @@ const mockReconciliations = [
     id: "DZ-2026-009",
     orderId: "WZXS20260508004",
     partner: "中铁十四局集团广州分公司",
-    type: "物资销售分成",
+    businessType: "物资销售",
+    subType: "销售分成对账",
     period: "2026年5月",
     amount: 1104000,
     confirmedAmount: 1104000,
@@ -183,7 +232,8 @@ const mockReconciliations = [
     id: "DZ-2026-010",
     orderId: "WZXS20260420005",
     partner: "中铁二十二局集团第一工程有限公司",
-    type: "物资销售分成",
+    businessType: "物资销售",
+    subType: "销售分成对账",
     period: "2026年4月",
     amount: 202500,
     confirmedAmount: 0,
@@ -194,6 +244,32 @@ const mockReconciliations = [
       "本期销售清单中存在 50 套已计入往期对账的扣件，存在重复结算；另：分成比例应按签订时的 25:75 而非临时调整的 30:70 核算，请重新出具。",
     rejectedBy: "孙广海（中铁二十二局 · 财务部）",
     rejectedAt: "2026-04-27 11:08:42",
+  },
+  {
+    id: "DZ-2026-011",
+    orderId: "WZCF20260505004",
+    partner: "中铁建东莞虎门港务仓储基地",
+    businessType: "物资存放",
+    subType: "保管费对账",
+    period: "2026年4月",
+    amount: 32400,
+    confirmedAmount: 32400,
+    status: "已确认",
+    createDate: "2026-05-01",
+    confirmDate: "2026-05-04",
+  },
+  {
+    id: "DZ-2026-012",
+    orderId: "WZJY20260505004",
+    partner: "中铁十二局物料分公司",
+    businessType: "物资租赁",
+    subType: "月度租金对账",
+    period: "2026年5月",
+    amount: 56000,
+    confirmedAmount: 0,
+    status: "待确认",
+    createDate: "2026-06-01",
+    confirmDate: "",
   },
 ]
 
@@ -216,6 +292,7 @@ type SettleStatus = "已支付" | "已收款" | "待支付" | "待收款" | "处
 interface SettleRecord {
   id: string // 流水号
   orderId: string // 关联订单号
+  businessType: BusinessType // 业务类型
   category: FeeCategory
   direction: "支出" | "收入"
   partner: string // 对方单位
@@ -231,6 +308,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260506100201",
     orderId: "CCJY20260506004",
+    businessType: "仓储租赁",
     category: "押金",
     direction: "支出",
     partner: "中铁建广州黄埔仓储基地",
@@ -243,6 +321,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260505100199",
     orderId: "WZJY20260505004",
+    businessType: "物资租赁",
     category: "押金",
     direction: "支出",
     partner: "中铁十二局物料分公司",
@@ -256,6 +335,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260505100198",
     orderId: "WZCF20260505004",
+    businessType: "物资存放",
     category: "保证金",
     direction: "支出",
     partner: "中铁建东莞虎门港务仓储基地",
@@ -269,6 +349,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260428100185",
     orderId: "CCJY20260428005",
+    businessType: "仓储租赁",
     category: "服务费",
     direction: "支出",
     partner: "中铁建物料华南专业运营有限公司",
@@ -281,6 +362,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260420100177",
     orderId: "WZCF20260420005",
+    businessType: "物资存放",
     category: "服务费",
     direction: "支出",
     partner: "中铁建物料华南专业运营有限公司",
@@ -294,6 +376,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260501100190",
     orderId: "CCJY20260428005",
+    businessType: "仓储租赁",
     category: "仓储租金",
     direction: "支出",
     partner: "中铁建物料华南专业运营有限公司",
@@ -306,6 +389,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260401100165",
     orderId: "CCJY20260315006",
+    businessType: "仓储租赁",
     category: "仓储租金",
     direction: "支出",
     partner: "中铁建物料华南专业运营有限公司",
@@ -319,6 +403,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260415100170",
     orderId: "WZCF20260420005",
+    businessType: "物资存放",
     category: "保管费",
     direction: "支出",
     partner: "中铁建物料华南专业运营有限公司",
@@ -332,6 +417,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260505100195",
     orderId: "WZJY20260428005",
+    businessType: "物资租赁",
     category: "物料租金",
     direction: "支出",
     partner: "中铁建物料华南专业运营有限公司",
@@ -345,6 +431,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260420100180",
     orderId: "YS20260420003",
+    businessType: "物资租赁",
     category: "运输费",
     direction: "支出",
     partner: "广州顺通运输有限公司",
@@ -358,6 +445,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260410100168",
     orderId: "YYFC20260301002",
+    businessType: "物资租赁",
     category: "物料运营分成",
     direction: "收入",
     partner: "中铁十二局集团有限公司",
@@ -371,6 +459,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260601100210",
     orderId: "CCJY20260428005",
+    businessType: "仓储租赁",
     category: "仓储租金",
     direction: "支出",
     partner: "中铁建物料华南专业运营有限公司",
@@ -382,6 +471,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260605100212",
     orderId: "WZCF20260420005",
+    businessType: "物资存放",
     category: "保管费",
     direction: "支出",
     partner: "中铁建物料华南专业运营有限公司",
@@ -393,6 +483,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260520100205",
     orderId: "YYFC20260301002",
+    businessType: "物资租赁",
     category: "物料运营分成",
     direction: "收入",
     partner: "中铁十二局集团有限公司",
@@ -405,6 +496,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260301100150",
     orderId: "CCJY20250901001",
+    businessType: "仓储租赁",
     category: "退款",
     direction: "收入",
     partner: "中铁十四局集团广州分公司",
@@ -418,6 +510,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260514100250",
     orderId: "WZXS20260513001",
+    businessType: "物资销售",
     category: "物资销售款",
     direction: "收入",
     partner: "中铁二十三局深圳分公司",
@@ -430,6 +523,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260511100242",
     orderId: "WZXS20260510003",
+    businessType: "物资销售",
     category: "物资销售款",
     direction: "收入",
     partner: "广州市顺德建材贸易公司",
@@ -442,6 +536,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260520100258",
     orderId: "WZXS20260512002",
+    businessType: "物资销售",
     category: "物资销售款",
     direction: "收入",
     partner: "中铁十一局广深城际项目部",
@@ -455,6 +550,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260526100265",
     orderId: "WZXS20260513001",
+    businessType: "物资销售",
     category: "销售分成",
     direction: "支出",
     partner: "中铁十四局集团广州分公司",
@@ -467,6 +563,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260513100247",
     orderId: "WZXS20260508004",
+    businessType: "物资销售",
     category: "销售分成",
     direction: "支出",
     partner: "中铁十四局集团广州分公司",
@@ -479,6 +576,7 @@ const mockSettlements: SettleRecord[] = [
   {
     id: "JS20260530100272",
     orderId: "WZXS20260510003",
+    businessType: "物资销售",
     category: "销售分成",
     direction: "支出",
     partner: "中铁建工集团第二建设有限公司",
@@ -602,6 +700,10 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
   // 结算管理筛选
   const [categoryFilter, setCategoryFilter] = useState<"all" | FeeCategory>("all")
   const [directionFilter, setDirectionFilter] = useState<"all" | "支出" | "收入">("all")
+  const [settleBizFilter, setSettleBizFilter] = useState<"all" | BusinessType>("all")
+
+  // 对账管理筛选：业务类型
+  const [reconBizFilter, setReconBizFilter] = useState<"all" | BusinessType>("all")
 
   // 生成对账单弹窗
   const [genDialogOpen, setGenDialogOpen] = useState(false)
@@ -631,14 +733,28 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
     return { totalPaid, totalReceived, totalToPay, totalToReceive }
   }, [])
 
-  // ============ 视图一：对账管理（保留原内容） ============
+  // ============ 视图一：对账管理（按四大业务统一） ============
   const renderReconciliation = () => {
     const filtered = mockReconciliations.filter((item) => {
       const matchesSearch =
         item.partner.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.id.toLowerCase().includes(searchTerm.toLowerCase())
+        item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.orderId.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesStatus = statusFilter === "all" || item.status === statusFilter
-      return matchesSearch && matchesStatus
+      const matchesBiz = reconBizFilter === "all" || item.businessType === reconBizFilter
+      return matchesSearch && matchesStatus && matchesBiz
+    })
+
+    // 按业务类型分组计数（用于筛选 chip）
+    const bizCount: Record<BusinessType | "all", number> = {
+      all: mockReconciliations.length,
+      仓储租赁: 0,
+      物资存放: 0,
+      物资租赁: 0,
+      物资销售: 0,
+    }
+    mockReconciliations.forEach((r) => {
+      bizCount[r.businessType] = (bizCount[r.businessType] ?? 0) + 1
     })
 
     return (
@@ -724,11 +840,43 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
             </div>
           </CardHeader>
           <CardContent>
+            {/* 业务类型筛选 chips */}
+            <div className="flex flex-wrap items-center gap-2 mb-4 pb-4 border-b">
+              <span className="text-xs text-muted-foreground mr-1">业务类型：</span>
+              {(["all", "仓储租赁", "物资存放", "物资租赁", "物资销售"] as const).map((b) => {
+                const active = reconBizFilter === b
+                const cfg = b === "all" ? null : businessTypeConfig[b]
+                return (
+                  <button
+                    key={b}
+                    onClick={() => setReconBizFilter(b)}
+                    className={`text-xs px-3 py-1 rounded-full border transition-colors inline-flex items-center gap-1.5 ${
+                      active
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-muted/40 text-foreground border-border hover:bg-muted"
+                    }`}
+                  >
+                    {cfg && (
+                      <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+                    )}
+                    {b === "all" ? "全部" : b}
+                    <span
+                      className={`tabular-nums text-[10px] rounded px-1 ${
+                        active ? "bg-white/20" : "bg-background"
+                      }`}
+                    >
+                      {bizCount[b]}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+
             <div className="flex flex-wrap items-center gap-4 mb-4">
               <div className="relative flex-1 min-w-[200px] max-w-sm">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="搜索合作方或对账单号..."
+                  placeholder="搜索合作方 / 对账单号 / 订单号..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-9"
@@ -756,7 +904,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                     <TableHead className="w-[112px]">对账单号</TableHead>
                     <TableHead className="w-[140px]">关联订单号</TableHead>
                     <TableHead>合作方</TableHead>
-                    <TableHead className="w-[104px]">业务类型</TableHead>
+                    <TableHead className="w-[140px]">业务类型</TableHead>
                     <TableHead className="w-[88px]">账期</TableHead>
                     <TableHead className="w-[128px] text-right">金额（元）</TableHead>
                     <TableHead className="w-[88px]">状态</TableHead>
@@ -781,7 +929,22 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                         <TableCell className="font-medium text-sm truncate" title={item.partner}>
                           {item.partner}
                         </TableCell>
-                        <TableCell className="text-sm truncate">{item.type}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-col leading-tight gap-0.5">
+                            <Badge
+                              variant="outline"
+                              className={`${businessTypeConfig[item.businessType].chip} h-5 text-[11px] w-fit gap-1`}
+                            >
+                              <span
+                                className={`w-1.5 h-1.5 rounded-full ${businessTypeConfig[item.businessType].dot}`}
+                              />
+                              {item.businessType}
+                            </Badge>
+                            <span className="text-[10px] text-muted-foreground truncate">
+                              {item.subType}
+                            </span>
+                          </div>
+                        </TableCell>
                         <TableCell className="text-xs text-muted-foreground">
                           {item.period}
                         </TableCell>
@@ -862,7 +1025,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
     )
   }
 
-  // ============ 视图二：结算管理（重新设计） ============
+  // ============ 视图二：结算管理（按四大业务统一） ============
   const renderSettlement = () => {
     const filtered = mockSettlements.filter((item) => {
       const matchesSearch =
@@ -872,7 +1035,26 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
       const matchesStatus = statusFilter === "all" || item.status === statusFilter
       const matchesCategory = categoryFilter === "all" || item.category === categoryFilter
       const matchesDirection = directionFilter === "all" || item.direction === directionFilter
-      return matchesSearch && matchesStatus && matchesCategory && matchesDirection
+      const matchesBiz = settleBizFilter === "all" || item.businessType === settleBizFilter
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesCategory &&
+        matchesDirection &&
+        matchesBiz
+      )
+    })
+
+    // 业务类型计数
+    const bizCount: Record<BusinessType | "all", number> = {
+      all: mockSettlements.length,
+      仓储租赁: 0,
+      物资存放: 0,
+      物资租赁: 0,
+      物资销售: 0,
+    }
+    mockSettlements.forEach((s) => {
+      bizCount[s.businessType] = (bizCount[s.businessType] ?? 0) + 1
     })
 
     const categoryChips: Array<"all" | FeeCategory> = [
@@ -976,14 +1158,42 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                   <Download className="h-4 w-4 mr-1" />
                   导出
                 </Button>
-                <Button size="sm">
-                  <CreditCard className="h-4 w-4 mr-1" />
-                  发起支付
-                </Button>
               </div>
             </div>
           </CardHeader>
           <CardContent>
+            {/* 业务类型筛选 chips */}
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              <span className="text-xs text-muted-foreground mr-1">业务类型：</span>
+              {(["all", "仓储租赁", "物资存放", "物资租赁", "物资销售"] as const).map((b) => {
+                const active = settleBizFilter === b
+                const cfg = b === "all" ? null : businessTypeConfig[b]
+                return (
+                  <button
+                    key={b}
+                    onClick={() => setSettleBizFilter(b)}
+                    className={`text-xs px-3 py-1 rounded-full border transition-colors inline-flex items-center gap-1.5 ${
+                      active
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-muted/40 text-foreground border-border hover:bg-muted"
+                    }`}
+                  >
+                    {cfg && (
+                      <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+                    )}
+                    {b === "all" ? "全部" : b}
+                    <span
+                      className={`tabular-nums text-[10px] rounded px-1 ${
+                        active ? "bg-white/20" : "bg-background"
+                      }`}
+                    >
+                      {bizCount[b]}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+
             {/* 费用类型筛选 chips */}
             <div className="flex flex-wrap items-center gap-2 mb-4 pb-4 border-b">
               <span className="text-xs text-muted-foreground mr-1">费用类型：</span>
@@ -1053,6 +1263,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                     <TableHead className="w-[56px] text-center">序号</TableHead>
                     <TableHead className="w-[170px]">流水号</TableHead>
                     <TableHead className="w-[160px]">关联订单</TableHead>
+                    <TableHead className="w-[110px]">业务类型</TableHead>
                     <TableHead className="w-[110px]">费用类型</TableHead>
                     <TableHead>对方单位</TableHead>
                     <TableHead className="w-[90px]">方向</TableHead>
@@ -1060,13 +1271,13 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                     <TableHead className="w-[180px]">支付通道</TableHead>
                     <TableHead className="w-[180px]">发生时间</TableHead>
                     <TableHead className="w-[100px]">状态</TableHead>
-                    <TableHead className="w-[140px] text-center">操作</TableHead>
+                    <TableHead className="w-[120px] text-center">操作</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={11} className="py-12 text-center text-sm text-muted-foreground">
+                      <TableCell colSpan={12} className="py-12 text-center text-sm text-muted-foreground">
                         暂无匹配的结算流水
                       </TableCell>
                     </TableRow>
@@ -1076,7 +1287,6 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                       const CatIcon = cat?.icon || Receipt
                       const stat = settleStatusConfig[item.status]
                       const isIncome = item.direction === "收入"
-                      const isPending = item.status === "待支付" || item.status === "待收款"
                       return (
                         <TableRow key={item.id}>
                           <TableCell className="text-center text-xs text-muted-foreground tabular-nums">
@@ -1087,6 +1297,17 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                           </TableCell>
                           <TableCell className="font-mono text-xs text-muted-foreground whitespace-nowrap">
                             {item.orderId}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant="outline"
+                              className={`${businessTypeConfig[item.businessType].chip} h-5 text-[11px] gap-1`}
+                            >
+                              <span
+                                className={`w-1.5 h-1.5 rounded-full ${businessTypeConfig[item.businessType].dot}`}
+                              />
+                              {item.businessType}
+                            </Badge>
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-1.5">
@@ -1136,15 +1357,6 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center justify-center gap-0.5">
-                              {isPending && (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 px-2 font-medium text-amber-700 hover:text-amber-800 hover:bg-amber-50"
-                                >
-                                  {item.status === "待支付" ? "去支付" : "去催收"}
-                                </Button>
-                              )}
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -1232,7 +1444,20 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                 </div>
                 <div>
                   <div className="text-muted-foreground">业务类型</div>
-                  <div className="mt-0.5">{rejectDialog.item.type}</div>
+                  <div className="mt-0.5 flex items-center gap-1.5">
+                    <Badge
+                      variant="outline"
+                      className={`${businessTypeConfig[rejectDialog.item.businessType].chip} h-5 text-[11px] gap-1`}
+                    >
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${businessTypeConfig[rejectDialog.item.businessType].dot}`}
+                      />
+                      {rejectDialog.item.businessType}
+                    </Badge>
+                    <span className="text-[11px] text-muted-foreground">
+                      {rejectDialog.item.subType}
+                    </span>
+                  </div>
                 </div>
                 <div>
                   <div className="text-muted-foreground">合作方</div>
