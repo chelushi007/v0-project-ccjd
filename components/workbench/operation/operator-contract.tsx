@@ -14,12 +14,12 @@ import {
   Calendar,
   Building2,
   Edit3,
-  Copy,
+
   FilePlus,
   Archive,
   Power,
-  PowerOff,
-  History,
+
+
   TrendingUp,
   Layers,
 } from "lucide-react"
@@ -33,6 +33,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { Switch } from "@/components/ui/switch"
 import {
   Select,
   SelectContent,
@@ -685,7 +686,7 @@ const templates: Template[] = [
 const bizColor: Record<Template["biz"], string> = {
   仓储租赁: "bg-blue-50 text-blue-700 border-blue-200",
   物资存放: "bg-indigo-50 text-indigo-700 border-indigo-200",
-  物资租赁: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  物���租赁: "bg-emerald-50 text-emerald-700 border-emerald-200",
   物资销售: "bg-amber-50 text-amber-700 border-amber-200",
 }
 
@@ -953,58 +954,33 @@ function TemplateManagePage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center justify-center gap-0.5 flex-wrap">
+                      <div className="flex items-center justify-center gap-3">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-7 px-2"
+                          className="h-7 px-2 text-blue-700 hover:text-blue-800 hover:bg-blue-50"
                           title="查看"
                         >
-                          <Eye className="w-3.5 h-3.5" />
+                          <Eye className="w-3.5 h-3.5 mr-1" />
+                          <span className="text-xs">查看</span>
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-7 px-2"
+                          className="h-7 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50"
                           title="编辑"
                         >
-                          <Edit3 className="w-3.5 h-3.5" />
+                          <Edit3 className="w-3.5 h-3.5 mr-1" />
+                          <span className="text-xs">编辑</span>
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 px-2"
-                          title="复制为新模板"
-                        >
-                          <Copy className="w-3.5 h-3.5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 px-2"
-                          title="版本历史"
-                        >
-                          <History className="w-3.5 h-3.5" />
-                        </Button>
-                        {t.status === "已启用" ? (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 px-2 text-slate-600 hover:text-slate-800"
-                            title="归档"
-                          >
-                            <Archive className="w-3.5 h-3.5" />
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 px-2 text-emerald-700 hover:text-emerald-800"
-                            title="启用"
-                          >
-                            <PowerOff className="w-3.5 h-3.5" />
-                          </Button>
-                        )}
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-muted-foreground">启用</span>
+                          <Switch
+                            checked={t.status === "已启用"}
+                            aria-label="启用模板"
+                            className="data-[state=checked]:bg-emerald-600"
+                          />
+                        </div>
                       </div>
                     </TableCell>
                   </TableRow>
