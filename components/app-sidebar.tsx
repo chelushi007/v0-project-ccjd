@@ -112,7 +112,7 @@ const menuSections: MenuSection[] = [
   },
   {
     id: "personal",
-    label: "个人工作台",
+    label: "用户工作台",
     icon: LayoutDashboard,
     description: "业务管理中心",
     items: personalMenu,
