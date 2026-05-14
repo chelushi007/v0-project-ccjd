@@ -1069,9 +1069,10 @@ export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps =
               </CardTitle>
               <CardContent className="px-0 py-0">
                 <div className="w-full overflow-x-auto border rounded-md">
-                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1500px" }}>
+                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1560px" }}>
                     <TableHeader>
                       <TableRow>
+                        <TableHead className="w-[56px] text-center whitespace-nowrap">序号</TableHead>
                         <TableHead className="whitespace-nowrap">订单号</TableHead>
                         <TableHead className="whitespace-nowrap">标的仓储</TableHead>
                         <TableHead className="whitespace-nowrap">面积</TableHead>
@@ -1086,8 +1087,11 @@ export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps =
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {warehouseOrders.map((order) => (
+                      {warehouseOrders.map((order, idx) => (
                         <TableRow key={order.id}>
+                          <TableCell className="text-center text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                            {idx + 1}
+                          </TableCell>
                           <TableCell className="font-mono text-xs whitespace-nowrap">{order.id}</TableCell>
                           <TableCell className="whitespace-nowrap">{order.title}</TableCell>
                           <TableCell className="whitespace-nowrap">{order.area}</TableCell>
@@ -1116,9 +1120,10 @@ export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps =
               </CardTitle>
               <CardContent className="px-0 py-0">
                 <div className="w-full overflow-x-auto border rounded-md">
-                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1700px" }}>
+                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1760px" }}>
                     <TableHeader>
                       <TableRow>
+                        <TableHead className="w-[56px] text-center whitespace-nowrap">序号</TableHead>
                         <TableHead className="whitespace-nowrap">订单号</TableHead>
                         <TableHead className="whitespace-nowrap">物料名称</TableHead>
                         <TableHead className="whitespace-nowrap">物料类型</TableHead>
@@ -1135,8 +1140,11 @@ export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps =
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {materialStorageOrders.map((order) => (
+                      {materialStorageOrders.map((order, idx) => (
                         <TableRow key={order.id}>
+                          <TableCell className="text-center text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                            {idx + 1}
+                          </TableCell>
                           <TableCell className="font-mono text-xs whitespace-nowrap">{order.id}</TableCell>
                           <TableCell className="whitespace-nowrap">{order.title}</TableCell>
                           <TableCell className="whitespace-nowrap">{order.materialType}</TableCell>
@@ -1167,9 +1175,10 @@ export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps =
               </CardTitle>
               <CardContent className="px-0 py-0">
                 <div className="w-full overflow-x-auto border rounded-md">
-                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1800px" }}>
+                  <table className="w-full caption-bottom text-sm" style={{ minWidth: "1860px" }}>
                     <TableHeader>
                       <TableRow>
+                        <TableHead className="w-[56px] text-center whitespace-nowrap">序号</TableHead>
                         <TableHead className="whitespace-nowrap">订单号</TableHead>
                         <TableHead className="whitespace-nowrap">物料名称</TableHead>
                         <TableHead className="whitespace-nowrap">数量</TableHead>
@@ -1186,8 +1195,11 @@ export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps =
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {materialTradeOrders.map((order) => (
+                      {materialTradeOrders.map((order, idx) => (
                         <TableRow key={order.id}>
+                          <TableCell className="text-center text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                            {idx + 1}
+                          </TableCell>
                           <TableCell className="font-mono text-xs whitespace-nowrap">{order.id}</TableCell>
                           <TableCell className="whitespace-nowrap">{order.title}</TableCell>
                           <TableCell className="whitespace-nowrap">{order.quantity}</TableCell>

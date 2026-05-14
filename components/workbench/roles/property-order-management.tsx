@@ -264,6 +264,7 @@ export function PropertyOrderManagement({ subTab }: PropertyOrderManagementProps
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[60px] text-center">序号</TableHead>
                     <TableHead className="w-[130px]">订单编号</TableHead>
                     <TableHead>仓库名称</TableHead>
                     <TableHead>出租方</TableHead>
@@ -276,11 +277,14 @@ export function PropertyOrderManagement({ subTab }: PropertyOrderManagementProps
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {mockWarehouseLeaseOrders.map((order) => {
+                  {mockWarehouseLeaseOrders.map((order, idx) => {
                     const statusInfo = statusConfig[order.status]
                     const StatusIcon = statusInfo?.icon || Clock
                     return (
                       <TableRow key={order.id}>
+                        <TableCell className="text-center text-sm text-muted-foreground tabular-nums">
+                          {idx + 1}
+                        </TableCell>
                         <TableCell className="font-mono text-sm">{order.id}</TableCell>
                         <TableCell className="font-medium">{order.warehouseName}</TableCell>
                         <TableCell className="text-muted-foreground">{order.warehouseOwner}</TableCell>
@@ -321,6 +325,7 @@ export function PropertyOrderManagement({ subTab }: PropertyOrderManagementProps
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[60px] text-center">序号</TableHead>
                     <TableHead className="w-[130px]">订单编号</TableHead>
                     <TableHead>物料名称</TableHead>
                     <TableHead className="text-right">数量</TableHead>
@@ -334,11 +339,14 @@ export function PropertyOrderManagement({ subTab }: PropertyOrderManagementProps
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {mockMaterialStorageOrders.map((order) => {
+                  {mockMaterialStorageOrders.map((order, idx) => {
                     const statusInfo = statusConfig[order.status]
                     const StatusIcon = statusInfo?.icon || Clock
                     return (
                       <TableRow key={order.id}>
+                        <TableCell className="text-center text-sm text-muted-foreground tabular-nums">
+                          {idx + 1}
+                        </TableCell>
                         <TableCell className="font-mono text-sm">{order.id}</TableCell>
                         <TableCell className="font-medium">{order.materialName}</TableCell>
                         <TableCell className="text-right">

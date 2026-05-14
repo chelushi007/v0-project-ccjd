@@ -615,6 +615,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
               <Table className="table-fixed [&_th]:px-2 [&_td]:px-2">
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[56px] text-center">序号</TableHead>
                     <TableHead className="w-[112px]">对账单号</TableHead>
                     <TableHead className="w-[140px]">关联订单号</TableHead>
                     <TableHead>合作方</TableHead>
@@ -626,13 +627,16 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filtered.map((item) => {
+                  {filtered.map((item, idx) => {
                     const statusInfo = reconciliationStatusConfig[item.status]
                     const StatusIcon = statusInfo?.icon || Clock
                     const hasConfirmed = item.confirmedAmount > 0
                     const isRejected = item.status === "被驳回"
                     return (
                       <TableRow key={item.id}>
+                        <TableCell className="text-center text-xs text-muted-foreground tabular-nums">
+                          {idx + 1}
+                        </TableCell>
                         <TableCell className="font-mono text-xs">{item.id}</TableCell>
                         <TableCell className="font-mono text-[11px] text-muted-foreground truncate">
                           {item.orderId}
@@ -907,6 +911,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[56px] text-center">序号</TableHead>
                     <TableHead className="w-[170px]">流水号</TableHead>
                     <TableHead className="w-[160px]">关联订单</TableHead>
                     <TableHead className="w-[110px]">费用类型</TableHead>
@@ -922,12 +927,12 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                 <TableBody>
                   {filtered.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={10} className="py-12 text-center text-sm text-muted-foreground">
+                      <TableCell colSpan={11} className="py-12 text-center text-sm text-muted-foreground">
                         暂无匹配的结算流水
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filtered.map((item) => {
+                    filtered.map((item, idx) => {
                       const cat = categoryConfig[item.category]
                       const CatIcon = cat?.icon || Receipt
                       const stat = settleStatusConfig[item.status]
@@ -935,6 +940,9 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
                       const isPending = item.status === "待支付" || item.status === "待收款"
                       return (
                         <TableRow key={item.id}>
+                          <TableCell className="text-center text-xs text-muted-foreground tabular-nums">
+                            {idx + 1}
+                          </TableCell>
                           <TableCell className="font-mono text-xs whitespace-nowrap">
                             {item.id}
                           </TableCell>

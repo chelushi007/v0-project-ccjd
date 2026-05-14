@@ -285,6 +285,7 @@ export function MaterialOrderManagement({ subTab, roleType }: MaterialOrderManag
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[60px] text-center">序号</TableHead>
                   <TableHead className="w-[140px]">订单编号</TableHead>
                   <TableHead>物料名称</TableHead>
                   <TableHead>规格型号</TableHead>
@@ -298,11 +299,14 @@ export function MaterialOrderManagement({ subTab, roleType }: MaterialOrderManag
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredOrders.map((order) => {
+                {filteredOrders.map((order, idx) => {
                   const statusInfo = statusConfig[order.status]
                   const StatusIcon = statusInfo?.icon || Clock
                   return (
                     <TableRow key={order.id}>
+                      <TableCell className="text-center text-sm text-muted-foreground tabular-nums">
+                        {idx + 1}
+                      </TableCell>
                       <TableCell className="font-mono text-sm">{order.id}</TableCell>
                       <TableCell className="font-medium">{order.materialName}</TableCell>
                       <TableCell className="text-muted-foreground">{order.materialSpec}</TableCell>

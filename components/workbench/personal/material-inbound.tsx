@@ -385,9 +385,10 @@ export function MaterialInbound() {
           </div>
 
           <div className="w-full overflow-x-auto">
-            <Table className="min-w-[1560px]">
+            <Table className="min-w-[1620px]">
               <TableHeader>
                 <TableRow className="bg-muted/40">
+                  <TableHead className="w-[60px] text-center">序号</TableHead>
                   <TableHead className="w-[150px]">入库单号</TableHead>
                   <TableHead>入库类型</TableHead>
                   <TableHead>来源/委托方</TableHead>
@@ -405,8 +406,11 @@ export function MaterialInbound() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((r) => (
+                {filtered.map((r, idx) => (
                   <TableRow key={r.id}>
+                    <TableCell className="text-center text-xs text-muted-foreground tabular-nums">
+                      {idx + 1}
+                    </TableCell>
                     <TableCell className="font-mono text-xs">{r.id}</TableCell>
                     <TableCell>{typeBadge(r.type)}</TableCell>
                     <TableCell className="text-sm">{r.source}</TableCell>

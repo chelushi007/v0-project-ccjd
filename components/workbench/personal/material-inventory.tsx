@@ -425,9 +425,10 @@ export function MaterialInventory() {
           </div>
 
           <div className="w-full overflow-x-auto">
-            <Table className="min-w-[1460px]">
+            <Table className="min-w-[1520px]">
               <TableHeader>
                 <TableRow className="bg-muted/40">
+                  <TableHead className="w-[60px] text-center">序号</TableHead>
                   <TableHead className="w-[130px]">物料编号</TableHead>
                   <TableHead>物料名称</TableHead>
                   <TableHead>规格型号</TableHead>
@@ -442,8 +443,11 @@ export function MaterialInventory() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((r) => (
+                {filtered.map((r, idx) => (
                   <TableRow key={r.id}>
+                    <TableCell className="text-center text-xs text-muted-foreground tabular-nums">
+                      {idx + 1}
+                    </TableCell>
                     <TableCell className="font-mono text-xs">{r.id}</TableCell>
                     <TableCell className="font-medium">{r.name}</TableCell>
                     <TableCell className="text-muted-foreground">

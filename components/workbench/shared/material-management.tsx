@@ -286,6 +286,7 @@ export function MaterialManagement({ roleType = "warehouse-unit" }: MaterialMana
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[60px] text-center">序号</TableHead>
                   <TableHead className="w-[120px]">物料编号</TableHead>
                   <TableHead>物料名称</TableHead>
                   <TableHead>规格型号</TableHead>
@@ -298,8 +299,11 @@ export function MaterialManagement({ roleType = "warehouse-unit" }: MaterialMana
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredMaterials.map((material) => (
+                {filteredMaterials.map((material, idx) => (
                   <TableRow key={material.id}>
+                    <TableCell className="text-center text-sm text-muted-foreground tabular-nums">
+                      {idx + 1}
+                    </TableCell>
                     <TableCell className="font-mono text-sm">{material.id}</TableCell>
                     <TableCell className="font-medium">{material.name}</TableCell>
                     <TableCell className="text-muted-foreground">{material.spec}</TableCell>

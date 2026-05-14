@@ -459,9 +459,10 @@ export function MaterialTransfer() {
           </div>
 
           <div className="w-full overflow-x-auto">
-            <Table className="min-w-[1640px]">
+            <Table className="min-w-[1700px]">
               <TableHeader>
                 <TableRow className="bg-muted/40">
+                  <TableHead className="w-[60px] text-center">序号</TableHead>
                   <TableHead className="w-[150px]">过户单号</TableHead>
                   <TableHead>接收方类型</TableHead>
                   <TableHead className="w-[380px]">物权流转</TableHead>
@@ -478,8 +479,11 @@ export function MaterialTransfer() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((r) => (
+                {filtered.map((r, idx) => (
                   <TableRow key={r.id}>
+                    <TableCell className="text-center text-xs text-muted-foreground tabular-nums">
+                      {idx + 1}
+                    </TableCell>
                     <TableCell className="font-mono text-xs">{r.id}</TableCell>
                     <TableCell>{receiverTypeBadge(r.receiverType)}</TableCell>
                     <TableCell>

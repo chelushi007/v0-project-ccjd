@@ -215,6 +215,7 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
                   <TableHeader>
                     <TableRow className="bg-muted/50">
                       <TableHead className="w-10"></TableHead>
+                      <TableHead className="w-[56px] text-center">序号</TableHead>
                       <TableHead>物料名称</TableHead>
                       <TableHead>类别</TableHead>
                       <TableHead>规格</TableHead>
@@ -225,7 +226,7 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredMaterials.map(material => (
+                    {filteredMaterials.map((material, idx) => (
                       <TableRow
                         key={material.id}
                         className={`cursor-pointer transition-colors ${selectedMaterials.includes(material.id) ? "bg-primary/5" : "hover:bg-muted/30"}`}
@@ -236,6 +237,9 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
                             checked={selectedMaterials.includes(material.id)}
                             onCheckedChange={() => toggleSelect(material.id)}
                           />
+                        </TableCell>
+                        <TableCell className="text-center text-sm text-muted-foreground tabular-nums">
+                          {idx + 1}
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">

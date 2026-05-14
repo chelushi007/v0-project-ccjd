@@ -84,6 +84,7 @@ export function TransactionNotice() {
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50">
+                <TableHead className="font-semibold w-[60px] text-center">序号</TableHead>
                 <TableHead className="font-semibold">公告名称</TableHead>
                 <TableHead className="font-semibold">出租单位</TableHead>
                 <TableHead className="font-semibold">承租单位</TableHead>
@@ -92,11 +93,14 @@ export function TransactionNotice() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {transactions.map((item) => (
+              {transactions.map((item, idx) => (
                 <TableRow
                   key={item.id}
                   className="cursor-pointer hover:bg-muted/30 transition-colors"
                 >
+                  <TableCell className="text-center text-sm text-muted-foreground tabular-nums">
+                    {idx + 1}
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-card-foreground hover:text-primary transition-colors">

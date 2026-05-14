@@ -254,7 +254,7 @@ const materialRentRows: MaterialRentRow[] = [
     quantity: "500吨",
     location: "广东省广州市黄埔区",
     price: "1800元/吨/月",
-    rentTerm: "6 个月",
+    rentTerm: "6 个���",
     submitDate: "2026-05-10",
     publishDate: "2026-05-11",
     status: "已发布",
@@ -701,6 +701,7 @@ function renderSelfRent(
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[56px] text-center">序号</TableHead>
                   <TableHead className="w-[130px]">需求单号</TableHead>
                   <TableHead>标题</TableHead>
                   <TableHead className="w-[160px]">所在区域</TableHead>
@@ -714,8 +715,11 @@ function renderSelfRent(
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.map((d) => (
+                {rows.map((d, idx) => (
                   <TableRow key={d.id}>
+                    <TableCell className="text-center text-xs text-muted-foreground tabular-nums">
+                      {idx + 1}
+                    </TableCell>
                     <TableCell className="font-mono text-xs">{d.id}</TableCell>
                     <TableCell className="max-w-xs truncate" title={d.title}>
                       {d.title}
@@ -807,9 +811,10 @@ function renderEntrustRent(
 
           {/* 本板块内水平滚动 */}
           <div className="rounded-md border overflow-x-auto">
-            <Table className="min-w-[1240px]">
+            <Table className="min-w-[1300px]">
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[56px] text-center">序号</TableHead>
                   <TableHead className="w-[140px]">需求单号</TableHead>
                   <TableHead className="min-w-[240px]">标题</TableHead>
                   <TableHead className="w-[170px]">所在区域</TableHead>
@@ -824,8 +829,11 @@ function renderEntrustRent(
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.map((d) => (
+                {rows.map((d, idx) => (
                   <TableRow key={d.id}>
+                    <TableCell className="text-center text-xs text-muted-foreground tabular-nums">
+                      {idx + 1}
+                    </TableCell>
                     <TableCell className="font-mono text-xs">{d.id}</TableCell>
                     <TableCell className="truncate" title={d.title}>
                       {d.title}
@@ -918,6 +926,7 @@ function renderMaterialRent(
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[56px] text-center">序号</TableHead>
                   <TableHead className="w-[130px]">需求单号</TableHead>
                   <TableHead>标题</TableHead>
                   <TableHead className="w-[100px]">物料类型</TableHead>
@@ -931,8 +940,11 @@ function renderMaterialRent(
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.map((d) => (
+                {rows.map((d, idx) => (
                   <TableRow key={d.id}>
+                    <TableCell className="text-center text-xs text-muted-foreground tabular-nums">
+                      {idx + 1}
+                    </TableCell>
                     <TableCell className="font-mono text-xs">{d.id}</TableCell>
                     <TableCell className="max-w-xs truncate" title={d.title}>
                       {d.title}

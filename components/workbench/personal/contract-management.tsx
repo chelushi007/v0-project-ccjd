@@ -367,6 +367,7 @@ export function ContractManagement({ roleType = "property" }: ContractManagement
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[60px] text-center">序号</TableHead>
                   <TableHead className="w-[150px]">合同编号</TableHead>
                   <TableHead>合同名称</TableHead>
                   <TableHead>类型</TableHead>
@@ -379,8 +380,11 @@ export function ContractManagement({ roleType = "property" }: ContractManagement
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredData.map((item) => (
+                {filteredData.map((item, idx) => (
                   <TableRow key={item.id}>
+                    <TableCell className="text-center text-sm text-muted-foreground tabular-nums">
+                      {idx + 1}
+                    </TableCell>
                     <TableCell className="font-medium">
                       <p className="font-mono text-sm">{item.id}</p>
                     </TableCell>

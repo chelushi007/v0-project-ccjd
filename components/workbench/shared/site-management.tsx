@@ -220,6 +220,7 @@ export function SiteManagement() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[60px] text-center">序号</TableHead>
                   <TableHead className="w-[100px]">站点编号</TableHead>
                   <TableHead>站点名称</TableHead>
                   <TableHead>地址</TableHead>
@@ -233,10 +234,13 @@ export function SiteManagement() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredSites.map((site) => {
+                {filteredSites.map((site, idx) => {
                   const usageRate = ((site.usedArea / site.area) * 100).toFixed(0)
                   return (
                     <TableRow key={site.id}>
+                      <TableCell className="text-center text-sm text-muted-foreground tabular-nums">
+                        {idx + 1}
+                      </TableCell>
                       <TableCell className="font-mono text-sm">{site.id}</TableCell>
                       <TableCell className="font-medium">{site.name}</TableCell>
                       <TableCell className="text-muted-foreground max-w-[200px] truncate">
