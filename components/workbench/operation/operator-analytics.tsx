@@ -34,9 +34,24 @@ import {
   MapPin,
   Truck,
   Users,
-  Download,
-  Monitor,
+  MonitorPlay,
 } from "lucide-react"
+import { OperatorVisualScreen } from "./operator-visual-screen"
+
+// 统计周期
+type Period = "today" | "week" | "month" | "year"
+const periodLabels: Record<Period, string> = {
+  today: "今日",
+  week: "本周",
+  month: "本月",
+  year: "本年",
+}
+const periodFactors: Record<Period, number> = {
+  today: 0.033,
+  week: 0.23,
+  month: 1,
+  year: 12,
+}
 import {
   ComposableMap,
   Geographies,
@@ -387,6 +402,16 @@ function heatColor(value: number, max: number, mode: "warehouses" | "gmv") {
 // ─────────────────────────────────────────────────────────────
 
 export function OperatorAnalytics() {
+  const [screenOpen, setScreenOpen] = useState(false)
+  const [periodCore, setPeriodCore] = useState<Period>("month")
+  const [periodIncome, setPeriodIncome] = useState<Period>("month")
+  const [periodUser, setPeriodUser] = useState<Period>("month")
+  const [periodMap, setPeriodMap] = useState<Period>("month")
+
+  if (screenOpen) {
+    return <OperatorVisualScreen onClose={() => setScreenOpen(false)} />
+  }
+
   return (
     <div className="space-y-6">
       {/* 顶栏 */}
@@ -402,24 +427,14 @@ export function OperatorAnalytics() {
             实时洞察平台交易、收入、用户与仓储分布
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Tabs defaultValue="month">
-            <TabsList className="h-9">
-              <TabsTrigger value="today" className="text-xs">今日</TabsTrigger>
-              <TabsTrigger value="week" className="text-xs">本周</TabsTrigger>
-              <TabsTrigger value="month" className="text-xs">本月</TabsTrigger>
-              <TabsTrigger value="year" className="text-xs">本年</TabsTrigger>
-            </TabsList>
-          </Tabs>
-          <Button variant="outline" size="sm">
-            <Download className="w-4 h-4 mr-2" />
-            导出
-          </Button>
-          <Button size="sm">
-            <Monitor className="w-4 h-4 mr-2" />
-            大屏模式
-          </Button>
-        </div>
+        <Button
+          size="sm"
+          onClick={() => setScreenOpen(true)}
+          className="bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-700 hover:to-blue-800 text-white shadow-sm"
+        >
+          <MonitorPlay className="w-4 h-4 mr-2" />
+          可视化大屏
+        </Button>
       </div>
 
       {/* 一、GMV 及盘活核心指标 */}
@@ -428,10 +443,12 @@ export function OperatorAnalytics() {
         title="总交易额(GMV)及盘活核心指标"
         desc="8 项关键业务指标 · 衡量平台规模与活跃度"
         accent="from-blue-500 to-indigo-500"
+        period={periodCore}
+        onPeriodChange={setPeriodCore}
       />
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {coreMetrics.map((m) => (
-          <CoreCard key={m.key} metric={m} />
+          <CoreCard key={m.key} metric={m} period={periodCore} />
         ))}
       </div>
 
@@ -441,11 +458,13 @@ export function OperatorAnalytics() {
         title="平台收入指标"
         desc="平台抽佣与服务费组成 · 单位：万元"
         accent="from-emerald-500 to-teal-500"
+        period={periodIncome}
+        onPeriodChange={setPeriodIncome}
       />
       <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-4">
         <div className="grid grid-cols-2 gap-3">
           {incomeItems.map((it) => (
-            <IncomeCard key={it.key} item={it} />
+            <IncomeCard key={it.key} item={it} period={periodIncome} />
           ))}
         </div>
         <Card>
@@ -455,12 +474,22 @@ export function OperatorAnalytics() {
                 <Layers className="w-4 h-4 text-emerald-600" />
                 平台收入构成（按月堆叠）
               </CardTitle>
-              <CardDescription className="text-xs">单位：万元</CardDescription>
+              <CardDescription className="text-xs">
+                {periodLabels[periodIncome]} · 万元
+              </CardDescription>
             </div>
           </CardHeader>
           <CardContent className="pt-0">
             <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={incomeByMonth} margin={{ top: 6, right: 8, left: -10, bottom: 0 }}>
+              <BarChart
+                data={incomeByMonth.map((d) => ({
+                  m: d.m,
+                  entrust: +(d.entrust * periodFactors[periodIncome]).toFixed(0),
+                  value: +(d.value * periodFactors[periodIncome]).toFixed(0),
+                  trade: +(d.trade * periodFactors[periodIncome]).toFixed(0),
+                }))}
+                margin={{ top: 6, right: 8, left: -10, bottom: 0 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" vertical={false} />
                 <XAxis dataKey="m" tickLine={false} axisLine={false} tick={{ fontSize: 12 }} />
                 <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12 }} />
@@ -488,11 +517,13 @@ export function OperatorAnalytics() {
         title="用户情况"
         desc="入驻企业与使用单位规模分布"
         accent="from-indigo-500 to-blue-500"
+        period={periodUser}
+        onPeriodChange={setPeriodUser}
       />
       <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-4">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {userItems.map((u) => (
-            <UserCard key={u.key} item={u} />
+            <UserCard key={u.key} item={u} period={periodUser} />
           ))}
         </div>
         <Card>
@@ -543,47 +574,83 @@ export function OperatorAnalytics() {
         title="仓储地理分布"
         desc="热力图反映规模 · 鼠标移入查看省份详情"
         accent="from-amber-500 to-orange-500"
+        period={periodMap}
+        onPeriodChange={setPeriodMap}
       />
-      <ChinaHeatmap />
+      <ChinaHeatmap period={periodMap} />
     </div>
   )
 }
 
 // ─────────────────────────────────────────────────────────────
-// 区块标题
+// 区块标题（含周期切换）
 // ─────────────────────────────────────────────────────────────
 function SectionHeader({
   index,
   title,
   desc,
   accent,
+  period,
+  onPeriodChange,
 }: {
   index: string
   title: string
   desc: string
   accent: string
+  period: Period
+  onPeriodChange: (p: Period) => void
 }) {
   return (
-    <div className="flex items-center gap-3">
-      <div
-        className={`flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br ${accent} text-white text-xs font-bold tracking-wider shadow-sm`}
-      >
-        {index}
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex items-center gap-3">
+        <div
+          className={`flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br ${accent} text-white text-xs font-bold tracking-wider shadow-sm`}
+        >
+          {index}
+        </div>
+        <div>
+          <h2 className="text-base font-semibold leading-tight">{title}</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
+        </div>
       </div>
-      <div>
-        <h2 className="text-base font-semibold leading-tight">{title}</h2>
-        <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
-      </div>
+      <Tabs value={period} onValueChange={(v) => onPeriodChange(v as Period)}>
+        <TabsList className="h-8">
+          <TabsTrigger value="today" className="text-xs h-6 px-3">今日</TabsTrigger>
+          <TabsTrigger value="week" className="text-xs h-6 px-3">本周</TabsTrigger>
+          <TabsTrigger value="month" className="text-xs h-6 px-3">本月</TabsTrigger>
+          <TabsTrigger value="year" className="text-xs h-6 px-3">本年</TabsTrigger>
+        </TabsList>
+      </Tabs>
     </div>
   )
+}
+
+// 数字格式化辅助：保留原值的小数位数
+function scaleNumber(originStr: string, factor: number): string {
+  // 检测原值的小数位数
+  const cleaned = originStr.replace(/,/g, "")
+  const num = parseFloat(cleaned)
+  if (isNaN(num)) return originStr
+  const dotIdx = cleaned.indexOf(".")
+  const decimals = dotIdx === -1 ? 0 : cleaned.length - dotIdx - 1
+  const scaled = num * factor
+  return scaled.toLocaleString(undefined, {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  })
 }
 
 // ─────────────────────────────────────────────────────────────
 // 核心指标卡
 // ─────────────────────────────────────────────────────────────
-function CoreCard({ metric }: { metric: CoreMetric }) {
+function CoreCard({ metric, period }: { metric: CoreMetric; period: Period }) {
   const Icon = metric.icon
   const isUp = metric.trend === "up"
+  // 百分比类指标不随周期缩放
+  const isPercent = metric.unit === "%"
+  const displayValue = isPercent
+    ? metric.value
+    : scaleNumber(metric.value, periodFactors[period])
   return (
     <Card className="overflow-hidden relative hover:shadow-md transition-shadow">
       <div className={`absolute top-0 right-0 w-24 h-24 ${metric.bg} rounded-bl-full opacity-60`} />
@@ -613,7 +680,7 @@ function CoreCard({ metric }: { metric: CoreMetric }) {
           <div className="text-xs text-muted-foreground">{metric.label}</div>
           <div className="mt-1 flex items-baseline gap-1">
             <span className="text-2xl font-bold tabular-nums tracking-tight">
-              {metric.value}
+              {displayValue}
             </span>
             <span className="text-xs text-muted-foreground">{metric.unit}</span>
           </div>
@@ -629,9 +696,10 @@ function CoreCard({ metric }: { metric: CoreMetric }) {
 // ─────────────────────────────────────────────────────────────
 // 收入卡
 // ─────────────────────────────────────────────────────────────
-function IncomeCard({ item }: { item: IncomeItem }) {
+function IncomeCard({ item, period }: { item: IncomeItem; period: Period }) {
   const Icon = item.icon
   const isUp = item.trend === "up"
+  const scaledValue = item.value * periodFactors[period]
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardContent className="p-4">
@@ -645,7 +713,7 @@ function IncomeCard({ item }: { item: IncomeItem }) {
         </div>
         <div className="mt-2 flex items-baseline gap-1">
           <span className="text-2xl font-bold tabular-nums">
-            {item.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {scaledValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
           <span className="text-xs text-muted-foreground">万元</span>
         </div>
@@ -672,8 +740,13 @@ function IncomeCard({ item }: { item: IncomeItem }) {
 // ─────────────────────────────────────────────────────────────
 // 用户卡
 // ─────────────────────────────────────────────────────────────
-function UserCard({ item }: { item: UserItem }) {
+function UserCard({ item, period }: { item: UserItem; period: Period }) {
   const Icon = item.icon
+  // 累计总数不变；新增数随周期缩放
+  const newCount = Math.max(
+    1,
+    Math.round(item.newThisMonth * periodFactors[period]),
+  )
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardContent className="p-4">
@@ -695,7 +768,7 @@ function UserCard({ item }: { item: UserItem }) {
             {item.delta}
           </span>
           <Badge variant="outline" className="h-4 px-1.5 text-[10px] font-normal">
-            本月 +{item.newThisMonth}
+            {periodLabels[period]} +{newCount}
           </Badge>
         </div>
       </CardContent>
@@ -706,17 +779,18 @@ function UserCard({ item }: { item: UserItem }) {
 // ─────────────────────────────────────────────────────────────
 // 中国地图热力图
 // ─────────────────────────────────────────────────────────────
-function ChinaHeatmap() {
+function ChinaHeatmap({ period }: { period: Period }) {
   const [mode, setMode] = useState<"warehouses" | "gmv">("warehouses")
   const [hovered, setHovered] = useState<string | null>(null)
   const [tip, setTip] = useState<{ x: number; y: number } | null>(null)
+  const factor = periodFactors[period]
 
   const max = useMemo(() => {
     const values = Object.values(provinceData).map((p) =>
-      mode === "warehouses" ? p.warehouses : p.gmv,
+      mode === "warehouses" ? p.warehouses : p.gmv * factor,
     )
     return Math.max(...values, 1)
-  }, [mode])
+  }, [mode, factor])
 
   const totals = useMemo(() => {
     const v = Object.values(provinceData)
@@ -725,24 +799,35 @@ function ChinaHeatmap() {
       warehouses: v.reduce((s, p) => s + p.warehouses, 0),
       rentable: v.reduce((s, p) => s + p.rentableArea, 0),
       rented: v.reduce((s, p) => s + p.rentedArea, 0),
-      gmv: v.reduce((s, p) => s + p.gmv, 0),
-      demands: v.reduce((s, p) => s + p.demands, 0),
+      gmv: v.reduce((s, p) => s + p.gmv, 0) * factor,
+      demands: Math.round(v.reduce((s, p) => s + p.demands, 0) * factor),
     }
-  }, [])
+  }, [factor])
 
   // Top 5
   const topProvinces = useMemo(() => {
     return Object.entries(provinceData)
-      .map(([name, s]) => ({ name, ...s }))
+      .map(([name, s]) => ({
+        name,
+        ...s,
+        gmv: s.gmv * factor,
+        demands: Math.round(s.demands * factor),
+      }))
       .sort((a, b) =>
         mode === "warehouses" ? b.warehouses - a.warehouses : b.gmv - a.gmv,
       )
       .slice(0, 5)
-  }, [mode])
+  }, [mode, factor])
 
   const hoveredStat = hovered ? provinceData[hovered] : null
 
-  // 图例阶梯
+  // 图例阶梯（GMV 桶随周期缩放）
+  const fmt = (n: number) =>
+    n >= 10000
+      ? `${(n / 10000).toFixed(1)}万`
+      : n >= 1000
+        ? n.toFixed(0)
+        : n.toFixed(n < 10 ? 1 : 0)
   const legendStops =
     mode === "warehouses"
       ? [
@@ -754,12 +839,12 @@ function ChinaHeatmap() {
           { color: "#1d4ed8", label: "≥ 25" },
         ]
       : [
-          { color: "#fed7aa", label: "≤ 200" },
-          { color: "#fb923c", label: "200-500" },
-          { color: "#f97316", label: "500-800" },
-          { color: "#ef4444", label: "800-1200" },
-          { color: "#dc2626", label: "1200-1500" },
-          { color: "#b91c1c", label: "≥ 1500" },
+          { color: "#fed7aa", label: `≤ ${fmt(200 * factor)}` },
+          { color: "#fb923c", label: `${fmt(200 * factor)}-${fmt(500 * factor)}` },
+          { color: "#f97316", label: `${fmt(500 * factor)}-${fmt(800 * factor)}` },
+          { color: "#ef4444", label: `${fmt(800 * factor)}-${fmt(1200 * factor)}` },
+          { color: "#dc2626", label: `${fmt(1200 * factor)}-${fmt(1500 * factor)}` },
+          { color: "#b91c1c", label: `≥ ${fmt(1500 * factor)}` },
         ]
 
   return (
@@ -799,7 +884,11 @@ function ChinaHeatmap() {
                     geographies.map((geo) => {
                       const name = geo.properties.name as string
                       const stat = provinceData[name]
-                      const value = stat ? (mode === "warehouses" ? stat.warehouses : stat.gmv) : 0
+                      const value = stat
+                        ? mode === "warehouses"
+                          ? stat.warehouses
+                          : stat.gmv * factor
+                        : 0
                       const fill = heatColor(value, max, mode)
                       const isHover = hovered === name
                       return (
@@ -870,8 +959,15 @@ function ChinaHeatmap() {
                     <Row label="仓储数量" value={`${hoveredStat.warehouses} 座`} accent="text-blue-600" />
                     <Row label="可租面积" value={`${hoveredStat.rentableArea.toLocaleString()} m²`} />
                     <Row label="在租面积" value={`${hoveredStat.rentedArea.toLocaleString()} m²`} accent="text-emerald-600" />
-                    <Row label="交易额" value={`${hoveredStat.gmv.toLocaleString()} 万元`} accent="text-amber-600" />
-                    <Row label="需求单数量" value={`${hoveredStat.demands.toLocaleString()} 单`} />
+                    <Row
+                      label={`交易额 · ${periodLabels[period]}`}
+                      value={`${(hoveredStat.gmv * factor).toLocaleString(undefined, { maximumFractionDigits: 1 })} 万元`}
+                      accent="text-amber-600"
+                    />
+                    <Row
+                      label={`需求单 · ${periodLabels[period]}`}
+                      value={`${Math.round(hoveredStat.demands * factor).toLocaleString()} 单`}
+                    />
                   </dl>
                 )}
               </div>
@@ -902,7 +998,10 @@ function ChinaHeatmap() {
           <div className="flex flex-col gap-3">
             <Card className="bg-gradient-to-br from-slate-900 to-slate-800 border-0 text-white">
               <CardContent className="p-4">
-                <div className="text-[11px] text-slate-300 mb-2">全国仓储概览</div>
+                <div className="text-[11px] text-slate-300 mb-2 flex items-center justify-between">
+                  <span>全国仓储概览</span>
+                  <span className="text-[10px] text-slate-400">{periodLabels[period]}</span>
+                </div>
                 <div className="grid grid-cols-2 gap-y-3 gap-x-2">
                   <Mini label="覆盖省份" value={`${totals.provinces}`} unit="个" tone="text-blue-300" />
                   <Mini label="仓储数量" value={`${totals.warehouses}`} unit="座" tone="text-emerald-300" />
