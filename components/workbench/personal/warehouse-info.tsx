@@ -5,7 +5,6 @@ import {
   Package,
   Plus,
   Search,
-  MoreHorizontal,
   MapPin,
   Ruler,
   Building2,
@@ -15,7 +14,6 @@ import {
   CheckCircle,
   Clock,
   XCircle,
-  Upload,
   ChevronLeft,
   ChevronRight,
   Phone,
@@ -44,13 +42,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { WarehouseSiteAdd } from "./warehouse-site-add"
 
 interface WarehouseRow {
@@ -284,10 +275,6 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
           <p className="text-muted-foreground mt-1">管理仓储站点和资源信息</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline">
-            <Upload className="w-4 h-4 mr-2" />
-            批量导入
-          </Button>
           <Button onClick={() => setMode("create")}>
             <Plus className="w-4 h-4 mr-2" />
             新增站点
@@ -413,7 +400,7 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
         </CardHeader>
         <CardContent>
           <div className="rounded-md border overflow-x-auto">
-            <Table className="min-w-[1400px]">
+            <Table className="min-w-[1540px]">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[220px]">站点名称 / 类型</TableHead>
@@ -426,7 +413,7 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
                   <TableHead className="w-[150px]">联系人</TableHead>
                   <TableHead className="w-[110px]">状态</TableHead>
                   <TableHead className="w-[110px]">发布状态</TableHead>
-                  <TableHead className="text-right w-[80px]">操作</TableHead>
+                  <TableHead className="w-[220px]">操作</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -538,29 +525,33 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
 
                       <TableCell>{getStatusBadge(item.status)}</TableCell>
                       <TableCell>{getPublishStatusBadge(item.publishStatus)}</TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <Eye className="w-4 h-4 mr-2" />
-                              查看详情
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Edit className="w-4 h-4 mr-2" />
-                              编辑
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive">
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              删除
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                      <TableCell>
+                        <div className="flex flex-wrap items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-2 text-xs"
+                          >
+                            <Eye className="w-3.5 h-3.5 mr-1" />
+                            查看
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-2 text-xs text-primary"
+                          >
+                            <Edit className="w-3.5 h-3.5 mr-1" />
+                            编辑
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-2 text-xs text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="w-3.5 h-3.5 mr-1" />
+                            删除
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
