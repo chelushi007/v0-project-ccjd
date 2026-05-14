@@ -13,6 +13,7 @@ import {
   Ruler,
   Briefcase,
   Handshake,
+  Star,
 } from "lucide-react"
 import {
   Card,
@@ -45,7 +46,7 @@ type PublishStatus = "草稿" | "待审核" | "已上架" | "审核驳回" | "�
 type WarehouseType = "平面" | "楼层"
 type Operation = "自主" | "委托" | "自主/委托"
 type OperationStatus = "可出租" | "不可出租" | "—"
-type UnitNature = "仓储单位" | "仓储站点" | "物资转运单位"
+type UnitNature = "仓储单位" | "仓储站点" | "物资专运单位"
 
 interface WarehouseRow {
   seq: number
@@ -63,6 +64,7 @@ interface WarehouseRow {
   publishTime: string
   operation: Operation
   operationStatus: OperationStatus
+  rating: number
 }
 
 const warehouseData: WarehouseRow[] = [
@@ -82,6 +84,7 @@ const warehouseData: WarehouseRow[] = [
     publishTime: "2025-10-01",
     operation: "自主",
     operationStatus: "—",
+    rating: 0,
   },
   {
     seq: 2,
@@ -99,6 +102,7 @@ const warehouseData: WarehouseRow[] = [
     publishTime: "2025-10-01",
     operation: "委托",
     operationStatus: "可出租",
+    rating: 4,
   },
   {
     seq: 3,
@@ -116,6 +120,7 @@ const warehouseData: WarehouseRow[] = [
     publishTime: "2025-10-01",
     operation: "自主/委托",
     operationStatus: "不可出租",
+    rating: 5,
   },
   {
     seq: 4,
@@ -127,12 +132,13 @@ const warehouseData: WarehouseRow[] = [
     type: "平面",
     region: "广东省-广州市-南沙区",
     address: "进港大道23号",
-    unitNature: "物资转运单位",
+    unitNature: "物资专运单位",
     belongUnit: "南沙铁建专运车队",
     creator: "李先生",
     publishTime: "2025-10-01",
     operation: "自主/委托",
     operationStatus: "可出租",
+    rating: 3,
   },
   {
     seq: 5,
@@ -150,6 +156,7 @@ const warehouseData: WarehouseRow[] = [
     publishTime: "2025-10-01",
     operation: "委托",
     operationStatus: "不可出租",
+    rating: 4,
   },
   {
     seq: 6,
@@ -167,6 +174,7 @@ const warehouseData: WarehouseRow[] = [
     publishTime: "2025-10-01",
     operation: "委托",
     operationStatus: "可出租",
+    rating: 5,
   },
   {
     seq: 7,
@@ -178,12 +186,13 @@ const warehouseData: WarehouseRow[] = [
     type: "平面",
     region: "广东省-广州市-南沙区",
     address: "进港大道23号",
-    unitNature: "物资转运单位",
+    unitNature: "物资专运单位",
     belongUnit: "从化专运车队",
     creator: "李先生",
     publishTime: "2025-10-01",
     operation: "自主",
     operationStatus: "—",
+    rating: 3,
   },
   {
     seq: 8,
@@ -201,6 +210,7 @@ const warehouseData: WarehouseRow[] = [
     publishTime: "2025-10-01",
     operation: "委托",
     operationStatus: "可出租",
+    rating: 4,
   },
   {
     seq: 9,
@@ -212,12 +222,13 @@ const warehouseData: WarehouseRow[] = [
     type: "楼层",
     region: "广东省-广州市-南沙区",
     address: "进港大道23号",
-    unitNature: "物资转运单位",
+    unitNature: "物资专运单位",
     belongUnit: "天河转运中心",
     creator: "李先生",
     publishTime: "2025-10-01",
     operation: "自主/委托",
     operationStatus: "可出租",
+    rating: 2,
   },
   {
     seq: 10,
@@ -235,6 +246,7 @@ const warehouseData: WarehouseRow[] = [
     publishTime: "2025-10-01",
     operation: "自主/委托",
     operationStatus: "—",
+    rating: 1,
   },
   {
     seq: 11,
@@ -252,6 +264,7 @@ const warehouseData: WarehouseRow[] = [
     publishTime: "2025-10-02",
     operation: "自主",
     operationStatus: "可出租",
+    rating: 5,
   },
 ]
 
@@ -303,11 +316,39 @@ function getOperationStatusCell(status: OperationStatus) {
   return <span className="text-muted-foreground">—</span>
 }
 
+function getRatingStars(rating: number) {
+  const safe = Math.max(0, Math.min(5, Math.round(rating)))
+  if (safe === 0) {
+    return <span className="text-xs text-muted-foreground">暂无评价</span>
+  }
+  return (
+    <span
+      className="inline-flex items-center gap-0.5"
+      aria-label={`${safe}星评价`}
+      title={`${safe} / 5`}
+    >
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Star
+          key={i}
+          className={`w-3.5 h-3.5 ${
+            i < safe
+              ? "fill-yellow-400 text-yellow-400"
+              : "fill-transparent text-muted-foreground/40"
+          }`}
+        />
+      ))}
+      <span className="ml-1 text-xs tabular-nums text-muted-foreground">
+        {safe}.0
+      </span>
+    </span>
+  )
+}
+
 function getUnitNatureBadge(nature: UnitNature) {
   const map: Record<UnitNature, string> = {
     仓储单位: "bg-primary/10 text-primary border-primary/20",
     仓储站点: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20",
-    物资转运单位: "bg-orange-500/10 text-orange-600 border-orange-500/20",
+    物资专运单位: "bg-orange-500/10 text-orange-600 border-orange-500/20",
   }
   return <Badge className={`${map[nature]} font-normal whitespace-nowrap`}>{nature}</Badge>
 }
@@ -508,7 +549,7 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
                   <SelectItem value="all">全部性质</SelectItem>
                   <SelectItem value="仓储单位">仓储单位</SelectItem>
                   <SelectItem value="仓储站点">仓储站点</SelectItem>
-                  <SelectItem value="物资转运单位">物资转运单位</SelectItem>
+                  <SelectItem value="物资专运单位">物资专运单位</SelectItem>
                 </SelectContent>
               </Select>
               <Select defaultValue="all">
@@ -527,7 +568,7 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
         </CardHeader>
         <CardContent>
           <div className="rounded-md border overflow-x-auto">
-            <Table className="min-w-[1940px]">
+            <Table className="min-w-[2090px]">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[60px] text-center">序号</TableHead>
@@ -545,6 +586,7 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
                   <TableHead className="w-[110px]">发布时间</TableHead>
                   <TableHead className="w-[120px]">运营方式</TableHead>
                   <TableHead className="w-[100px]">运营状态</TableHead>
+                  <TableHead className="w-[150px]">评价</TableHead>
                   <TableHead className="w-[240px]">操作</TableHead>
                 </TableRow>
               </TableHeader>
@@ -622,6 +664,9 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
 
                     {/* 运营状态 */}
                     <TableCell>{getOperationStatusCell(row.operationStatus)}</TableCell>
+
+                    {/* 评价 */}
+                    <TableCell>{getRatingStars(row.rating)}</TableCell>
 
                     {/* 操作 */}
                     <TableCell>
