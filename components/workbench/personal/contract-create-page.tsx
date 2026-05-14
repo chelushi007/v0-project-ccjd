@@ -47,7 +47,15 @@ type Props = {
   onBack: () => void
 }
 
-type ContractType = "租赁合同" | "托管合同" | "服务合同" | "存放合同" | "委托合同"
+type ContractType =
+  | "租赁合同"
+  | "托管合同"
+  | "服务合同"
+  | "存放合同"
+  | "委托合同"
+  | "销售合同"
+  | "销售代理协议"
+  | "分成协议"
 type PaymentMethod = "一次性付清" | "月付" | "季付" | "半年付" | "年付"
 
 type UploadedFile = {
@@ -62,6 +70,9 @@ const CONTRACT_TYPES: { value: ContractType; desc: string; color: string }[] = [
   { value: "服务合同", desc: "包装、配送、装卸等服务", color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
   { value: "存放合同", desc: "纯仓储存放业务", color: "bg-orange-500/10 text-orange-600 border-orange-500/20" },
   { value: "委托合同", desc: "对外委托业务", color: "bg-cyan-500/10 text-cyan-600 border-cyan-500/20" },
+  { value: "销售合同", desc: "托管物资对外销售", color: "bg-amber-500/10 text-amber-700 border-amber-500/20" },
+  { value: "销售代理协议", desc: "代物权方销售授权", color: "bg-rose-500/10 text-rose-700 border-rose-500/20" },
+  { value: "分成协议", desc: "销售所得分成比例", color: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20" },
 ]
 
 const PARTY_B_LIBRARY = [

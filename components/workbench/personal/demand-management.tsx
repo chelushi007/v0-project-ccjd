@@ -13,6 +13,9 @@ import {
   PenLine,
   Send,
   CheckCircle,
+  Tags,
+  HandCoins,
+  Coins,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -44,6 +47,7 @@ import { DetailPublishPage } from "@/components/frontend/detail-publish-page"
 import { EntrustAcceptancePage } from "./entrust-acceptance-page"
 import { MaterialPickerDialog, type MaterialItem } from "./material-picker-dialog"
 import { MaterialRentPublishPage } from "./material-rent-publish-page"
+import { MaterialSalePublishPage } from "./material-sale-publish-page"
 
 // ============ 类型 ============
 
@@ -307,6 +311,117 @@ const materialRentRows: MaterialRentRow[] = [
   },
 ]
 
+// ============ 数据：物资出售 ============
+
+interface MaterialSaleRow {
+  id: string
+  title: string
+  materialType: string
+  quantity: string
+  propertyOwner: string // 物权单位
+  region: string
+  unitPrice: string // 销售单价
+  totalAmount: string // 销售总额
+  shareRatio: string // 专运 : 物权
+  saleMode: "整批" | "分批"
+  submitDate: string
+  publishDate: string
+  status: SelfStatus
+  views: number
+  inquiries: number
+  rejectReason?: string
+}
+
+const materialSaleRows: MaterialSaleRow[] = [
+  {
+    id: "WS20260513001",
+    title: "HRB400 螺纹钢 1200 吨整批销售 · 南沙综合仓",
+    materialType: "型材类",
+    quantity: "1200 吨",
+    propertyOwner: "中铁十四局集团广州分公司",
+    region: "广东省广州市南沙区",
+    unitPrice: "4,200元/吨",
+    totalAmount: "5,040,000",
+    shareRatio: "25 : 75",
+    saleMode: "整批",
+    submitDate: "2026-05-11",
+    publishDate: "2026-05-12",
+    status: "已发布",
+    views: 142,
+    inquiries: 8,
+  },
+  {
+    id: "WS20260512002",
+    title: "WJ-7 型扣件系统 12000 套分批销售",
+    materialType: "拼装类",
+    quantity: "12000 套",
+    propertyOwner: "中铁电气化局集团广州分公司",
+    region: "广东省深圳市宝安区",
+    unitPrice: "12元/套",
+    totalAmount: "144,000",
+    shareRatio: "20 : 80",
+    saleMode: "分批",
+    submitDate: "2026-05-11",
+    publishDate: "—",
+    status: "待审核",
+    views: 0,
+    inquiries: 0,
+  },
+  {
+    id: "WS20260510003",
+    title: "Φ32 螺纹钢余料 480 吨 整批清仓",
+    materialType: "型材类",
+    quantity: "480 吨",
+    propertyOwner: "中铁建工集团第二建设有限公司",
+    region: "广东省广州市黄埔区",
+    unitPrice: "3,950元/吨",
+    totalAmount: "1,896,000",
+    shareRatio: "30 : 70",
+    saleMode: "整批",
+    submitDate: "—",
+    publishDate: "—",
+    status: "草稿",
+    views: 0,
+    inquiries: 0,
+  },
+  {
+    id: "WS20260509004",
+    title: "建筑钢管 1500 套 分批销售",
+    materialType: "脚手架类",
+    quantity: "1500 套",
+    propertyOwner: "中铁二十二局集团第一工程有限公司",
+    region: "广东省佛山市顺德区",
+    unitPrice: "180元/套",
+    totalAmount: "270,000",
+    shareRatio: "25 : 75",
+    saleMode: "分批",
+    submitDate: "2026-05-07",
+    publishDate: "—",
+    status: "被驳回",
+    views: 0,
+    inquiries: 0,
+    rejectReason:
+      "1) 缺少与物权单位签署的销售代理协议附件；2) 分成比例未在协议中明确，请上传协议正本后重新提交。",
+  },
+  {
+    id: "WS20260507005",
+    title: "工字钢 320 吨 整批销售",
+    materialType: "型材类",
+    quantity: "320 吨",
+    propertyOwner: "中铁十四局集团广州分公司",
+    region: "广东省东莞市虎门镇",
+    unitPrice: "4,600元/吨",
+    totalAmount: "1,472,000",
+    shareRatio: "25 : 75",
+    saleMode: "整批",
+    submitDate: "2026-05-04",
+    publishDate: "2026-05-05",
+    status: "已发布",
+    views: 96,
+    inquiries: 5,
+  },
+]
+
 // ============ 工具：状态徽标 ============
 
 const statusBadge = (status: SelfStatus | EntrustStatus) => {
@@ -412,7 +527,7 @@ function entrustStatusActions(
       return [
         { label: "查看" },
         { label: "上传合同", tone: "primary" },
-        { label: "合同详情" },
+        { label: "合同��情" },
       ]
     case "已签署":
       return [
@@ -506,8 +621,13 @@ function Toolbar({
 
 // ============ 主组件 ============
 
-type DemandSubTab = "self-rent" | "entrust-rent" | "material-rent"
-type DemandMode = "list" | "publish-warehouse" | "publish-material" | "accept-entrust"
+type DemandSubTab = "self-rent" | "entrust-rent" | "material-rent" | "material-sale"
+type DemandMode =
+  | "list"
+  | "publish-warehouse"
+  | "publish-material"
+  | "publish-sale"
+  | "accept-entrust"
 
 interface DemandManagementProps {
   subTab?: DemandSubTab
@@ -542,6 +662,18 @@ export function DemandManagement({ subTab = "self-rent" }: DemandManagementProps
     )
   }
 
+  if (mode === "publish-sale") {
+    return (
+      <MaterialSalePublishPage
+        onBack={() => {
+          setMode("list")
+          setPickedMaterials([])
+        }}
+        initialMaterials={pickedMaterials}
+      />
+    )
+  }
+
   if (mode === "accept-entrust" && acceptTarget) {
     return (
       <EntrustAcceptancePage
@@ -565,6 +697,8 @@ export function DemandManagement({ subTab = "self-rent" }: DemandManagementProps
   const renderPage = () => {
     if (subTab === "self-rent") return renderSelfRent(setMode, openReject)
     if (subTab === "entrust-rent") return renderEntrustRent(setMode, openAccept)
+    if (subTab === "material-sale")
+      return renderMaterialSale(setMode, openReject)
     return renderMaterialRent(setMaterialPickerOpen, openReject)
   }
 
@@ -973,6 +1107,203 @@ function renderMaterialRent(
                     </TableCell>
                   </TableRow>
                 ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </>
+  )
+}
+
+// ============ 子页：物资出售 ============
+
+function renderMaterialSale(
+  setMode: (m: DemandMode) => void,
+  openReject: (id: string, reason?: string) => void,
+) {
+  const rows = materialSaleRows
+  const draft = rows.filter((d) => d.status === "草稿").length
+  const reviewing = rows.filter((d) => d.status === "待审核").length
+  const published = rows.filter((d) => d.status === "已发布").length
+  const rejected = rows.filter((d) => d.status === "被驳回").length
+
+  // 已发布的销售总金额（用作运营指标）
+  const totalGmv = rows
+    .filter((r) => r.status === "已发布")
+    .reduce((s, r) => s + Number(r.totalAmount.replace(/,/g, "")), 0)
+
+  return (
+    <>
+      <PageHeader
+        icon={Tags}
+        iconTone="amber"
+        title="物资出售"
+        desc="由物资专运单位代物权单位销售托管物资，所得按约定比例分成"
+        actionLabel="新增物资销售"
+        onAction={() => setMode("publish-sale")}
+      />
+
+      <StatsRow
+        items={[
+          { label: "草稿", value: draft, icon: PenLine, tone: "primary" },
+          { label: "待审核", value: reviewing, icon: Clock, tone: "amber" },
+          {
+            label: "已发布",
+            value: published,
+            icon: CheckCircle2,
+            tone: "emerald",
+          },
+          { label: "被驳回", value: rejected, icon: AlertCircle, tone: "rose" },
+        ]}
+      />
+
+      {/* 业务说明卡 + 已发布销售额 */}
+      <Card className="bg-gradient-to-r from-amber-50/60 via-card to-emerald-50/60 border-amber-200/60">
+        <CardContent className="p-4 flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-start gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+              <HandCoins className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-sm font-semibold text-foreground">
+                销售代理业务规则
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                物资专运单位与物权单位签署销售代理协议后，可发布托管物资销售需求；成交后按分成比例自动结算，详见
+                <span className="text-primary font-medium">
+                  {" "}
+                  费用管理 · 销售分成
+                </span>
+                。
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="text-right">
+              <div className="text-[11px] text-muted-foreground">
+                已发布销售总额
+              </div>
+              <div className="text-xl font-bold text-emerald-700 tabular-nums">
+                ¥ {totalGmv.toLocaleString("zh-CN")}
+              </div>
+            </div>
+            <Coins className="w-8 h-8 text-emerald-600/70" />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-4 space-y-4">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <h3 className="text-sm font-semibold text-foreground">
+              销售需求单列表
+              <span className="text-xs text-muted-foreground ml-2">
+                共 {rows.length} 条
+              </span>
+            </h3>
+            <Toolbar
+              placeholder="搜索需求单号、物料或物权单位"
+              statusOptions={[
+                { value: "draft", label: "草稿" },
+                { value: "reviewing", label: "待审核" },
+                { value: "published", label: "已发布" },
+                { value: "rejected", label: "被驳回" },
+              ]}
+            />
+          </div>
+
+          <div className="rounded-md border overflow-x-auto">
+            <Table className="min-w-[1500px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[56px] text-center">序号</TableHead>
+                  <TableHead className="w-[130px]">需求单号</TableHead>
+                  <TableHead className="min-w-[220px]">标题</TableHead>
+                  <TableHead className="w-[100px]">物料类型</TableHead>
+                  <TableHead className="w-[110px]">数量</TableHead>
+                  <TableHead className="min-w-[200px]">物权单位</TableHead>
+                  <TableHead className="w-[120px]">销售单价</TableHead>
+                  <TableHead className="w-[130px] text-right">
+                    销售总额(元)
+                  </TableHead>
+                  <TableHead className="w-[140px]">分成 (专运:物权)</TableHead>
+                  <TableHead className="w-[80px]">模式</TableHead>
+                  <TableHead className="w-[100px]">发布时间</TableHead>
+                  <TableHead className="w-[90px]">状态</TableHead>
+                  <TableHead className="w-[230px] text-center">操作</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.map((d, idx) => {
+                  const [transportPart, propertyPart] = d.shareRatio
+                    .split(":")
+                    .map((s) => s.trim())
+                  return (
+                    <TableRow key={d.id}>
+                      <TableCell className="text-center text-xs text-muted-foreground tabular-nums">
+                        {idx + 1}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs whitespace-nowrap">
+                        {d.id}
+                      </TableCell>
+                      <TableCell
+                        className="max-w-xs truncate"
+                        title={d.title}
+                      >
+                        {d.title}
+                      </TableCell>
+                      <TableCell>{d.materialType}</TableCell>
+                      <TableCell className="text-sm">{d.quantity}</TableCell>
+                      <TableCell
+                        className="text-sm text-muted-foreground"
+                        title={d.propertyOwner}
+                      >
+                        {d.propertyOwner}
+                      </TableCell>
+                      <TableCell className="text-primary font-medium text-sm">
+                        {d.unitPrice}
+                      </TableCell>
+                      <TableCell className="text-right font-medium tabular-nums">
+                        {d.totalAmount}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1 text-xs tabular-nums">
+                          <span className="rounded bg-primary/10 text-primary px-1.5 py-0.5 font-medium">
+                            {transportPart}
+                          </span>
+                          <span className="text-muted-foreground">:</span>
+                          <span className="rounded bg-orange-100 text-orange-700 px-1.5 py-0.5 font-medium">
+                            {propertyPart}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className={
+                            d.saleMode === "整批"
+                              ? "border-primary/40 text-primary"
+                              : "border-accent/40 text-accent"
+                          }
+                        >
+                          {d.saleMode}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-xs whitespace-nowrap">
+                        {d.publishDate}
+                      </TableCell>
+                      <TableCell>{statusBadge(d.status)}</TableCell>
+                      <TableCell>
+                        <RowActions
+                          actions={selfStatusActions(d.status, () =>
+                            openReject(d.id, d.rejectReason),
+                          )}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
               </TableBody>
             </Table>
           </div>

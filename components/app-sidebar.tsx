@@ -23,6 +23,7 @@ import {
   PackagePlus,
   PackageMinus,
   ArrowLeftRight,
+  Tags,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -75,6 +76,7 @@ const personalMenu: MenuItem[] = [
       { id: "demand-self", label: "仓储自主出租", icon: Warehouse },
       { id: "demand-entrust", label: "仓储委托出租", icon: FileText },
       { id: "demand-material", label: "物料出租", icon: Package },
+      { id: "demand-material-sale", label: "物资出售", icon: Tags },
     ],
   },
   {

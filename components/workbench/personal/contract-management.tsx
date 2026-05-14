@@ -137,6 +137,76 @@ const contractData = [
     signDate: "2025-12-20",
     progress: 55,
   },
+  {
+    id: "CON20260513007",
+    name: "HRB400 螺纹钢 1200 吨销售合同",
+    type: "销售合同",
+    partyA: "中铁建物料华南专业运营有限公司",
+    partyB: "中铁二十三局深圳分公司",
+    warehouse: "中铁建广州南沙综合仓储基地",
+    amount: 5040000,
+    startDate: "2026-05-13",
+    endDate: "2026-05-25",
+    status: "signed",
+    signDate: "2026-05-13",
+    progress: 75,
+  },
+  {
+    id: "CON20260510008",
+    name: "Φ32 螺纹钢余料销售合同",
+    type: "销售合同",
+    partyA: "中铁建物料华南专业运营有限公司",
+    partyB: "广州市顺德建材贸易公司",
+    warehouse: "中铁建广州黄埔恒温仓储基地",
+    amount: 1896000,
+    startDate: "2026-05-10",
+    endDate: "2026-05-15",
+    status: "completed",
+    signDate: "2026-05-10",
+    progress: 100,
+  },
+  {
+    id: "CON20260420009",
+    name: "物资销售代理协议(中铁十四局)",
+    type: "销售代理协议",
+    partyA: "中铁建物料华南专业运营有限公司",
+    partyB: "中铁十四局集团广州分公司",
+    warehouse: "南沙 / 东莞 / 黄埔仓储基地",
+    amount: 0,
+    startDate: "2026-04-20",
+    endDate: "2027-04-19",
+    status: "signed",
+    signDate: "2026-04-20",
+    progress: 30,
+  },
+  {
+    id: "CON20260420010",
+    name: "销售分成协议(25:75)",
+    type: "分成协议",
+    partyA: "中铁建物料华南专业运营有限公司",
+    partyB: "中铁十四局集团广州分公司",
+    warehouse: "—",
+    amount: 0,
+    startDate: "2026-04-20",
+    endDate: "2027-04-19",
+    status: "signed",
+    signDate: "2026-04-20",
+    progress: 30,
+  },
+  {
+    id: "CON20260512011",
+    name: "WJ-7 型扣件系统销售合同",
+    type: "销售合同",
+    partyA: "中铁建物料华南专业运营有限公司",
+    partyB: "中铁十一局广深城际项目部",
+    warehouse: "中铁建深圳前海智慧仓储基地",
+    amount: 144000,
+    startDate: "2026-05-12",
+    endDate: "2026-06-30",
+    status: "pending",
+    signDate: null,
+    progress: 0,
+  },
 ]
 
 const getStatusBadge = (status: string) => {
@@ -188,6 +258,9 @@ const getTypeBadge = (type: string) => {
     服务合同: "bg-blue-500/10 text-blue-600 border-blue-500/20",
     存放合同: "bg-orange-500/10 text-orange-600 border-orange-500/20",
     委托合同: "bg-cyan-500/10 text-cyan-600 border-cyan-500/20",
+    销售合同: "bg-amber-500/10 text-amber-700 border-amber-500/20",
+    销售代理协议: "bg-rose-500/10 text-rose-700 border-rose-500/20",
+    分成协议: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20",
   }
   return <Badge className={colors[type] || ""}>{type}</Badge>
 }
@@ -344,6 +417,9 @@ export function ContractManagement({ roleType = "property" }: ContractManagement
                   <SelectItem value="service">服务合同</SelectItem>
                   <SelectItem value="storage">存放合同</SelectItem>
                   <SelectItem value="entrust">委托合同</SelectItem>
+                  <SelectItem value="sale">销售合同</SelectItem>
+                  <SelectItem value="agency">销售代理协议</SelectItem>
+                  <SelectItem value="share">分成协议</SelectItem>
                 </SelectContent>
               </Select>
             </div>

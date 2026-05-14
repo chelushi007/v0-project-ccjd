@@ -143,6 +143,58 @@ const mockReconciliations = [
     rejectedBy: "王志强（中铁十五局集团 · 项目部）",
     rejectedAt: "2026-04-03 09:42:18",
   },
+  {
+    id: "DZ-2026-007",
+    orderId: "WZXS20260513001",
+    partner: "中铁十四局集团广州分公司",
+    type: "物资销售分成",
+    period: "2026年5月",
+    amount: 3780000,
+    confirmedAmount: 3780000,
+    status: "已确认",
+    createDate: "2026-05-26",
+    confirmDate: "2026-05-27",
+  },
+  {
+    id: "DZ-2026-008",
+    orderId: "WZXS20260510003",
+    partner: "中铁建工集团第二建设有限公司",
+    type: "物资销售分成",
+    period: "2026年5月",
+    amount: 1327200,
+    confirmedAmount: 0,
+    status: "待确认",
+    createDate: "2026-05-16",
+    confirmDate: "",
+  },
+  {
+    id: "DZ-2026-009",
+    orderId: "WZXS20260508004",
+    partner: "中铁十四局集团广州分公司",
+    type: "物资销售分成",
+    period: "2026年5月",
+    amount: 1104000,
+    confirmedAmount: 1104000,
+    status: "已结算",
+    createDate: "2026-05-13",
+    confirmDate: "2026-05-15",
+  },
+  {
+    id: "DZ-2026-010",
+    orderId: "WZXS20260420005",
+    partner: "中铁二十二局集团第一工程有限公司",
+    type: "物资销售分成",
+    period: "2026年4月",
+    amount: 202500,
+    confirmedAmount: 0,
+    status: "被驳回",
+    createDate: "2026-04-26",
+    confirmDate: "",
+    rejectReason:
+      "本期销售清单中存在 50 套已计入往期对账的扣件，存在重复结算；另：分成比例应按签订时的 25:75 而非临时调整的 30:70 核算，请重新出具。",
+    rejectedBy: "孙广海（中铁二十二局 · 财务部）",
+    rejectedAt: "2026-04-27 11:08:42",
+  },
 ]
 
 // ============ 结算流水（按费用类型，覆盖支出与收入两个方向） ============
@@ -155,6 +207,8 @@ type FeeCategory =
   | "物料租金"
   | "运输费"
   | "物料运营分成"
+  | "物资销售款"
+  | "销售分成"
   | "退款"
 
 type SettleStatus = "已支付" | "已收款" | "待支付" | "待收款" | "处理中" | "已退款"
@@ -360,6 +414,79 @@ const mockSettlements: SettleRecord[] = [
     occurDate: "2026-03-01 10:18:22",
     voucherNo: "ICBC202603010100150",
   },
+  // 物资销售款（专运单位代收买方货款）
+  {
+    id: "JS20260514100250",
+    orderId: "WZXS20260513001",
+    category: "物资销售款",
+    direction: "收入",
+    partner: "中铁二十三局深圳分公司",
+    amount: 5040000,
+    channel: "工商银行 对公收款",
+    status: "已收款",
+    occurDate: "2026-05-14 10:25:18",
+    voucherNo: "ICBC202605140100250",
+  },
+  {
+    id: "JS20260511100242",
+    orderId: "WZXS20260510003",
+    category: "物资销售款",
+    direction: "收入",
+    partner: "广州市顺德建材贸易公司",
+    amount: 1896000,
+    channel: "招商银行 对公收款",
+    status: "已收款",
+    occurDate: "2026-05-11 14:38:09",
+    voucherNo: "CMB202605110100242",
+  },
+  {
+    id: "JS20260520100258",
+    orderId: "WZXS20260512002",
+    category: "物资销售款",
+    direction: "收入",
+    partner: "中铁十一局广深城际项目部",
+    amount: 72000,
+    channel: "工商银行 对公收款",
+    status: "已收款",
+    occurDate: "2026-05-20 09:14:33",
+    voucherNo: "ICBC202605200100258",
+  },
+  // 销售分成（专运单位 → 物权单位结算物权方份额）
+  {
+    id: "JS20260526100265",
+    orderId: "WZXS20260513001",
+    category: "销售分成",
+    direction: "支出",
+    partner: "中铁十四局集团广州分公司",
+    amount: 3780000,
+    channel: "工商银行 对公转账",
+    status: "已支付",
+    occurDate: "2026-05-26 11:42:08",
+    voucherNo: "ICBC202605260100265",
+  },
+  {
+    id: "JS20260513100247",
+    orderId: "WZXS20260508004",
+    category: "销售分成",
+    direction: "支出",
+    partner: "中铁十四局集团广州分公司",
+    amount: 1104000,
+    channel: "工商银行 对公转账",
+    status: "已支付",
+    occurDate: "2026-05-13 15:08:46",
+    voucherNo: "ICBC202605130100247",
+  },
+  {
+    id: "JS20260530100272",
+    orderId: "WZXS20260510003",
+    category: "销售分成",
+    direction: "支出",
+    partner: "中铁建工集团第二建设有限公司",
+    amount: 1327200,
+    channel: "工商银行 对公转账",
+    status: "待支付",
+    occurDate: "2026-05-30 待支付",
+  },
 ]
 
 // ============ 视觉映射 ============
@@ -416,6 +543,16 @@ const categoryConfig: Record<
     icon: TrendingUp,
     chip: "bg-emerald-50 text-emerald-700 border-emerald-200",
     iconColor: "text-emerald-600",
+  },
+  物资销售款: {
+    icon: ArrowDownLeft,
+    chip: "bg-amber-50 text-amber-700 border-amber-200",
+    iconColor: "text-amber-600",
+  },
+  销售分成: {
+    icon: ArrowUpRight,
+    chip: "bg-rose-50 text-rose-700 border-rose-200",
+    iconColor: "text-rose-600",
   },
   退款: {
     icon: RefreshCw,
@@ -748,6 +885,8 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
       "物料租金",
       "运输费",
       "物料运营分成",
+      "物资销售款",
+      "销售分成",
       "退款",
     ]
 
@@ -871,7 +1010,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
               <div className="relative flex-1 min-w-[220px] max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="搜索流水号 / 订单号 / 合作方..."
+                  placeholder="搜索流水号 / ��单号 / 合作方..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-9"
