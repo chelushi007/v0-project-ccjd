@@ -24,7 +24,6 @@ import {
   PackageMinus,
   ArrowLeftRight,
   Tags,
-  Settings2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -102,51 +101,6 @@ const personalMenu: MenuItem[] = [
   { id: "contract", label: "合同管理", icon: FileText },
 ]
 
-// 运营方工作台菜单
-const operationMenu: MenuItem[] = [
-  { id: "op-my-workbench", label: "我的工作台", icon: LayoutDashboard },
-  { id: "op-warehouse", label: "仓储管理", icon: Warehouse },
-  {
-    id: "op-material",
-    label: "物料管理",
-    icon: Package,
-    children: [
-      { id: "op-material-inventory", label: "库存管理", icon: Boxes },
-      { id: "op-material-inbound", label: "入库管理", icon: PackagePlus },
-      { id: "op-material-outbound", label: "出库管理", icon: PackageMinus },
-      { id: "op-material-transfer", label: "过户管理", icon: ArrowLeftRight },
-    ],
-  },
-  {
-    id: "op-demand",
-    label: "需求管理",
-    icon: ClipboardList,
-    children: [
-      { id: "op-demand-self", label: "仓储自主出租", icon: Warehouse },
-      { id: "op-demand-entrust", label: "仓储委托出租", icon: FileText },
-      { id: "op-demand-material", label: "物料出租", icon: Package },
-      { id: "op-demand-material-sale", label: "物资出售", icon: Tags },
-    ],
-  },
-  {
-    id: "op-order",
-    label: "订单管理",
-    icon: ShoppingCart,
-    children: [
-      { id: "op-order-warehouse", label: "仓储交易订单", icon: Warehouse },
-      { id: "op-order-storage", label: "物料存放订单", icon: Package },
-      { id: "op-order-trade", label: "物料交易订单", icon: ShoppingCart },
-    ],
-  },
-  {
-    id: "op-settlement",
-    label: "费用管理",
-    icon: CreditCard,
-    children: [{ id: "op-service-fee", label: "服务费收款管理", icon: Wallet }],
-  },
-  { id: "op-contract", label: "合同管理", icon: FileText },
-]
-
 // 主导航菜单
 const menuSections: MenuSection[] = [
   {
@@ -162,13 +116,6 @@ const menuSections: MenuSection[] = [
     icon: LayoutDashboard,
     description: "业务管理中心",
     items: personalMenu,
-  },
-  {
-    id: "operation",
-    label: "运营方工作台",
-    icon: Settings2,
-    description: "运营管理驾驶舱",
-    items: operationMenu,
   },
 ]
 
@@ -190,7 +137,6 @@ export function AppSidebar({
   const [expandedSections, setExpandedSections] = useState<string[]>([
     "frontend",
     "personal",
-    "operation",
   ])
   // 三级展开（如：结算管理）。当前激活子项所在的父级会自动保持展开
   const [expandedItems, setExpandedItems] = useState<string[]>([
@@ -198,10 +144,6 @@ export function AppSidebar({
     "demand",
     "order",
     "material",
-    "op-settlement",
-    "op-demand",
-    "op-order",
-    "op-material",
   ])
 
   const toggleSection = (sectionId: string) => {

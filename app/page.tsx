@@ -9,7 +9,6 @@ import { SmartMatchPage } from "@/components/frontend/smart-match-page"
 import { DetailPublishPage } from "@/components/frontend/detail-publish-page"
 import { MaterialPublishPage } from "@/components/frontend/material-publish-page"
 import { PersonalWorkbench } from "@/components/workbench/personal-workbench"
-import { OperationWorkbench } from "@/components/workbench/operation-workbench"
 import { cn } from "@/lib/utils"
 import { Bell, User, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -110,14 +109,9 @@ export default function HomePage() {
       }
     }
 
-    // 用户工作台
+    // 个人工作台
     if (activeTab === "personal") {
       return <PersonalWorkbench activeSubTab={activeSubTab} />
-    }
-
-    // 运营方工作台
-    if (activeTab === "operation") {
-      return <OperationWorkbench activeSubTab={activeSubTab} />
     }
 
     return <FrontendPage onNavigate={handleNavigate} />
