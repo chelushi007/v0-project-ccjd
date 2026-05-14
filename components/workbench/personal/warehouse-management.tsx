@@ -1,10 +1,11 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   Table,
   TableBody,
@@ -28,12 +29,14 @@ import {
   Search,
   Plus,
   Download,
+  ChevronLeft,
   ChevronRight,
   CheckCircle2,
   Clock,
   XCircle,
   PauseCircle,
   ArrowRight,
+  ArrowUpRight,
   Eye,
   Pencil,
   ShieldCheck,
@@ -43,53 +46,75 @@ import {
   Phone,
   CalendarClock,
   Route,
+  Warehouse as WarehouseIcon,
+  Layers,
+  Network,
+  TrendingUp,
 } from "lucide-react"
 
-/* -------------------- 类型 & 数据 -------------------- */
+/* -------------------- 类型 & 资源元数据 -------------------- */
 
 type ResourceKey = "unit" | "site" | "transport"
+type CommonStatus = "正常运营" | "审核中" | "待申请" | "已驳回" | "已停用"
 
 interface ResourceMeta {
   key: ResourceKey
   label: string
+  shortName: string
   description: string
+  positioning: string
+  qualificationFrom: string
   Icon: typeof Building2
-  accent: string // bg-* for icon container
-  accentText: string // text-* color
-  ring: string // ring color for selected tab
+  // 配色（参照企业中心）
+  color: string
+  bg: string
+  border: string
+  accent: string
 }
 
 const RESOURCES: ResourceMeta[] = [
   {
     key: "unit",
     label: "仓储单位",
-    description: "中铁建体系内入驻平台的二级 / 三级 / 项目组单位",
+    shortName: "仓储单位",
+    description: "在平台入驻的中铁建体系内自有仓储资源单位",
+    positioning: "中铁建股份内部二级 / 三级 / 项目组单位",
+    qualificationFrom: "经平台基础入驻审核",
     Icon: Building2,
-    accent: "bg-primary/10",
-    accentText: "text-primary",
-    ring: "ring-primary/40",
+    color: "text-primary",
+    bg: "bg-primary/10",
+    border: "border-primary/20",
+    accent: "bg-primary",
   },
   {
     key: "site",
     label: "仓储站点",
-    description: "由仓储单位申请获得资质的下属仓储基地",
+    shortName: "站点单位",
+    description: "由仓储单位申请获得资质的自营仓储基地",
+    positioning: "仓储单位旗下登记备案的仓储基地",
+    qualificationFrom: "由仓储单位向平台提交申请并获批",
     Icon: MapPinned,
-    accent: "bg-emerald-500/10",
-    accentText: "text-emerald-600",
-    ring: "ring-emerald-500/40",
+    color: "text-emerald-600",
+    bg: "bg-emerald-500/10",
+    border: "border-emerald-500/20",
+    accent: "bg-emerald-500",
   },
   {
     key: "transport",
     label: "专运单位",
+    shortName: "专运单位",
     description: "由仓储站点申请获得资质的物资专属承运单位",
+    positioning: "仓储站点旗下登记的专属物资承运团队",
+    qualificationFrom: "由仓储站点向平台提交申请并获批",
     Icon: Truck,
-    accent: "bg-orange-500/10",
-    accentText: "text-orange-600",
-    ring: "ring-orange-500/40",
+    color: "text-orange-600",
+    bg: "bg-orange-500/10",
+    border: "border-orange-500/20",
+    accent: "bg-orange-500",
   },
 ]
 
-type CommonStatus = "正常运营" | "审核中" | "待申请" | "已驳回" | "已停用"
+/* -------------------- 数据 -------------------- */
 
 interface UnitRow {
   id: string
@@ -125,7 +150,7 @@ interface TransportRow {
   parentSite: string
   parentUnit: string
   vehicles: number
-  capacity: number // 总吨位
+  capacity: number
   serviceArea: string
   monthOrders: number
   applyDate: string
@@ -500,42 +525,183 @@ function LevelBadge({ level }: { level: UnitRow["level"] }) {
 /* -------------------- 主组件 -------------------- */
 
 export function WarehouseManagement() {
-  const [active, setActive] = useState<ResourceKey>("unit")
+  const [activeIndex, setActiveIndex] = useState(0)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("全部")
   const [levelFilter, setLevelFilter] = useState("全部")
 
-  // 关闭页签切换时保留各自筛选条件以提升用户体验
-  const activeMeta = RESOURCES.find((r) => r.key === active)!
+  const active = RESOURCES[activeIndex]
+  const Icon = active.Icon
 
-  /* ------- 各页签的统计 / 列表过滤 ------- */
+  const handlePrev = () =>
+    setActiveIndex((prev) => (prev === 0 ? RESOURCES.length - 1 : prev - 1))
+  const handleNext = () =>
+    setActiveIndex((prev) => (prev === RESOURCES.length - 1 ? 0 : prev + 1))
 
-  const unitStats = useMemo(() => {
-    return {
+  /* ------- 各页签的统计 ------- */
+
+  const unitStats = useMemo(
+    () => ({
       total: unitRows.length,
       running: unitRows.filter((r) => r.status === "正常运营").length,
       reviewing: unitRows.filter((r) => r.status === "审核中").length,
       sites: unitRows.reduce((s, r) => s + r.siteCount, 0),
-    }
-  }, [])
+      area: unitRows.reduce((s, r) => s + r.totalArea, 0),
+    }),
+    [],
+  )
 
-  const siteStats = useMemo(() => {
-    return {
+  const siteStats = useMemo(
+    () => ({
       total: siteRows.length,
       running: siteRows.filter((r) => r.status === "正常运营").length,
       reviewing: siteRows.filter((r) => r.status === "审核中").length,
       area: siteRows.reduce((s, r) => s + r.area, 0),
-    }
-  }, [])
+      used: siteRows.reduce((s, r) => s + r.usedArea, 0),
+      transport: siteRows.reduce((s, r) => s + r.transportCount, 0),
+    }),
+    [],
+  )
 
-  const transportStats = useMemo(() => {
-    return {
+  const transportStats = useMemo(
+    () => ({
       total: transportRows.length,
       running: transportRows.filter((r) => r.status === "正常运营").length,
       reviewing: transportRows.filter((r) => r.status === "审核中").length,
       vehicles: transportRows.reduce((s, r) => s + r.vehicles, 0),
+      capacity: transportRows.reduce((s, r) => s + r.capacity, 0),
+      monthOrders: transportRows.reduce((s, r) => s + r.monthOrders, 0),
+    }),
+    [],
+  )
+
+  /* ------- 按当前资源生成关键统计 ------- */
+
+  const hotStats = useMemo(() => {
+    if (active.key === "unit") {
+      return [
+        { label: "入驻仓储单位", value: unitStats.total, unit: "家" },
+        { label: "下属仓储站点", value: unitStats.sites, unit: "个" },
+        {
+          label: "托管仓储面积",
+          value: (unitStats.area / 10000).toFixed(1),
+          unit: "万㎡",
+        },
+      ]
     }
-  }, [])
+    if (active.key === "site") {
+      const rate = siteStats.area
+        ? Math.round((siteStats.used / siteStats.area) * 100)
+        : 0
+      return [
+        { label: "仓储站点总数", value: siteStats.total, unit: "个" },
+        {
+          label: "可调度面积",
+          value: (siteStats.area / 10000).toFixed(1),
+          unit: "万㎡",
+        },
+        { label: "平均使用率", value: rate, unit: "%" },
+      ]
+    }
+    return [
+      { label: "专运单位总数", value: transportStats.total, unit: "家" },
+      { label: "在册运力", value: transportStats.vehicles, unit: "辆" },
+      {
+        label: "本月承运订单",
+        value: transportStats.monthOrders,
+        unit: "单",
+      },
+    ]
+  }, [active.key, unitStats, siteStats, transportStats])
+
+  /* ------- 当前资源类型 4 张概览统计 ------- */
+
+  const overviewStats = useMemo(() => {
+    if (active.key === "unit") {
+      return [
+        {
+          label: "入驻仓储单位",
+          value: unitStats.total,
+          Icon: Building2,
+          tone: "primary" as const,
+        },
+        {
+          label: "正常运营",
+          value: unitStats.running,
+          Icon: CheckCircle2,
+          tone: "emerald" as const,
+        },
+        {
+          label: "审核中",
+          value: unitStats.reviewing,
+          Icon: Clock,
+          tone: "amber" as const,
+        },
+        {
+          label: "下属站点合计",
+          value: unitStats.sites,
+          Icon: MapPinned,
+          tone: "blue" as const,
+        },
+      ]
+    }
+    if (active.key === "site") {
+      return [
+        {
+          label: "仓储站点总数",
+          value: siteStats.total,
+          Icon: MapPinned,
+          tone: "emerald" as const,
+        },
+        {
+          label: "正常运营",
+          value: siteStats.running,
+          Icon: CheckCircle2,
+          tone: "emerald" as const,
+        },
+        {
+          label: "审核中",
+          value: siteStats.reviewing,
+          Icon: Clock,
+          tone: "amber" as const,
+        },
+        {
+          label: "可调度总面积",
+          value: `${(siteStats.area / 10000).toFixed(1)} 万㎡`,
+          Icon: Package,
+          tone: "blue" as const,
+        },
+      ]
+    }
+    return [
+      {
+        label: "专运单位总数",
+        value: transportStats.total,
+        Icon: Truck,
+        tone: "orange" as const,
+      },
+      {
+        label: "正常运营",
+        value: transportStats.running,
+        Icon: CheckCircle2,
+        tone: "emerald" as const,
+      },
+      {
+        label: "审核中",
+        value: transportStats.reviewing,
+        Icon: Clock,
+        tone: "amber" as const,
+      },
+      {
+        label: "在册运力车辆",
+        value: `${transportStats.vehicles} 辆`,
+        Icon: Route,
+        tone: "blue" as const,
+      },
+    ]
+  }, [active.key, unitStats, siteStats, transportStats])
+
+  /* ------- 过滤 ------- */
 
   const filteredUnits = unitRows.filter((r) => {
     const ok =
@@ -566,13 +732,13 @@ export function WarehouseManagement() {
   })
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* 页头 */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-foreground">仓储管理</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            在同一窗口管理仓储单位、仓储站点与专运单位，并维护其层级隶属关系
+            在同一窗口管理仓储单位、仓储站点与专运单位，并维护其层级隶属与资质流转关系
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -582,39 +748,175 @@ export function WarehouseManagement() {
           </Button>
           <Button size="sm">
             <Plus className="w-4 h-4 mr-2" />
-            {active === "unit"
+            {active.key === "unit"
               ? "新增仓储单位"
-              : active === "site"
+              : active.key === "site"
                 ? "新增仓储站点"
                 : "新增专运单位"}
           </Button>
         </div>
       </div>
 
-      {/* 层级关系条 */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col gap-3 md:flex-row md:items-stretch">
-            <div className="text-xs text-muted-foreground md:w-24 md:self-center">
-              资质流转
+      {/* 资源信息卡片（参照企业中心） */}
+      <Card className="overflow-hidden">
+        <div className={cn("h-1", active.accent)} />
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <WarehouseIcon className="w-5 h-5 text-primary" />
+                资源信息
+              </CardTitle>
+              <Badge
+                variant="outline"
+                className={cn(active.color, active.border)}
+              >
+                <Icon className="w-3 h-3 mr-1" />
+                {active.label}
+              </Badge>
             </div>
-            <div className="flex flex-1 flex-col gap-2 md:flex-row md:items-stretch md:gap-0">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handlePrev}
+                className="h-8 w-8"
+                aria-label="切换上一类仓储资源"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <span className="text-xs text-muted-foreground">
+                {activeIndex + 1} / {RESOURCES.length}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleNext}
+                className="h-8 w-8"
+                aria-label="切换下一类仓储资源"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* 左：资源类型与定位 */}
+            <div className="flex items-start gap-4 lg:w-1/3">
+              <Avatar className={cn("w-16 h-16 rounded-lg", active.bg)}>
+                <AvatarFallback
+                  className={cn(
+                    "rounded-lg",
+                    active.bg,
+                    active.color,
+                    "text-base font-bold",
+                  )}
+                >
+                  <Icon className="w-7 h-7" />
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h2 className="text-lg font-semibold">{active.label}</h2>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {active.description}
+                </p>
+                <div className="mt-3 flex items-center gap-2 flex-wrap">
+                  <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
+                    <CheckCircle2 className="w-3 h-3 mr-1" />
+                    资质流转已激活
+                  </Badge>
+                </div>
+              </div>
+            </div>
+
+            {/* 右：定位与资质来源 */}
+            <div className="flex-1 lg:border-l border-border lg:pl-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <InfoItem
+                  icon={Layers}
+                  label="资源定位"
+                  value={active.positioning}
+                />
+                <InfoItem
+                  icon={ShieldCheck}
+                  label="资质来源"
+                  value={active.qualificationFrom}
+                />
+                <InfoItem
+                  icon={Network}
+                  label="上游关系"
+                  value={
+                    active.key === "unit"
+                      ? "—（最顶层）"
+                      : active.key === "site"
+                        ? "归属于「仓储单位」"
+                        : "归属于「仓储站点」"
+                  }
+                />
+                <InfoItem
+                  icon={TrendingUp}
+                  label="下游可申请"
+                  value={
+                    active.key === "unit"
+                      ? "可申请下属「仓储站点」"
+                      : active.key === "site"
+                        ? "可申请下属「专运单位」"
+                        : "—（末端节点）"
+                  }
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 关键统计三联 */}
+          <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-border">
+            {hotStats.map((stat) => (
+              <div
+                key={stat.label}
+                className={cn("p-3 rounded-lg", active.bg)}
+              >
+                <p className="text-xs text-muted-foreground">{stat.label}</p>
+                <p className="mt-1 flex items-baseline gap-1">
+                  <span className={cn("text-xl font-bold", active.color)}>
+                    {stat.value}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {stat.unit}
+                  </span>
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* 资质流转链 */}
+          <div className="mt-6 pt-6 border-t border-border">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Network className="w-4 h-4 text-primary" />
+                <h3 className="font-medium text-sm">资质流转链路</h3>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                点击卡片可快速切换不同资源
+              </p>
+            </div>
+            <div className="flex flex-col gap-2 md:flex-row md:items-stretch md:gap-0">
               {RESOURCES.map((r, i) => {
-                const Icon = r.Icon
-                const isActive = active === r.key
+                const RI = r.Icon
+                const isActive = activeIndex === i
                 return (
-                  <div
-                    key={r.key}
-                    className="flex flex-1 items-center"
-                  >
+                  <div key={r.key} className="flex flex-1 items-center">
                     <button
-                      onClick={() => setActive(r.key)}
+                      onClick={() => setActiveIndex(i)}
                       className={cn(
                         "flex w-full items-center gap-3 rounded-lg border p-3 text-left transition-all",
                         isActive
                           ? cn(
                               "border-transparent shadow-sm ring-2",
-                              r.ring,
+                              r.color.replace("text-", "ring-").replace("-600", "-500/40").replace("-primary", "-primary/40"),
+                              r.bg,
                             )
                           : "border-border hover:border-foreground/20 hover:bg-muted/40",
                       )}
@@ -622,16 +924,14 @@ export function WarehouseManagement() {
                       <div
                         className={cn(
                           "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
-                          r.accent,
+                          r.bg,
                         )}
                       >
-                        <Icon className={cn("h-5 w-5", r.accentText)} />
+                        <RI className={cn("h-5 w-5", r.color)} />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">
-                            {r.label}
-                          </span>
+                          <span className="text-sm font-medium">{r.label}</span>
                           {isActive && (
                             <Badge
                               variant="secondary"
@@ -654,106 +954,73 @@ export function WarehouseManagement() {
               })}
             </div>
           </div>
-          <p className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            仓储单位为中铁建体系内入驻平台的二级 / 三级 / 项目组单位；站点由仓储单位申请获得资质；专运单位由仓储站点申请获得资质
-          </p>
         </CardContent>
       </Card>
 
-      {/* 统计 */}
-      {active === "unit" && (
-        <StatRow
-          items={[
-            {
-              label: "入驻仓储单位",
-              value: unitStats.total,
-              Icon: Building2,
-              tone: "primary",
-            },
-            {
-              label: "正常运营",
-              value: unitStats.running,
-              Icon: CheckCircle2,
-              tone: "emerald",
-            },
-            {
-              label: "审核中",
-              value: unitStats.reviewing,
-              Icon: Clock,
-              tone: "amber",
-            },
-            {
-              label: "下属站点合计",
-              value: unitStats.sites,
-              Icon: MapPinned,
-              tone: "blue",
-            },
-          ]}
-        />
-      )}
-      {active === "site" && (
-        <StatRow
-          items={[
-            {
-              label: "仓储站点总数",
-              value: siteStats.total,
-              Icon: MapPinned,
-              tone: "emerald",
-            },
-            {
-              label: "正常运营",
-              value: siteStats.running,
-              Icon: CheckCircle2,
-              tone: "emerald",
-            },
-            {
-              label: "审核中",
-              value: siteStats.reviewing,
-              Icon: Clock,
-              tone: "amber",
-            },
-            {
-              label: "可调度总面积",
-              value: `${(siteStats.area / 10000).toFixed(1)} 万㎡`,
-              Icon: Package,
-              tone: "blue",
-            },
-          ]}
-        />
-      )}
-      {active === "transport" && (
-        <StatRow
-          items={[
-            {
-              label: "专运单位总数",
-              value: transportStats.total,
-              Icon: Truck,
-              tone: "orange",
-            },
-            {
-              label: "正常运营",
-              value: transportStats.running,
-              Icon: CheckCircle2,
-              tone: "emerald",
-            },
-            {
-              label: "审核中",
-              value: transportStats.reviewing,
-              Icon: Clock,
-              tone: "amber",
-            },
-            {
-              label: "在册运力车辆",
-              value: `${transportStats.vehicles} 辆`,
-              Icon: Route,
-              tone: "blue",
-            },
-          ]}
-        />
-      )}
+      {/* 概览统计四联（按当前资源） */}
+      <StatRow items={overviewStats} />
 
-      {/* 列表卡 */}
+      {/* 关联与申请卡片 */}
+      <Card className="overflow-hidden">
+        <div className={cn("h-1", active.accent)} />
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Network className="w-5 h-5 text-primary" />
+                关联与申请
+              </CardTitle>
+              <Badge
+                variant="outline"
+                className={cn(active.color, active.border)}
+              >
+                <Icon className="w-3 h-3 mr-1" />
+                {active.shortName}
+              </Badge>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {active.key === "unit"
+                ? "仓储单位为最顶层，可向下申请仓储站点"
+                : active.key === "site"
+                  ? "由上游仓储单位申请获批 · 可向下申请专运单位"
+                  : "由上游仓储站点申请获批 · 末端节点"}
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* 上下游关系图 */}
+          <RelationFlow activeKey={active.key} />
+
+          {/* 申请引导 */}
+          {active.key !== "transport" && (
+            <div className="rounded-lg border border-dashed border-primary/30 bg-primary/5 p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <ArrowUpRight className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-sm">
+                    {active.key === "unit"
+                      ? "申请下属仓储站点"
+                      : "申请下属专运单位"}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {active.key === "unit"
+                      ? "作为仓储单位，可将自营仓库登记为「仓储站点」，获得精细化仓储运营与下设专运资质入口。"
+                      : "作为仓储站点，可向平台申请下设「专运单位」，承接物资专属承运业务。"}
+                  </p>
+                </div>
+                <Button size="sm" className="whitespace-nowrap">
+                  <Plus className="w-3.5 h-3.5 mr-1" />
+                  {active.key === "unit" ? "申请新增站点" : "申请新增专运"}
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* 资源列表卡 */}
       <Card>
         <CardContent className="p-4">
           <div className="mb-4 flex flex-wrap items-center gap-2">
@@ -761,9 +1028,9 @@ export function WarehouseManagement() {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={
-                  active === "unit"
+                  active.key === "unit"
                     ? "搜索单位名称 / 编号 / 上级机构"
-                    : active === "site"
+                    : active.key === "site"
                       ? "搜索站点名称 / 编号 / 所属单位 / 地址"
                       : "搜索专运单位 / 所属站点 / 所属单位"
                 }
@@ -772,7 +1039,7 @@ export function WarehouseManagement() {
                 className="pl-9"
               />
             </div>
-            {active === "unit" && (
+            {active.key === "unit" && (
               <Select value={levelFilter} onValueChange={setLevelFilter}>
                 <SelectTrigger className="w-[140px]">
                   <SelectValue placeholder="单位层级" />
@@ -801,20 +1068,20 @@ export function WarehouseManagement() {
             <div className="ml-auto text-xs text-muted-foreground">
               共{" "}
               <span className="font-medium text-foreground">
-                {active === "unit"
+                {active.key === "unit"
                   ? filteredUnits.length
-                  : active === "site"
+                  : active.key === "site"
                     ? filteredSites.length
                     : filteredTransports.length}
               </span>{" "}
-              条 / {activeMeta.label}
+              条 / {active.label}
             </div>
           </div>
 
           <div className="overflow-auto rounded-md border">
-            {active === "unit" && <UnitTable rows={filteredUnits} />}
-            {active === "site" && <SiteTable rows={filteredSites} />}
-            {active === "transport" && (
+            {active.key === "unit" && <UnitTable rows={filteredUnits} />}
+            {active.key === "site" && <SiteTable rows={filteredSites} />}
+            {active.key === "transport" && (
               <TransportTable rows={filteredTransports} />
             )}
           </div>
@@ -824,12 +1091,154 @@ export function WarehouseManagement() {
   )
 }
 
-/* -------------------- 统计卡 -------------------- */
+/* -------------------- 关键信息项 -------------------- */
 
-const toneMap: Record<
-  string,
-  { wrap: string; icon: string }
-> = {
+function InfoItem({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  label: string
+  value: string
+}) {
+  return (
+    <div className="flex items-start gap-2 text-sm">
+      <Icon className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+      <div className="min-w-0">
+        <p className="text-xs text-muted-foreground">{label}</p>
+        <p className="text-foreground">{value}</p>
+      </div>
+    </div>
+  )
+}
+
+/* -------------------- 关联流程图 -------------------- */
+
+function RelationFlow({ activeKey }: { activeKey: ResourceKey }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <RelationCard
+        title="仓储单位"
+        subtitle="二级 / 三级 / 项目组"
+        Icon={Building2}
+        color="primary"
+        active={activeKey === "unit"}
+        role={
+          activeKey === "unit"
+            ? "当前节点"
+            : activeKey === "site"
+              ? "向上溯源"
+              : "二级溯源"
+        }
+      />
+      <RelationCard
+        title="仓储站点"
+        subtitle="自营仓储基地"
+        Icon={MapPinned}
+        color="emerald"
+        active={activeKey === "site"}
+        role={
+          activeKey === "unit"
+            ? "可下设资质"
+            : activeKey === "site"
+              ? "当前节点"
+              : "直接归属"
+        }
+      />
+      <RelationCard
+        title="专运单位"
+        subtitle="物资专属承运"
+        Icon={Truck}
+        color="orange"
+        active={activeKey === "transport"}
+        role={
+          activeKey === "unit"
+            ? "二级可设资质"
+            : activeKey === "site"
+              ? "可下设资质"
+              : "当前节点"
+        }
+      />
+    </div>
+  )
+}
+
+function RelationCard({
+  title,
+  subtitle,
+  Icon,
+  color,
+  active,
+  role,
+}: {
+  title: string
+  subtitle: string
+  Icon: typeof Building2
+  color: "primary" | "emerald" | "orange"
+  active: boolean
+  role: string
+}) {
+  const tone =
+    color === "primary"
+      ? { bg: "bg-primary/10", text: "text-primary", border: "border-primary/30" }
+      : color === "emerald"
+        ? {
+            bg: "bg-emerald-500/10",
+            text: "text-emerald-600",
+            border: "border-emerald-500/30",
+          }
+        : {
+            bg: "bg-orange-500/10",
+            text: "text-orange-600",
+            border: "border-orange-500/30",
+          }
+  return (
+    <div
+      className={cn(
+        "rounded-lg border p-3 transition-all",
+        active
+          ? cn(tone.border, tone.bg, "shadow-sm")
+          : "border-border bg-card",
+      )}
+    >
+      <div className="flex items-center gap-3">
+        <div
+          className={cn(
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
+            tone.bg,
+          )}
+        >
+          <Icon className={cn("h-5 w-5", tone.text)} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h4 className="text-sm font-medium">{title}</h4>
+            {active && (
+              <Badge
+                variant="secondary"
+                className="h-5 px-1.5 text-[10px] font-normal"
+              >
+                当前
+              </Badge>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+            {subtitle}
+          </p>
+        </div>
+      </div>
+      <div className="mt-2 pt-2 border-t border-dashed border-border">
+        <p className="text-[11px] text-muted-foreground">关系定位</p>
+        <p className={cn("text-xs font-medium mt-0.5", tone.text)}>{role}</p>
+      </div>
+    </div>
+  )
+}
+
+/* -------------------- 概览统计 -------------------- */
+
+const toneMap: Record<string, { wrap: string; icon: string }> = {
   primary: { wrap: "bg-primary/10", icon: "text-primary" },
   emerald: { wrap: "bg-emerald-500/10", icon: "text-emerald-600" },
   amber: { wrap: "bg-amber-500/10", icon: "text-amber-600" },
