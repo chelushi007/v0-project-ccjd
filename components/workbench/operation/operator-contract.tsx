@@ -686,7 +686,7 @@ const templates: Template[] = [
 const bizColor: Record<Template["biz"], string> = {
   仓储租赁: "bg-blue-50 text-blue-700 border-blue-200",
   物资存放: "bg-indigo-50 text-indigo-700 border-indigo-200",
-  物���租赁: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  物资租赁: "bg-emerald-50 text-emerald-700 border-emerald-200",
   物资销售: "bg-amber-50 text-amber-700 border-amber-200",
 }
 
