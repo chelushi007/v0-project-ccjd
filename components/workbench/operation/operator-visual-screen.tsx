@@ -203,7 +203,7 @@ export function OperatorVisualScreen({ onClose }: { onClose: () => void }) {
               className="inline-block text-2xl md:text-3xl font-bold tracking-[0.4em] bg-gradient-to-r from-cyan-300 via-sky-100 to-cyan-300 bg-clip-text text-transparent"
               style={{ textShadow: "0 0 24px rgba(34,211,238,0.45)" }}
             >
-              供应链平台运营驾驶舱
+              盘古循环资源平台仓储基地运营驾驶舱
             </h1>
             <div className="text-[10px] text-cyan-200/70 tracking-[0.3em] mt-1">
               OPERATION COMMAND CENTER · LIVE
