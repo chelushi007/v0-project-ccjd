@@ -5,7 +5,6 @@ import {
   Package,
   Plus,
   Search,
-  Filter,
   MoreHorizontal,
   MapPin,
   Ruler,
@@ -19,6 +18,12 @@ import {
   Upload,
   ChevronLeft,
   ChevronRight,
+  Phone,
+  Layers,
+  ShieldCheck,
+  ShieldAlert,
+  Briefcase,
+  Handshake,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -46,78 +51,133 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { WarehouseSiteAdd } from "./warehouse-site-add"
 
-// 仓储信息数据
-const warehouseData = [
+interface WarehouseRow {
+  id: string
+  name: string
+  type: string
+  structure: "钢结构" | "混凝土结构" | "砖混结构" | "混合结构" | "露天"
+  operation: "自主" | "委托"
+  buildArea: number
+  rentableArea: number
+  publicArea: number
+  fireRecord: "有" | "无" | "办理中"
+  location: string
+  fullAddress: string
+  status: "active" | "maintenance" | "inactive"
+  publishStatus: "published" | "reviewing" | "unpublished"
+  createTime: string
+  contact: string
+  phone: string
+  facilityCount: number
+  facilityHighlights: string[]
+}
+
+const warehouseData: WarehouseRow[] = [
   {
     id: "WH001",
     name: "中铁建广州南沙综合仓储基地",
     type: "综合仓库",
-    area: 15000,
-    availableArea: 8000,
+    structure: "钢结构",
+    operation: "自主",
+    buildArea: 15000,
+    rentableArea: 12800,
+    publicArea: 2200,
+    fireRecord: "有",
     location: "广东省广州市南沙区",
+    fullAddress: "广州市南沙区进港大道15号铁建仓储园",
     status: "active",
     publishStatus: "published",
     createTime: "2023-06-15",
-    unitPrice: 35,
-    facilities: ["叉车", "货架", "监控", "消防"],
+    contact: "张志远",
+    phone: "138****8821",
+    facilityCount: 12,
+    facilityHighlights: ["龙门吊", "叉车", "监控全覆盖"],
   },
   {
     id: "WH002",
     name: "中铁建深圳龙岗物流基地",
     type: "物流仓库",
-    area: 25000,
-    availableArea: 12000,
+    structure: "钢结构",
+    operation: "自主",
+    buildArea: 25000,
+    rentableArea: 21500,
+    publicArea: 3500,
+    fireRecord: "有",
     location: "广东省深圳市龙岗区",
+    fullAddress: "深圳市龙岗区平湖街道华南国际物流中心",
     status: "active",
     publishStatus: "published",
     createTime: "2023-08-20",
-    unitPrice: 45,
-    facilities: ["叉车", "货架", "监控", "消防", "恒温"],
+    contact: "李文涛",
+    phone: "139****9302",
+    facilityCount: 16,
+    facilityHighlights: ["重型货架", "登高车", "人脸识别"],
   },
   {
     id: "WH003",
     name: "中铁建东莞塘厦仓储站点",
     type: "普通仓库",
-    area: 8000,
-    availableArea: 3000,
+    structure: "砖混结构",
+    operation: "委托",
+    buildArea: 8000,
+    rentableArea: 6800,
+    publicArea: 1200,
+    fireRecord: "办理中",
     location: "广东省东莞市塘厦镇",
+    fullAddress: "东莞市塘厦镇林村社区铁建物资园",
     status: "maintenance",
     publishStatus: "unpublished",
     createTime: "2023-10-05",
-    unitPrice: 28,
-    facilities: ["货架", "监控", "消防"],
+    contact: "王广志",
+    phone: "137****7563",
+    facilityCount: 8,
+    facilityHighlights: ["货架", "监控", "消防"],
   },
   {
     id: "WH004",
     name: "中铁建佛山南海冷链仓储基地",
     type: "冷链仓库",
-    area: 6000,
-    availableArea: 2500,
+    structure: "混凝土结构",
+    operation: "自主",
+    buildArea: 6000,
+    rentableArea: 4800,
+    publicArea: 1200,
+    fireRecord: "有",
     location: "广东省佛山市南海区",
+    fullAddress: "佛山市南海区狮山镇官窑工业区铁建冷链园",
     status: "active",
     publishStatus: "reviewing",
     createTime: "2023-12-10",
-    unitPrice: 65,
-    facilities: ["叉车", "货架", "监控", "消防", "冷藏"],
+    contact: "赵敏",
+    phone: "136****6024",
+    facilityCount: 14,
+    facilityHighlights: ["冷藏", "叉车", "粉尘抑制"],
   },
   {
     id: "WH005",
     name: "中铁二十二局惠州大亚湾仓储基地",
     type: "综合仓库",
-    area: 20000,
-    availableArea: 15000,
+    structure: "钢结构",
+    operation: "自主",
+    buildArea: 20000,
+    rentableArea: 17800,
+    publicArea: 2200,
+    fireRecord: "有",
     location: "广东省惠州市大亚湾区",
+    fullAddress: "惠州市大亚湾区西区龙海二路铁建仓储基地",
     status: "active",
     publishStatus: "published",
     createTime: "2026-01-08",
-    unitPrice: 32,
-    facilities: ["叉车", "货架", "监控", "消防"],
+    contact: "周建国",
+    phone: "135****5187",
+    facilityCount: 10,
+    facilityHighlights: ["叉车", "监控全覆盖", "封闭围墙"],
   },
 ]
 
-const getStatusBadge = (status: string) => {
+const getStatusBadge = (status: WarehouseRow["status"]) => {
   switch (status) {
     case "active":
       return (
@@ -143,7 +203,7 @@ const getStatusBadge = (status: string) => {
   }
 }
 
-const getPublishStatusBadge = (status: string) => {
+const getPublishStatusBadge = (status: WarehouseRow["publishStatus"]) => {
   switch (status) {
     case "published":
       return <Badge className="bg-primary/10 text-primary border-primary/20">已发布</Badge>
@@ -154,18 +214,64 @@ const getPublishStatusBadge = (status: string) => {
   }
 }
 
+const getOperationBadge = (op: WarehouseRow["operation"]) => {
+  return op === "自主" ? (
+    <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20 gap-1">
+      <Briefcase className="w-3 h-3" />
+      自主
+    </Badge>
+  ) : (
+    <Badge className="bg-purple-500/10 text-purple-600 border-purple-500/20 gap-1">
+      <Handshake className="w-3 h-3" />
+      委托
+    </Badge>
+  )
+}
+
+const getFireBadge = (record: WarehouseRow["fireRecord"]) => {
+  if (record === "有") {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs text-green-600">
+        <ShieldCheck className="w-3.5 h-3.5" />
+        已备案
+      </span>
+    )
+  }
+  if (record === "办理中") {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs text-yellow-600">
+        <ShieldAlert className="w-3.5 h-3.5" />
+        办理中
+      </span>
+    )
+  }
+  return (
+    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+      <ShieldAlert className="w-3.5 h-3.5" />
+      未备案
+    </span>
+  )
+}
+
 interface WarehouseInfoProps {
   roleType?: "warehouse-unit" | "warehouse-site"
 }
 
 export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProps) {
+  void roleType
   const [searchKeyword, setSearchKeyword] = useState("")
-  const [currentPage, setCurrentPage] = useState(1)
+  const [mode, setMode] = useState<"list" | "create">("list")
+
+  if (mode === "create") {
+    return (
+      <WarehouseSiteAdd onBack={() => setMode("list")} onSubmit={() => setMode("list")} />
+    )
+  }
 
   const stats = {
     total: warehouseData.length,
-    totalArea: warehouseData.reduce((sum, item) => sum + item.area, 0),
-    availableArea: warehouseData.reduce((sum, item) => sum + item.availableArea, 0),
+    buildArea: warehouseData.reduce((sum, item) => sum + item.buildArea, 0),
+    rentableArea: warehouseData.reduce((sum, item) => sum + item.rentableArea, 0),
     published: warehouseData.filter((item) => item.publishStatus === "published").length,
   }
 
@@ -182,7 +288,7 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
             <Upload className="w-4 h-4 mr-2" />
             批量导入
           </Button>
-          <Button>
+          <Button onClick={() => setMode("create")}>
             <Plus className="w-4 h-4 mr-2" />
             新增站点
           </Button>
@@ -208,10 +314,10 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">总面积</p>
+                <p className="text-sm text-muted-foreground">建筑面积</p>
                 <p className="text-2xl font-bold mt-1">
-                  {(stats.totalArea / 10000).toFixed(1)}
-                  <span className="text-sm font-normal text-muted-foreground ml-1">万m²</span>
+                  {(stats.buildArea / 10000).toFixed(1)}
+                  <span className="text-sm font-normal text-muted-foreground ml-1">万㎡</span>
                 </p>
               </div>
               <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -224,10 +330,10 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">可用面积</p>
+                <p className="text-sm text-muted-foreground">可租面积</p>
                 <p className="text-2xl font-bold mt-1">
-                  {(stats.availableArea / 10000).toFixed(1)}
-                  <span className="text-sm font-normal text-muted-foreground ml-1">万m²</span>
+                  {(stats.rentableArea / 10000).toFixed(1)}
+                  <span className="text-sm font-normal text-muted-foreground ml-1">万㎡</span>
                 </p>
               </div>
               <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center">
@@ -259,7 +365,7 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
               <CardTitle className="text-lg">仓储站点列表</CardTitle>
               <CardDescription>管理所有仓储站点信息</CardDescription>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -269,6 +375,16 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
                   className="pl-9 w-[200px]"
                 />
               </div>
+              <Select defaultValue="all">
+                <SelectTrigger className="w-[120px]">
+                  <SelectValue placeholder="运营方式" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">全部方式</SelectItem>
+                  <SelectItem value="self">自主</SelectItem>
+                  <SelectItem value="entrust">委托</SelectItem>
+                </SelectContent>
+              </Select>
               <Select defaultValue="all">
                 <SelectTrigger className="w-[120px]">
                   <SelectValue placeholder="仓库类型" />
@@ -296,76 +412,158 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
-            <Table>
+          <div className="rounded-md border overflow-x-auto">
+            <Table className="min-w-[1400px]">
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[180px]">站点名称</TableHead>
-                  <TableHead>类型</TableHead>
-                  <TableHead>位置</TableHead>
-                  <TableHead className="text-right">总面积(m²)</TableHead>
-                  <TableHead className="text-right">可用面积(m²)</TableHead>
-                  <TableHead className="text-right">单价(元/m²/月)</TableHead>
-                  <TableHead>状态</TableHead>
-                  <TableHead>发布状态</TableHead>
-                  <TableHead className="text-right">操作</TableHead>
+                  <TableHead className="w-[220px]">站点名称 / 类型</TableHead>
+                  <TableHead className="w-[100px]">运营方式</TableHead>
+                  <TableHead className="w-[110px]">仓储架构</TableHead>
+                  <TableHead className="text-right w-[200px]">面积(㎡)</TableHead>
+                  <TableHead className="w-[100px]">消防备案</TableHead>
+                  <TableHead className="w-[200px]">配套亮点</TableHead>
+                  <TableHead className="w-[180px]">位置</TableHead>
+                  <TableHead className="w-[150px]">联系人</TableHead>
+                  <TableHead className="w-[110px]">状态</TableHead>
+                  <TableHead className="w-[110px]">发布状态</TableHead>
+                  <TableHead className="text-right w-[80px]">操作</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {warehouseData.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">
-                      <div>
-                        <p className="font-medium">{item.name}</p>
-                        <p className="text-xs text-muted-foreground">{item.id}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{item.type}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 text-sm">
-                        <MapPin className="w-3 h-3 text-muted-foreground" />
-                        {item.location}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right font-medium">
-                      {item.area.toLocaleString()}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <span className="text-green-600 font-medium">
-                        {item.availableArea.toLocaleString()}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">{item.unitPrice}</TableCell>
-                    <TableCell>{getStatusBadge(item.status)}</TableCell>
-                    <TableCell>{getPublishStatusBadge(item.publishStatus)}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="w-4 h-4 mr-2" />
-                            查看详情
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Edit className="w-4 h-4 mr-2" />
-                            编辑
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            删除
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {warehouseData
+                  .filter((item) =>
+                    searchKeyword
+                      ? item.name.toLowerCase().includes(searchKeyword.toLowerCase())
+                      : true,
+                  )
+                  .map((item) => (
+                    <TableRow key={item.id}>
+                      {/* 名称 / 类型 */}
+                      <TableCell>
+                        <div className="space-y-1">
+                          <p className="font-medium leading-tight">{item.name}</p>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[11px] text-muted-foreground font-mono">
+                              {item.id}
+                            </span>
+                            <Badge variant="outline" className="text-[11px] py-0 px-1.5">
+                              {item.type}
+                            </Badge>
+                          </div>
+                        </div>
+                      </TableCell>
+
+                      {/* 运营方式 */}
+                      <TableCell>{getOperationBadge(item.operation)}</TableCell>
+
+                      {/* 仓储架构 */}
+                      <TableCell>
+                        <span className="inline-flex items-center gap-1 text-sm text-foreground">
+                          <Layers className="w-3.5 h-3.5 text-muted-foreground" />
+                          {item.structure}
+                        </span>
+                      </TableCell>
+
+                      {/* 建筑/可租面积 */}
+                      <TableCell className="text-right">
+                        <div className="space-y-0.5 leading-tight">
+                          <div className="flex items-center justify-end gap-2">
+                            <span className="text-[11px] text-muted-foreground">
+                              建筑
+                            </span>
+                            <span className="font-medium tabular-nums">
+                              {item.buildArea.toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-end gap-2">
+                            <span className="text-[11px] text-muted-foreground">
+                              可租
+                            </span>
+                            <span className="text-green-600 font-medium tabular-nums">
+                              {item.rentableArea.toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+                      </TableCell>
+
+                      {/* 消防备案 */}
+                      <TableCell>{getFireBadge(item.fireRecord)}</TableCell>
+
+                      {/* 配套亮点 */}
+                      <TableCell>
+                        <div className="flex flex-wrap items-center gap-1">
+                          {item.facilityHighlights.slice(0, 2).map((f) => (
+                            <Badge
+                              key={f}
+                              variant="secondary"
+                              className="text-[11px] py-0 px-1.5 font-normal"
+                            >
+                              {f}
+                            </Badge>
+                          ))}
+                          {item.facilityCount > 2 && (
+                            <Badge
+                              variant="outline"
+                              className="text-[11px] py-0 px-1.5 font-normal text-muted-foreground"
+                            >
+                              +{item.facilityCount - 2}
+                            </Badge>
+                          )}
+                        </div>
+                      </TableCell>
+
+                      {/* 位置 */}
+                      <TableCell>
+                        <div
+                          className="flex items-start gap-1 text-sm max-w-[180px]"
+                          title={item.fullAddress}
+                        >
+                          <MapPin className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                          <span className="line-clamp-2 leading-snug">
+                            {item.location}
+                          </span>
+                        </div>
+                      </TableCell>
+
+                      {/* 联系人 */}
+                      <TableCell>
+                        <div className="space-y-0.5 leading-tight">
+                          <p className="text-sm">{item.contact}</p>
+                          <p className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
+                            <Phone className="w-3 h-3" />
+                            {item.phone}
+                          </p>
+                        </div>
+                      </TableCell>
+
+                      <TableCell>{getStatusBadge(item.status)}</TableCell>
+                      <TableCell>{getPublishStatusBadge(item.publishStatus)}</TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem>
+                              <Eye className="w-4 h-4 mr-2" />
+                              查看详情
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Edit className="w-4 h-4 mr-2" />
+                              编辑
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-destructive">
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              删除
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </div>
