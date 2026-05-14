@@ -27,6 +27,8 @@ import {
   FileCheck,
   Package,
   Warehouse,
+  Star,
+  Repeat,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -128,10 +130,34 @@ const todoItems = {
       priority: "low",
       description: "申请退出广州南沙专运单位资质，已审核通过",
     },
+    {
+      id: "A005",
+      title: "过户申请 - HRB400 钢筋 3,000 吨",
+      applicant: "本企业",
+      type: "过户申请",
+      createTime: "2026-01-20 09:30",
+      submitTime: "2026-01-20 09:30",
+      progress: "受让方确认中",
+      progressStep: 2,
+      totalStep: 3,
+      status: "processing",
+      priority: "high",
+      description: "将广州南沙综合仓 HRB400 螺纹钢 3,000 吨过户至中铁二十三局深圳分公司",
+    },
   ],
 }
 
 const messages = [
+  {
+    id: "M000",
+    type: "review",
+    title: "您收到了一条新评价",
+    rating: 5,
+    content:
+      "中铁二十三局深圳分公司对「南沙综合仓储基地」给出 5 星评价：「响应迅速、出入库高效，单据清晰」。",
+    time: "5分钟前",
+    read: false,
+  },
   {
     id: "M001",
     type: "system",
@@ -220,6 +246,8 @@ const getApprovalTypeIcon = (type: string) => {
       return <Truck className="w-3.5 h-3.5 text-purple-600" />
     case "专运单位退出申请":
       return <LogOut className="w-3.5 h-3.5 text-red-600" />
+    case "过户申请":
+      return <Repeat className="w-3.5 h-3.5 text-emerald-600" />
     default:
       return <FileText className="w-3.5 h-3.5 text-muted-foreground" />
   }
@@ -227,6 +255,8 @@ const getApprovalTypeIcon = (type: string) => {
 
 const getMsgIcon = (type: string) => {
   switch (type) {
+    case "review":
+      return <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
     case "business":
       return <MessageSquare className="w-4 h-4 text-primary" />
     case "notice":
@@ -236,7 +266,7 @@ const getMsgIcon = (type: string) => {
   }
 }
 
-// ── 快捷入口配置 ──────────────────────────────────────────────────────────────
+// ── 快捷入口配置 ─────────────────────���────────────────────────────────────────
 
 const quickApprovalEntries = [
   { label: "合同审批", icon: FilePen, count: 2, color: "text-blue-600", bg: "bg-blue-500/10" },
@@ -394,7 +424,7 @@ export function TodoList({ roleType = "property" }: TodoListProps) {
               {/* 近6个月成交金额趋势变化图 */}
               <div className="flex-1 flex flex-col">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs text-muted-foreground">近6个月成交金额趋势（万元）</p>
+                  <p className="text-xs text-muted-foreground">近6个月成交金额趋势(万元)</p>
                   <div className="flex items-center gap-3 text-[11px]">
                     <span className="flex items-center gap-1">
                       <span className="w-2.5 h-2.5 rounded-sm bg-primary" />
@@ -405,6 +435,245 @@ export function TodoList({ roleType = "property" }: TodoListProps) {
                       <span className="text-muted-foreground">物料</span>
                     </span>
                   </div>
+                </div>
+                {(() => {
+                  const data = [
+                    { month: "8月", warehouse: 58, material: 40 },
+                    { month: "9月", warehouse: 68, material: 44 },
+                    { month: "10月", warehouse: 82, material: 52 },
+                    { month: "11月", warehouse: 88, material: 57 },
+                    { month: "12月", warehouse: 84, material: 54 },
+                    { month: "1月", warehouse: 98.6, material: 57.8 },
+                  ]
+                  const W = 600
+                  const H = 180
+                  const PAD_L = 38
+                  const PAD_R = 16
+                  const PAD_T = 22
+                  const PAD_B = 22
+                  const max = 120
+                  const innerW = W - PAD_L - PAD_R
+                  const innerH = H - PAD_T - PAD_B
+                  const yTicks = [0, 30, 60, 90, 120]
+                  const xAt = (i: number) =>
+                    PAD_L + (innerW * i) / (data.length - 1)
+                  const yAt = (v: number) =>
+                    PAD_T + innerH - (innerH * v) / max
+                  // Catmull-Rom → Cubic Bezier 平滑曲线
+                  const buildSmoothPath = (key: "warehouse" | "material") => {
+                    const pts = data.map((d, i) => [xAt(i), yAt(d[key])] as const)
+                    if (pts.length < 2) return ""
+                    let path = `M ${pts[0][0]} ${pts[0][1]}`
+                    for (let i = 0; i < pts.length - 1; i++) {
+                      const p0 = pts[i - 1] ?? pts[i]
+                      const p1 = pts[i]
+                      const p2 = pts[i + 1]
+                      const p3 = pts[i + 2] ?? p2
+                      const cp1x = p1[0] + (p2[0] - p0[0]) / 6
+                      const cp1y = p1[1] + (p2[1] - p0[1]) / 6
+                      const cp2x = p2[0] - (p3[0] - p1[0]) / 6
+                      const cp2y = p2[1] - (p3[1] - p1[1]) / 6
+                      path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2[0]} ${p2[1]}`
+                    }
+                    return path
+                  }
+                  const buildArea = (key: "warehouse" | "material") =>
+                    `${buildSmoothPath(key)} L ${xAt(data.length - 1)} ${
+                      PAD_T + innerH
+                    } L ${xAt(0)} ${PAD_T + innerH} Z`
+                  const lastIdx = data.length - 1
+
+                  return (
+                    <div className="flex-1 w-full min-h-[180px]">
+                      <svg
+                        viewBox={`0 0 ${W} ${H}`}
+                        className="w-full h-full"
+                        preserveAspectRatio="none"
+                      >
+                        <defs>
+                          <linearGradient id="gradWarehouse" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.32" />
+                            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+                          </linearGradient>
+                          <linearGradient id="gradMaterial" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="hsl(var(--accent))" stopOpacity="0.32" />
+                            <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity="0" />
+                          </linearGradient>
+                          <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+                            <feDropShadow
+                              dx="0"
+                              dy="1.5"
+                              stdDeviation="1.2"
+                              floodOpacity="0.18"
+                            />
+                          </filter>
+                        </defs>
+
+                        {/* Y 轴刻度网格 + 数值 */}
+                        {yTicks.map((tick) => {
+                          const y = yAt(tick)
+                          return (
+                            <g key={tick}>
+                              <line
+                                x1={PAD_L}
+                                y1={y}
+                                x2={W - PAD_R}
+                                y2={y}
+                                stroke="currentColor"
+                                className="text-border"
+                                strokeDasharray="3 4"
+                                strokeWidth="1"
+                                opacity="0.55"
+                              />
+                              <text
+                                x={PAD_L - 8}
+                                y={y + 3}
+                                textAnchor="end"
+                                className="fill-muted-foreground"
+                                style={{ fontSize: "10px" }}
+                              >
+                                {tick}
+                              </text>
+                            </g>
+                          )
+                        })}
+
+                        {/* 最新月份竖向高亮 */}
+                        <line
+                          x1={xAt(lastIdx)}
+                          y1={PAD_T}
+                          x2={xAt(lastIdx)}
+                          y2={PAD_T + innerH}
+                          stroke="hsl(var(--primary))"
+                          strokeDasharray="3 3"
+                          strokeWidth="1"
+                          opacity="0.35"
+                        />
+
+                        {/* 面积 */}
+                        <path d={buildArea("warehouse")} fill="url(#gradWarehouse)" />
+                        <path d={buildArea("material")} fill="url(#gradMaterial)" />
+
+                        {/* 折线 */}
+                        <path
+                          d={buildSmoothPath("warehouse")}
+                          fill="none"
+                          stroke="hsl(var(--primary))"
+                          strokeWidth="2.25"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          filter="url(#softShadow)"
+                        />
+                        <path
+                          d={buildSmoothPath("material")}
+                          fill="none"
+                          stroke="hsl(var(--accent))"
+                          strokeWidth="2.25"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          filter="url(#softShadow)"
+                        />
+
+                        {/* 数据点：白边 + 内填色，最新月份放大 */}
+                        {data.map((d, i) => {
+                          const latest = i === lastIdx
+                          const wR = latest ? 5 : 3.5
+                          const mR = latest ? 5 : 3.5
+                          return (
+                            <g key={d.month}>
+                              <circle
+                                cx={xAt(i)}
+                                cy={yAt(d.warehouse)}
+                                r={wR}
+                                fill="hsl(var(--card))"
+                                stroke="hsl(var(--primary))"
+                                strokeWidth="2"
+                              />
+                              <circle
+                                cx={xAt(i)}
+                                cy={yAt(d.material)}
+                                r={mR}
+                                fill="hsl(var(--card))"
+                                stroke="hsl(var(--accent))"
+                                strokeWidth="2"
+                              />
+                            </g>
+                          )
+                        })}
+
+                        {/* 最新月份数值气泡 */}
+                        {(() => {
+                          const i = lastIdx
+                          const wx = xAt(i)
+                          const wy = yAt(data[i].warehouse)
+                          const my = yAt(data[i].material)
+                          return (
+                            <g>
+                              {/* 仓储气泡 */}
+                              <rect
+                                x={wx - 28}
+                                y={wy - 22}
+                                width="40"
+                                height="16"
+                                rx="8"
+                                fill="hsl(var(--primary))"
+                              />
+                              <text
+                                x={wx - 8}
+                                y={wy - 11}
+                                textAnchor="middle"
+                                fill="hsl(var(--primary-foreground))"
+                                style={{ fontSize: "10px", fontWeight: 600 }}
+                              >
+                                {data[i].warehouse}
+                              </text>
+                              {/* 物料气泡 */}
+                              <rect
+                                x={wx - 28}
+                                y={my + 8}
+                                width="40"
+                                height="16"
+                                rx="8"
+                                fill="hsl(var(--accent))"
+                              />
+                              <text
+                                x={wx - 8}
+                                y={my + 19}
+                                textAnchor="middle"
+                                fill="hsl(var(--accent-foreground))"
+                                style={{ fontSize: "10px", fontWeight: 600 }}
+                              >
+                                {data[i].material}
+                              </text>
+                            </g>
+                          )
+                        })()}
+
+                        {/* X 轴标签 */}
+                        {data.map((d, i) => (
+                          <text
+                            key={d.month}
+                            x={xAt(i)}
+                            y={H - 4}
+                            textAnchor="middle"
+                            className={
+                              i === lastIdx
+                                ? "fill-foreground"
+                                : "fill-muted-foreground"
+                            }
+                            style={{
+                              fontSize: "10px",
+                              fontWeight: i === lastIdx ? 600 : 400,
+                            }}
+                          >
+                            {d.month}
+                          </text>
+                        ))}
+                      </svg>
+                    </div>
+                  )
+                })()}
+              </div>
                 </div>
                 {(() => {
                   const data = [
@@ -538,6 +807,23 @@ export function TodoList({ roleType = "property" }: TodoListProps) {
                         </span>
                         {!msg.read && <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />}
                       </div>
+                      {msg.type === "review" && typeof msg.rating === "number" && (
+                        <div className="flex items-center gap-0.5 mb-1">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-3 h-3 ${
+                                i < msg.rating!
+                                  ? "fill-yellow-400 text-yellow-400"
+                                  : "fill-transparent text-muted-foreground/40"
+                              }`}
+                            />
+                          ))}
+                          <span className="ml-1 text-[10px] text-yellow-600 font-medium tabular-nums">
+                            {msg.rating}.0
+                          </span>
+                        </div>
+                      )}
                       <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                         {msg.content}
                       </p>
