@@ -49,6 +49,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
+import { ContractCreatePage } from "./contract-create-page"
 
 // 合同数据
 const contractData = [
@@ -198,6 +199,11 @@ interface ContractManagementProps {
 export function ContractManagement({ roleType = "property" }: ContractManagementProps) {
   const [searchKeyword, setSearchKeyword] = useState("")
   const [activeTab, setActiveTab] = useState("all")
+  const [mode, setMode] = useState<"list" | "create">("list")
+
+  if (mode === "create") {
+    return <ContractCreatePage onBack={() => setMode("list")} />
+  }
 
   const stats = {
     total: contractData.length,
@@ -230,7 +236,7 @@ export function ContractManagement({ roleType = "property" }: ContractManagement
             <Download className="w-4 h-4 mr-2" />
             导出
           </Button>
-          <Button>
+          <Button onClick={() => setMode("create")}>
             <Plus className="w-4 h-4 mr-2" />
             新建合同
           </Button>
