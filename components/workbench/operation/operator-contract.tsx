@@ -311,7 +311,9 @@ function ContractQueryPage() {
       if (typeFilter !== "all" && it.type !== typeFilter) return false
       if (
         searchKeyword &&
-        !`${it.id}${it.name}${it.partyB}`.toLowerCase().includes(searchKeyword.toLowerCase())
+        !`${it.id}${it.name}${it.partyA}${it.partyB}`
+        .toLowerCase()
+        .includes(searchKeyword.toLowerCase())
       )
         return false
       return true
@@ -425,7 +427,7 @@ function ContractQueryPage() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  placeholder="搜索合同编号、名称或乙方..."
+                  placeholder="搜索合同编号、名称、发起方或确认方..."
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   className="pl-9 w-[220px]"
@@ -483,9 +485,10 @@ function ContractQueryPage() {
                   <TableHead className="w-[60px] text-center">序号</TableHead>
                   <TableHead className="w-[150px]">合同编号</TableHead>
                   <TableHead>合同名称</TableHead>
-                  <TableHead>类型</TableHead>
-                  <TableHead>乙方</TableHead>
-                  <TableHead className="text-right">金额(元)</TableHead>
+                      <TableHead>类型</TableHead>
+                      <TableHead>发起方</TableHead>
+                      <TableHead>确认方</TableHead>
+                      <TableHead className="text-right">金额(元)</TableHead>
                   <TableHead>合同期限</TableHead>
                   <TableHead>履约进度</TableHead>
                   <TableHead>状态</TableHead>
@@ -511,7 +514,15 @@ function ContractQueryPage() {
                     <TableCell>
                       <div className="flex items-center gap-1">
                         <Building2 className="w-3 h-3 text-muted-foreground" />
-                        <span className="text-sm truncate max-w-[140px]">
+                        <span className="text-sm truncate max-w-[160px]" title={item.partyA}>
+                          {item.partyA}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Building2 className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-sm truncate max-w-[160px]" title={item.partyB}>
                           {item.partyB}
                         </span>
                       </div>

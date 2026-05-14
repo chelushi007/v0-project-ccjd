@@ -453,7 +453,8 @@ export function ContractManagement({ roleType = "property" }: ContractManagement
                   <TableHead className="w-[150px]">合同编号</TableHead>
                   <TableHead>合同名称</TableHead>
                   <TableHead>类型</TableHead>
-                  <TableHead>乙方</TableHead>
+                  <TableHead>发起方</TableHead>
+                  <TableHead>确认方</TableHead>
                   <TableHead className="text-right">金额(元)</TableHead>
                   <TableHead>合同期限</TableHead>
                   <TableHead>履约进度</TableHead>
@@ -480,7 +481,17 @@ export function ContractManagement({ roleType = "property" }: ContractManagement
                     <TableCell>
                       <div className="flex items-center gap-1">
                         <Building2 className="w-3 h-3 text-muted-foreground" />
-                        <span className="text-sm truncate max-w-[120px]">{item.partyB}</span>
+                        <span className="text-sm truncate max-w-[160px]" title={item.partyA}>
+                          {item.partyA}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Building2 className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-sm truncate max-w-[160px]" title={item.partyB}>
+                          {item.partyB}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell className="text-right font-medium text-primary">
