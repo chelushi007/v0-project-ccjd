@@ -279,7 +279,7 @@ export function AppSidebar({
       </div>
 
       {/* 菜单列表 */}
-      <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto">
+      <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {menuSections.map((section) => {
           const SectionIcon = section.icon
           const isActive = activeTab === section.id
