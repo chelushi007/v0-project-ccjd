@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { TransferCreatePage } from "./transfer-create-page"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -262,10 +263,15 @@ function actionsByStatus(status: TransferStatus) {
 }
 
 export function MaterialTransfer() {
+  const [mode, setMode] = useState<"list" | "create">("list")
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("全部")
   const [receiverFilter, setReceiverFilter] = useState("全部")
   const [timeFilter, setTimeFilter] = useState("近30天")
+
+  if (mode === "create") {
+    return <TransferCreatePage onBack={() => setMode("list")} />
+  }
 
   const total = transferRows.length
   const pending = transferRows.filter((r) => r.status === "待确认").length
@@ -309,7 +315,7 @@ export function MaterialTransfer() {
             <Download className="w-4 h-4 mr-2" />
             导出
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={() => setMode("create")}>
             <Plus className="w-4 h-4 mr-2" />
             新建过户单
           </Button>
