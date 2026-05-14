@@ -5,25 +5,22 @@ import {
   Package,
   Plus,
   Search,
-  MapPin,
-  Ruler,
   Building2,
-  Eye,
-  Edit,
-  Trash2,
   CheckCircle,
-  Clock,
-  XCircle,
   ChevronLeft,
   ChevronRight,
-  Phone,
-  Layers,
-  ShieldCheck,
-  ShieldAlert,
+  FileText,
+  Ruler,
   Briefcase,
   Handshake,
 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -44,204 +41,285 @@ import {
 } from "@/components/ui/table"
 import { WarehouseSiteAdd } from "./warehouse-site-add"
 
+type PublishStatus = "草稿" | "待审核" | "已上架" | "审核驳回" | "已下架"
+type WarehouseType = "平面" | "楼层"
+type Operation = "自主" | "委托" | "自主/委托"
+type OperationStatus = "可出租" | "不可出租" | "—"
+type UnitNature = "中国铁建" | "合作用户"
+
 interface WarehouseRow {
-  id: string
+  seq: number
   name: string
-  type: string
-  structure: "钢结构" | "混凝土结构" | "砖混结构" | "混合结构" | "露天"
-  operation: "自主" | "委托"
+  code: string
+  publishStatus: PublishStatus
   buildArea: number
   rentableArea: number
-  publicArea: number
-  fireRecord: "有" | "无" | "办理中"
-  location: string
-  fullAddress: string
-  status: "active" | "maintenance" | "inactive"
-  publishStatus: "published" | "reviewing" | "unpublished"
-  createTime: string
-  contact: string
-  phone: string
-  facilityCount: number
-  facilityHighlights: string[]
+  type: WarehouseType
+  region: string
+  address: string
+  unitNature: UnitNature
+  belongUnit: string
+  creator: string
+  publishTime: string
+  operation: Operation
+  operationStatus: OperationStatus
 }
 
 const warehouseData: WarehouseRow[] = [
   {
-    id: "WH001",
-    name: "中铁建广州南沙综合仓储基地",
-    type: "综合仓库",
-    structure: "钢结构",
+    seq: 1,
+    name: "中铁十九局集团第一工程有限公司南沙仓储基地",
+    code: "",
+    publishStatus: "草稿",
+    buildArea: 1100,
+    rentableArea: 1000,
+    type: "平面",
+    region: "广东省-广州市-南沙区",
+    address: "进港大道23号",
+    unitNature: "中国铁建",
+    belongUnit: "中铁建工集团",
+    creator: "李先生",
+    publishTime: "2025-10-01",
     operation: "自主",
-    buildArea: 15000,
-    rentableArea: 12800,
-    publicArea: 2200,
-    fireRecord: "有",
-    location: "广东省广州市南沙区",
-    fullAddress: "广州市南沙区进港大道15号铁建仓储园",
-    status: "active",
-    publishStatus: "published",
-    createTime: "2023-06-15",
-    contact: "张志远",
-    phone: "138****8821",
-    facilityCount: 12,
-    facilityHighlights: ["龙门吊", "叉车", "监控全覆盖"],
+    operationStatus: "—",
   },
   {
-    id: "WH002",
-    name: "中铁建深圳龙岗物流基地",
-    type: "物流仓库",
-    structure: "钢结构",
-    operation: "自主",
-    buildArea: 25000,
-    rentableArea: 21500,
-    publicArea: 3500,
-    fireRecord: "有",
-    location: "广东省深圳市龙岗区",
-    fullAddress: "深圳市龙岗区平湖街道华南国际物流中心",
-    status: "active",
-    publishStatus: "published",
-    createTime: "2023-08-20",
-    contact: "李文涛",
-    phone: "139****9302",
-    facilityCount: 16,
-    facilityHighlights: ["重型货架", "登高车", "人脸识别"],
-  },
-  {
-    id: "WH003",
-    name: "中铁建东莞塘厦仓储站点",
-    type: "普通仓库",
-    structure: "砖混结构",
+    seq: 2,
+    name: "中铁十九局集团第一工程有限公司番禺综合仓库",
+    code: "CK202511190002",
+    publishStatus: "待审核",
+    buildArea: 1100,
+    rentableArea: 1000,
+    type: "平面",
+    region: "广东省-广州市-南沙区",
+    address: "进港大道23号",
+    unitNature: "合作用户",
+    belongUnit: "XX集团",
+    creator: "李先生",
+    publishTime: "2025-10-01",
     operation: "委托",
-    buildArea: 8000,
-    rentableArea: 6800,
-    publicArea: 1200,
-    fireRecord: "办理中",
-    location: "广东省东莞市塘厦镇",
-    fullAddress: "东莞市塘厦镇林村社区铁建物资园",
-    status: "maintenance",
-    publishStatus: "unpublished",
-    createTime: "2023-10-05",
-    contact: "王广志",
-    phone: "137****7563",
-    facilityCount: 8,
-    facilityHighlights: ["货架", "监控", "消防"],
+    operationStatus: "可出租",
   },
   {
-    id: "WH004",
-    name: "中铁建佛山南海冷链仓储基地",
-    type: "冷链仓库",
-    structure: "混凝土结构",
-    operation: "自主",
-    buildArea: 6000,
-    rentableArea: 4800,
-    publicArea: 1200,
-    fireRecord: "有",
-    location: "广东省佛山市南海区",
-    fullAddress: "佛山市南海区狮山镇官窑工业区铁建冷链园",
-    status: "active",
-    publishStatus: "reviewing",
-    createTime: "2023-12-10",
-    contact: "赵敏",
-    phone: "136****6024",
-    facilityCount: 14,
-    facilityHighlights: ["冷藏", "叉车", "粉尘抑制"],
+    seq: 3,
+    name: "中铁十九局集团第一工程有限公司黄埔物流园",
+    code: "CK202511190003",
+    publishStatus: "已上架",
+    buildArea: 1100,
+    rentableArea: 1000,
+    type: "楼层",
+    region: "广东省-广州市-南沙区",
+    address: "进港大道23号",
+    unitNature: "中国铁建",
+    belongUnit: "中铁建工集团",
+    creator: "李先生",
+    publishTime: "2025-10-01",
+    operation: "自主/委托",
+    operationStatus: "不可出租",
   },
   {
-    id: "WH005",
-    name: "中铁二十二局惠州大亚湾仓储基地",
-    type: "综合仓库",
-    structure: "钢结构",
+    seq: 4,
+    name: "中铁十九局集团第一工程有限公司花都钢材库",
+    code: "CK202511190004",
+    publishStatus: "审核驳回",
+    buildArea: 1100,
+    rentableArea: 1000,
+    type: "平面",
+    region: "广东省-广州市-南沙区",
+    address: "进港大道23号",
+    unitNature: "合作用户",
+    belongUnit: "XX集团",
+    creator: "李先生",
+    publishTime: "2025-10-01",
+    operation: "自主/委托",
+    operationStatus: "可出租",
+  },
+  {
+    seq: 5,
+    name: "中铁十九局集团第一工程有限公司白云冷链基地",
+    code: "CK202511190005",
+    publishStatus: "已上架",
+    buildArea: 1100,
+    rentableArea: 1000,
+    type: "平面",
+    region: "广东省-广州市-南沙区",
+    address: "进港大道23号",
+    unitNature: "中国铁建",
+    belongUnit: "中铁建工集团",
+    creator: "李先生",
+    publishTime: "2025-10-01",
+    operation: "委托",
+    operationStatus: "不可出租",
+  },
+  {
+    seq: 6,
+    name: "中铁十九局集团第一工程有限公司增城综合仓",
+    code: "CK20251119006",
+    publishStatus: "已上架",
+    buildArea: 1100,
+    rentableArea: 1000,
+    type: "楼层",
+    region: "广东省-广州市-南沙区",
+    address: "进港大道23号",
+    unitNature: "合作用户",
+    belongUnit: "XX集团",
+    creator: "李先生",
+    publishTime: "2025-10-01",
+    operation: "委托",
+    operationStatus: "可出租",
+  },
+  {
+    seq: 7,
+    name: "中铁十九局集团第一工程有限公司从化项目仓库",
+    code: "CK20251119007",
+    publishStatus: "已下架",
+    buildArea: 1100,
+    rentableArea: 1000,
+    type: "平面",
+    region: "广东省-广州市-南沙区",
+    address: "进港大道23号",
+    unitNature: "合作用户",
+    belongUnit: "XX集团",
+    creator: "李先生",
+    publishTime: "2025-10-01",
     operation: "自主",
-    buildArea: 20000,
-    rentableArea: 17800,
-    publicArea: 2200,
-    fireRecord: "有",
-    location: "广东省惠州市大亚湾区",
-    fullAddress: "惠州市大亚湾区西区龙海二路铁建仓储基地",
-    status: "active",
-    publishStatus: "published",
-    createTime: "2026-01-08",
-    contact: "周建国",
-    phone: "135****5187",
-    facilityCount: 10,
-    facilityHighlights: ["叉车", "监控全覆盖", "封闭围墙"],
+    operationStatus: "—",
+  },
+  {
+    seq: 8,
+    name: "中铁十九局集团第一工程有限公司海珠钢构基地",
+    code: "CK20251119008",
+    publishStatus: "待审核",
+    buildArea: 1100,
+    rentableArea: 1000,
+    type: "平面",
+    region: "广东省-广州市-南沙区",
+    address: "进港大道23号",
+    unitNature: "中国铁建",
+    belongUnit: "中铁建工集团",
+    creator: "李先生",
+    publishTime: "2025-10-01",
+    operation: "委托",
+    operationStatus: "可出租",
+  },
+  {
+    seq: 9,
+    name: "中铁十九局集团第一工程有限公司天河中转仓",
+    code: "CK20251119009",
+    publishStatus: "已下架",
+    buildArea: 1100,
+    rentableArea: 1000,
+    type: "楼层",
+    region: "广东省-广州市-南沙区",
+    address: "进港大道23号",
+    unitNature: "合作用户",
+    belongUnit: "XX集团",
+    creator: "李先生",
+    publishTime: "2025-10-01",
+    operation: "自主/委托",
+    operationStatus: "可出租",
+  },
+  {
+    seq: 10,
+    name: "中铁十九局集团第一工程有限公司荔湾设备仓库",
+    code: "CK20251119010",
+    publishStatus: "已下架",
+    buildArea: 1100,
+    rentableArea: 1000,
+    type: "楼层",
+    region: "广东省-广州市-南沙区",
+    address: "进港大道23号",
+    unitNature: "合作用户",
+    belongUnit: "XX集团",
+    creator: "李先生",
+    publishTime: "2025-10-01",
+    operation: "自主/委托",
+    operationStatus: "—",
   },
 ]
 
-const getStatusBadge = (status: WarehouseRow["status"]) => {
-  switch (status) {
-    case "active":
-      return (
-        <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
-          <CheckCircle className="w-3 h-3 mr-1" />
-          正常运营
-        </Badge>
-      )
-    case "maintenance":
-      return (
-        <Badge className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20">
-          <Clock className="w-3 h-3 mr-1" />
-          维护中
-        </Badge>
-      )
-    default:
-      return (
-        <Badge className="bg-gray-500/10 text-gray-600 border-gray-500/20">
-          <XCircle className="w-3 h-3 mr-1" />
-          已停用
-        </Badge>
-      )
+function getPublishBadge(status: PublishStatus) {
+  const map: Record<PublishStatus, string> = {
+    草稿: "bg-muted text-muted-foreground border-border",
+    待审核: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
+    已上架: "bg-green-500/10 text-green-600 border-green-500/20",
+    审核驳回: "bg-red-500/10 text-red-600 border-red-500/20",
+    已下架: "bg-gray-500/10 text-gray-600 border-gray-500/20",
   }
+  return <Badge className={`${map[status]} font-normal`}>{status}</Badge>
 }
 
-const getPublishStatusBadge = (status: WarehouseRow["publishStatus"]) => {
-  switch (status) {
-    case "published":
-      return <Badge className="bg-primary/10 text-primary border-primary/20">已发布</Badge>
-    case "reviewing":
-      return <Badge className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20">审核中</Badge>
-    default:
-      return <Badge variant="outline">未发布</Badge>
-  }
-}
-
-const getOperationBadge = (op: WarehouseRow["operation"]) => {
-  return op === "自主" ? (
-    <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20 gap-1">
-      <Briefcase className="w-3 h-3" />
-      自主
-    </Badge>
-  ) : (
-    <Badge className="bg-purple-500/10 text-purple-600 border-purple-500/20 gap-1">
-      <Handshake className="w-3 h-3" />
-      委托
-    </Badge>
-  )
-}
-
-const getFireBadge = (record: WarehouseRow["fireRecord"]) => {
-  if (record === "有") {
+function getOperationBadge(op: Operation) {
+  if (op === "自主") {
     return (
-      <span className="inline-flex items-center gap-1 text-xs text-green-600">
-        <ShieldCheck className="w-3.5 h-3.5" />
-        已备案
+      <span className="inline-flex items-center gap-1 text-sm text-blue-600">
+        <Briefcase className="w-3.5 h-3.5" />
+        自主
       </span>
     )
   }
-  if (record === "办理中") {
+  if (op === "委托") {
     return (
-      <span className="inline-flex items-center gap-1 text-xs text-yellow-600">
-        <ShieldAlert className="w-3.5 h-3.5" />
-        办理中
+      <span className="inline-flex items-center gap-1 text-sm text-purple-600">
+        <Handshake className="w-3.5 h-3.5" />
+        委托
       </span>
     )
   }
   return (
-    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-      <ShieldAlert className="w-3.5 h-3.5" />
-      未备案
+    <span className="inline-flex items-center gap-1 text-sm text-foreground">
+      <Briefcase className="w-3.5 h-3.5 text-blue-600" />
+      <span className="text-muted-foreground">/</span>
+      <Handshake className="w-3.5 h-3.5 text-purple-600" />
+      <span className="ml-0.5">自主/委托</span>
     </span>
   )
+}
+
+function getOperationStatusCell(status: OperationStatus) {
+  if (status === "可出租") {
+    return <span className="text-sm text-green-600">可出租</span>
+  }
+  if (status === "不可出租") {
+    return <span className="text-sm text-muted-foreground">不可出租</span>
+  }
+  return <span className="text-muted-foreground">—</span>
+}
+
+function getActions(row: WarehouseRow): { label: string; tone?: "primary" | "warning" | "destructive" }[] {
+  switch (row.publishStatus) {
+    case "草稿":
+      return [{ label: "编辑", tone: "primary" }]
+    case "待审核":
+      return [
+        { label: "撤销", tone: "destructive" },
+        { label: "审核", tone: "primary" },
+      ]
+    case "已上架":
+      // 不可出租 → 仅查看;可出租 → 主动下架/委托出租/编辑
+      if (row.operationStatus === "不可出租") {
+        return [{ label: "查看", tone: "primary" }]
+      }
+      return [
+        { label: "主动下架", tone: "warning" },
+        { label: "委托出租", tone: "primary" },
+        { label: "编辑", tone: "primary" },
+      ]
+    case "审核驳回":
+      return [{ label: "编辑", tone: "primary" }]
+    case "已下架":
+      return [
+        { label: "重新上架", tone: "primary" },
+        { label: "编辑", tone: "primary" },
+      ]
+  }
+}
+
+const toneClass: Record<string, string> = {
+  primary: "text-primary hover:text-primary",
+  warning: "text-orange-600 hover:text-orange-600",
+  destructive: "text-destructive hover:text-destructive",
+  default: "text-foreground",
 }
 
 interface WarehouseInfoProps {
@@ -251,20 +329,32 @@ interface WarehouseInfoProps {
 export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProps) {
   void roleType
   const [searchKeyword, setSearchKeyword] = useState("")
+  const [statusFilter, setStatusFilter] = useState<string>("all")
   const [mode, setMode] = useState<"list" | "create">("list")
 
   if (mode === "create") {
-    return (
-      <WarehouseSiteAdd onBack={() => setMode("list")} onSubmit={() => setMode("list")} />
-    )
+    return <WarehouseSiteAdd onBack={() => setMode("list")} onSubmit={() => setMode("list")} />
   }
 
   const stats = {
     total: warehouseData.length,
-    buildArea: warehouseData.reduce((sum, item) => sum + item.buildArea, 0),
-    rentableArea: warehouseData.reduce((sum, item) => sum + item.rentableArea, 0),
-    published: warehouseData.filter((item) => item.publishStatus === "published").length,
+    published: warehouseData.filter((i) => i.publishStatus === "已上架").length,
+    buildArea: warehouseData.reduce((s, i) => s + i.buildArea, 0),
+    rentableArea: warehouseData.reduce((s, i) => s + i.rentableArea, 0),
   }
+
+  const filtered = warehouseData.filter((item) => {
+    if (searchKeyword) {
+      const k = searchKeyword.toLowerCase()
+      const hit =
+        item.name.toLowerCase().includes(k) ||
+        item.code.toLowerCase().includes(k) ||
+        item.address.toLowerCase().includes(k)
+      if (!hit) return false
+    }
+    if (statusFilter !== "all" && item.publishStatus !== statusFilter) return false
+    return true
+  })
 
   return (
     <div className="space-y-6">
@@ -301,10 +391,23 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
+                <p className="text-sm text-muted-foreground">已上架</p>
+                <p className="text-2xl font-bold mt-1">{stats.published}</p>
+              </div>
+              <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
                 <p className="text-sm text-muted-foreground">建筑面积</p>
                 <p className="text-2xl font-bold mt-1">
-                  {(stats.buildArea / 10000).toFixed(1)}
-                  <span className="text-sm font-normal text-muted-foreground ml-1">万㎡</span>
+                  {stats.buildArea.toLocaleString()}
+                  <span className="text-sm font-normal text-muted-foreground ml-1">㎡</span>
                 </p>
               </div>
               <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -319,25 +422,12 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
               <div>
                 <p className="text-sm text-muted-foreground">可租面积</p>
                 <p className="text-2xl font-bold mt-1">
-                  {(stats.rentableArea / 10000).toFixed(1)}
-                  <span className="text-sm font-normal text-muted-foreground ml-1">万㎡</span>
+                  {stats.rentableArea.toLocaleString()}
+                  <span className="text-sm font-normal text-muted-foreground ml-1">㎡</span>
                 </p>
               </div>
-              <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center">
-                <Package className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">已发布</p>
-                <p className="text-2xl font-bold mt-1">{stats.published}</p>
-              </div>
               <div className="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-purple-600" />
+                <Package className="w-6 h-6 text-purple-600" />
               </div>
             </div>
           </CardContent>
@@ -356,12 +446,25 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  placeholder="搜索站点名称..."
+                  placeholder="搜索名称/编号/地址..."
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
-                  className="pl-9 w-[200px]"
+                  className="pl-9 w-[220px]"
                 />
               </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[130px]">
+                  <SelectValue placeholder="发布状态" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">全部状态</SelectItem>
+                  <SelectItem value="草稿">草稿</SelectItem>
+                  <SelectItem value="待审核">待审核</SelectItem>
+                  <SelectItem value="已上架">已上架</SelectItem>
+                  <SelectItem value="审核驳回">审核驳回</SelectItem>
+                  <SelectItem value="已下架">已下架</SelectItem>
+                </SelectContent>
+              </Select>
               <Select defaultValue="all">
                 <SelectTrigger className="w-[120px]">
                   <SelectValue placeholder="运营方式" />
@@ -370,29 +473,7 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
                   <SelectItem value="all">全部方式</SelectItem>
                   <SelectItem value="self">自主</SelectItem>
                   <SelectItem value="entrust">委托</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select defaultValue="all">
-                <SelectTrigger className="w-[120px]">
-                  <SelectValue placeholder="仓库类型" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">全部类型</SelectItem>
-                  <SelectItem value="comprehensive">综合仓库</SelectItem>
-                  <SelectItem value="logistics">物流仓库</SelectItem>
-                  <SelectItem value="cold">冷链仓库</SelectItem>
-                  <SelectItem value="normal">普通仓库</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select defaultValue="all">
-                <SelectTrigger className="w-[120px]">
-                  <SelectValue placeholder="状态" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">全部状态</SelectItem>
-                  <SelectItem value="active">正常运营</SelectItem>
-                  <SelectItem value="maintenance">维护中</SelectItem>
-                  <SelectItem value="inactive">已停用</SelectItem>
+                  <SelectItem value="both">自主/委托</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -400,179 +481,155 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
         </CardHeader>
         <CardContent>
           <div className="rounded-md border overflow-x-auto">
-            <Table className="min-w-[1540px]">
+            <Table className="min-w-[1880px]">
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[220px]">站点名称 / 类型</TableHead>
-                  <TableHead className="w-[100px]">运营方式</TableHead>
-                  <TableHead className="w-[110px]">仓储架构</TableHead>
-                  <TableHead className="text-right w-[200px]">面积(㎡)</TableHead>
-                  <TableHead className="w-[100px]">消防备案</TableHead>
-                  <TableHead className="w-[200px]">配套亮点</TableHead>
-                  <TableHead className="w-[180px]">位置</TableHead>
-                  <TableHead className="w-[150px]">联系人</TableHead>
-                  <TableHead className="w-[110px]">状态</TableHead>
-                  <TableHead className="w-[110px]">发布状态</TableHead>
-                  <TableHead className="w-[220px]">操作</TableHead>
+                  <TableHead className="w-[60px] text-center">序号</TableHead>
+                  <TableHead className="w-[200px]">仓储名称</TableHead>
+                  <TableHead className="w-[150px]">仓储编号</TableHead>
+                  <TableHead className="w-[100px]">发布状态</TableHead>
+                  <TableHead className="w-[100px] text-right">建筑面积</TableHead>
+                  <TableHead className="w-[100px] text-right">可租面积</TableHead>
+                  <TableHead className="w-[90px]">仓储类型</TableHead>
+                  <TableHead className="w-[170px]">所在区域</TableHead>
+                  <TableHead className="w-[140px]">详细地址</TableHead>
+                  <TableHead className="w-[100px]">单位性质</TableHead>
+                  <TableHead className="w-[120px]">所属单位</TableHead>
+                  <TableHead className="w-[80px]">创建人</TableHead>
+                  <TableHead className="w-[110px]">发布时间</TableHead>
+                  <TableHead className="w-[120px]">运营方式</TableHead>
+                  <TableHead className="w-[100px]">运营状态</TableHead>
+                  <TableHead className="w-[240px]">操作</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {warehouseData
-                  .filter((item) =>
-                    searchKeyword
-                      ? item.name.toLowerCase().includes(searchKeyword.toLowerCase())
-                      : true,
-                  )
-                  .map((item) => (
-                    <TableRow key={item.id}>
-                      {/* 名称 / 类型 */}
-                      <TableCell>
-                        <div className="space-y-1">
-                          <p className="font-medium leading-tight">{item.name}</p>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[11px] text-muted-foreground font-mono">
-                              {item.id}
-                            </span>
-                            <Badge variant="outline" className="text-[11px] py-0 px-1.5">
-                              {item.type}
-                            </Badge>
-                          </div>
-                        </div>
-                      </TableCell>
+                {filtered.map((row) => (
+                  <TableRow key={`${row.seq}-${row.code || "draft"}`}>
+                    {/* 序号 */}
+                    <TableCell className="text-center text-sm text-muted-foreground tabular-nums">
+                      {row.seq}
+                    </TableCell>
 
-                      {/* 运营方式 */}
-                      <TableCell>{getOperationBadge(item.operation)}</TableCell>
+                    {/* 仓储名称 */}
+                    <TableCell>
+                      <p
+                        className="text-sm text-primary truncate max-w-[200px]"
+                        title={row.name}
+                      >
+                        {row.name}
+                      </p>
+                    </TableCell>
 
-                      {/* 仓储架构 */}
-                      <TableCell>
-                        <span className="inline-flex items-center gap-1 text-sm text-foreground">
-                          <Layers className="w-3.5 h-3.5 text-muted-foreground" />
-                          {item.structure}
-                        </span>
-                      </TableCell>
+                    {/* 仓储编号 */}
+                    <TableCell>
+                      {row.code ? (
+                        <span className="font-mono text-xs text-foreground">{row.code}</span>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
 
-                      {/* 建筑/可租面积 */}
-                      <TableCell className="text-right">
-                        <div className="space-y-0.5 leading-tight">
-                          <div className="flex items-center justify-end gap-2">
-                            <span className="text-[11px] text-muted-foreground">
-                              建筑
-                            </span>
-                            <span className="font-medium tabular-nums">
-                              {item.buildArea.toLocaleString()}
-                            </span>
-                          </div>
-                          <div className="flex items-center justify-end gap-2">
-                            <span className="text-[11px] text-muted-foreground">
-                              可租
-                            </span>
-                            <span className="text-green-600 font-medium tabular-nums">
-                              {item.rentableArea.toLocaleString()}
-                            </span>
-                          </div>
-                        </div>
-                      </TableCell>
+                    {/* 发布状态 */}
+                    <TableCell>{getPublishBadge(row.publishStatus)}</TableCell>
 
-                      {/* 消防备案 */}
-                      <TableCell>{getFireBadge(item.fireRecord)}</TableCell>
+                    {/* 建筑面积 */}
+                    <TableCell className="text-right tabular-nums">
+                      {row.buildArea}
+                      <span className="text-xs text-muted-foreground ml-0.5">㎡</span>
+                    </TableCell>
 
-                      {/* 配套亮点 */}
-                      <TableCell>
-                        <div className="flex flex-wrap items-center gap-1">
-                          {item.facilityHighlights.slice(0, 2).map((f) => (
-                            <Badge
-                              key={f}
-                              variant="secondary"
-                              className="text-[11px] py-0 px-1.5 font-normal"
-                            >
-                              {f}
-                            </Badge>
-                          ))}
-                          {item.facilityCount > 2 && (
-                            <Badge
-                              variant="outline"
-                              className="text-[11px] py-0 px-1.5 font-normal text-muted-foreground"
-                            >
-                              +{item.facilityCount - 2}
-                            </Badge>
-                          )}
-                        </div>
-                      </TableCell>
+                    {/* 可租面积 */}
+                    <TableCell className="text-right tabular-nums text-green-600">
+                      {row.rentableArea}
+                      <span className="text-xs text-muted-foreground ml-0.5">㎡</span>
+                    </TableCell>
 
-                      {/* 位置 */}
-                      <TableCell>
-                        <div
-                          className="flex items-start gap-1 text-sm max-w-[180px]"
-                          title={item.fullAddress}
-                        >
-                          <MapPin className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
-                          <span className="line-clamp-2 leading-snug">
-                            {item.location}
-                          </span>
-                        </div>
-                      </TableCell>
+                    {/* 仓储类型 */}
+                    <TableCell>
+                      <Badge variant="outline" className="font-normal">
+                        {row.type}
+                      </Badge>
+                    </TableCell>
 
-                      {/* 联系人 */}
-                      <TableCell>
-                        <div className="space-y-0.5 leading-tight">
-                          <p className="text-sm">{item.contact}</p>
-                          <p className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
-                            <Phone className="w-3 h-3" />
-                            {item.phone}
-                          </p>
-                        </div>
-                      </TableCell>
+                    {/* 所在区域 */}
+                    <TableCell className="text-sm">{row.region}</TableCell>
 
-                      <TableCell>{getStatusBadge(item.status)}</TableCell>
-                      <TableCell>{getPublishStatusBadge(item.publishStatus)}</TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap items-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 px-2 text-xs"
+                    {/* 详细地址 */}
+                    <TableCell className="text-sm">{row.address}</TableCell>
+
+                    {/* 单位性质 */}
+                    <TableCell>
+                      {row.unitNature === "中国铁建" ? (
+                        <Badge className="bg-primary/10 text-primary border-primary/20 font-normal">
+                          中国铁建
+                        </Badge>
+                      ) : (
+                        <Badge className="bg-orange-500/10 text-orange-600 border-orange-500/20 font-normal">
+                          合作用户
+                        </Badge>
+                      )}
+                    </TableCell>
+
+                    {/* 所属单位 */}
+                    <TableCell className="text-sm">{row.belongUnit}</TableCell>
+
+                    {/* 创建人 */}
+                    <TableCell className="text-sm">{row.creator}</TableCell>
+
+                    {/* 发布时间 */}
+                    <TableCell className="text-sm text-muted-foreground tabular-nums">
+                      {row.publishTime}
+                    </TableCell>
+
+                    {/* 运营方式 */}
+                    <TableCell>{getOperationBadge(row.operation)}</TableCell>
+
+                    {/* 运营状态 */}
+                    <TableCell>{getOperationStatusCell(row.operationStatus)}</TableCell>
+
+                    {/* 操作 */}
+                    <TableCell>
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        {getActions(row).map((a) => (
+                          <button
+                            key={a.label}
+                            type="button"
+                            className={`text-xs hover:underline ${
+                              toneClass[a.tone ?? "primary"]
+                            }`}
                           >
-                            <Eye className="w-3.5 h-3.5 mr-1" />
-                            查看
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 px-2 text-xs text-primary"
-                          >
-                            <Edit className="w-3.5 h-3.5 mr-1" />
-                            编辑
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 px-2 text-xs text-destructive hover:text-destructive"
-                          >
-                            <Trash2 className="w-3.5 h-3.5 mr-1" />
-                            删除
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                            {a.label}
+                          </button>
+                        ))}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </div>
 
           {/* 分页 */}
           <div className="flex items-center justify-between mt-4">
-            <p className="text-sm text-muted-foreground">
-              共 {warehouseData.length} 条记录
+            <p className="text-sm text-muted-foreground inline-flex items-center gap-2">
+              <FileText className="w-4 h-4" />共 {filtered.length} 条记录
             </p>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" disabled>
                 <ChevronLeft className="w-4 h-4" />
               </Button>
-              <Button variant="outline" size="sm" className="bg-primary text-primary-foreground">
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-primary text-primary-foreground"
+              >
                 1
               </Button>
               <Button variant="outline" size="sm">
                 2
+              </Button>
+              <Button variant="outline" size="sm">
+                3
               </Button>
               <Button variant="outline" size="sm">
                 <ChevronRight className="w-4 h-4" />
