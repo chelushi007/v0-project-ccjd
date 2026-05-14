@@ -45,7 +45,7 @@ type PublishStatus = "草稿" | "待审核" | "已上架" | "审核驳回" | "�
 type WarehouseType = "平面" | "楼层"
 type Operation = "自主" | "委托" | "自主/委托"
 type OperationStatus = "可出租" | "不可出租" | "—"
-type UnitNature = "中国铁建" | "合作用户"
+type UnitNature = "仓储单位" | "仓储站点" | "物资转运单位"
 
 interface WarehouseRow {
   seq: number
@@ -76,7 +76,7 @@ const warehouseData: WarehouseRow[] = [
     type: "平面",
     region: "广东省-广州市-南沙区",
     address: "进港大道23号",
-    unitNature: "中国铁建",
+    unitNature: "仓储单位",
     belongUnit: "中铁建工集团",
     creator: "李先生",
     publishTime: "2025-10-01",
@@ -93,8 +93,8 @@ const warehouseData: WarehouseRow[] = [
     type: "平面",
     region: "广东省-广州市-南沙区",
     address: "进港大道23号",
-    unitNature: "合作用户",
-    belongUnit: "XX集团",
+    unitNature: "仓储站点",
+    belongUnit: "南沙综合仓储基地",
     creator: "李先生",
     publishTime: "2025-10-01",
     operation: "委托",
@@ -110,7 +110,7 @@ const warehouseData: WarehouseRow[] = [
     type: "楼层",
     region: "广东省-广州市-南沙区",
     address: "进港大道23号",
-    unitNature: "中国铁建",
+    unitNature: "仓储单位",
     belongUnit: "中铁建工集团",
     creator: "李先生",
     publishTime: "2025-10-01",
@@ -127,8 +127,8 @@ const warehouseData: WarehouseRow[] = [
     type: "平面",
     region: "广东省-广州市-南沙区",
     address: "进港大道23号",
-    unitNature: "合作用户",
-    belongUnit: "XX集团",
+    unitNature: "物资转运单位",
+    belongUnit: "南沙铁建专运车队",
     creator: "李先生",
     publishTime: "2025-10-01",
     operation: "自主/委托",
@@ -144,7 +144,7 @@ const warehouseData: WarehouseRow[] = [
     type: "平面",
     region: "广东省-广州市-南沙区",
     address: "进港大道23号",
-    unitNature: "中国铁建",
+    unitNature: "仓储单位",
     belongUnit: "中铁建工集团",
     creator: "李先生",
     publishTime: "2025-10-01",
@@ -161,8 +161,8 @@ const warehouseData: WarehouseRow[] = [
     type: "楼层",
     region: "广东省-广州市-南沙区",
     address: "进港大道23号",
-    unitNature: "合作用户",
-    belongUnit: "XX集团",
+    unitNature: "仓储站点",
+    belongUnit: "增城综合站点",
     creator: "李先生",
     publishTime: "2025-10-01",
     operation: "委托",
@@ -178,8 +178,8 @@ const warehouseData: WarehouseRow[] = [
     type: "平面",
     region: "广东省-广州市-南沙区",
     address: "进港大道23号",
-    unitNature: "合作用户",
-    belongUnit: "XX集团",
+    unitNature: "物资转运单位",
+    belongUnit: "从化专运车队",
     creator: "李先生",
     publishTime: "2025-10-01",
     operation: "自主",
@@ -195,7 +195,7 @@ const warehouseData: WarehouseRow[] = [
     type: "平面",
     region: "广东省-广州市-南沙区",
     address: "进港大道23号",
-    unitNature: "中国铁建",
+    unitNature: "仓储单位",
     belongUnit: "中铁建工集团",
     creator: "李先生",
     publishTime: "2025-10-01",
@@ -212,8 +212,8 @@ const warehouseData: WarehouseRow[] = [
     type: "楼层",
     region: "广东省-广州市-南沙区",
     address: "进港大道23号",
-    unitNature: "合作用户",
-    belongUnit: "XX集团",
+    unitNature: "物资转运单位",
+    belongUnit: "天河转运中心",
     creator: "李先生",
     publishTime: "2025-10-01",
     operation: "自主/委托",
@@ -229,12 +229,29 @@ const warehouseData: WarehouseRow[] = [
     type: "楼层",
     region: "广东省-广州市-南沙区",
     address: "进港大道23号",
-    unitNature: "合作用户",
-    belongUnit: "XX集团",
+    unitNature: "仓储站点",
+    belongUnit: "荔湾设备站点",
     creator: "李先生",
     publishTime: "2025-10-01",
     operation: "自主/委托",
     operationStatus: "—",
+  },
+  {
+    seq: 11,
+    name: "中铁十九局集团第一工程有限公司琶洲临港仓库",
+    code: "CK20251119011",
+    publishStatus: "已上架",
+    buildArea: 1200,
+    rentableArea: 1100,
+    type: "平面",
+    region: "广东省-广州市-海珠区",
+    address: "新港东路168号",
+    unitNature: "仓储单位",
+    belongUnit: "中铁建工集团",
+    creator: "李先生",
+    publishTime: "2025-10-02",
+    operation: "自主",
+    operationStatus: "可出租",
   },
 ]
 
@@ -286,6 +303,15 @@ function getOperationStatusCell(status: OperationStatus) {
   return <span className="text-muted-foreground">—</span>
 }
 
+function getUnitNatureBadge(nature: UnitNature) {
+  const map: Record<UnitNature, string> = {
+    仓储单位: "bg-primary/10 text-primary border-primary/20",
+    仓储站点: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20",
+    物资转运单位: "bg-orange-500/10 text-orange-600 border-orange-500/20",
+  }
+  return <Badge className={`${map[nature]} font-normal whitespace-nowrap`}>{nature}</Badge>
+}
+
 function getActions(row: WarehouseRow): { label: string; tone?: "primary" | "warning" | "destructive" }[] {
   switch (row.publishStatus) {
     case "草稿":
@@ -295,16 +321,23 @@ function getActions(row: WarehouseRow): { label: string; tone?: "primary" | "war
         { label: "撤销", tone: "destructive" },
         { label: "审核", tone: "primary" },
       ]
-    case "已上架":
-      // 不可出租 → 仅查看;可出租 → 主动下架/委托出租/编辑
+    case "已上架": {
+      // 不可出租 → 仅查看;可出租 → 按运营方式动态生成出租入口
       if (row.operationStatus === "不可出租") {
         return [{ label: "查看", tone: "primary" }]
       }
-      return [
+      const actions: { label: string; tone?: "primary" | "warning" | "destructive" }[] = [
         { label: "主动下架", tone: "warning" },
-        { label: "委托出租", tone: "primary" },
-        { label: "编辑", tone: "primary" },
       ]
+      if (row.operation === "自主" || row.operation === "自主/委托") {
+        actions.push({ label: "自主出租", tone: "primary" })
+      }
+      if (row.operation === "委托" || row.operation === "自主/委托") {
+        actions.push({ label: "委托出租", tone: "primary" })
+      }
+      actions.push({ label: "编辑", tone: "primary" })
+      return actions
+    }
     case "审核驳回":
       return [{ label: "编辑", tone: "primary" }]
     case "已下架":
@@ -330,6 +363,7 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
   void roleType
   const [searchKeyword, setSearchKeyword] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [natureFilter, setNatureFilter] = useState<string>("all")
   const [mode, setMode] = useState<"list" | "create">("list")
 
   if (mode === "create") {
@@ -353,6 +387,7 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
       if (!hit) return false
     }
     if (statusFilter !== "all" && item.publishStatus !== statusFilter) return false
+    if (natureFilter !== "all" && item.unitNature !== natureFilter) return false
     return true
   })
 
@@ -465,6 +500,17 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
                   <SelectItem value="已下架">已下架</SelectItem>
                 </SelectContent>
               </Select>
+              <Select value={natureFilter} onValueChange={setNatureFilter}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="单位性质" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">全部性质</SelectItem>
+                  <SelectItem value="仓储单位">仓储单位</SelectItem>
+                  <SelectItem value="仓储站点">仓储站点</SelectItem>
+                  <SelectItem value="物资转运单位">物资转运单位</SelectItem>
+                </SelectContent>
+              </Select>
               <Select defaultValue="all">
                 <SelectTrigger className="w-[120px]">
                   <SelectValue placeholder="运营方式" />
@@ -481,7 +527,7 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
         </CardHeader>
         <CardContent>
           <div className="rounded-md border overflow-x-auto">
-            <Table className="min-w-[1880px]">
+            <Table className="min-w-[1940px]">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[60px] text-center">序号</TableHead>
@@ -493,8 +539,8 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
                   <TableHead className="w-[90px]">仓储类型</TableHead>
                   <TableHead className="w-[170px]">所在区域</TableHead>
                   <TableHead className="w-[140px]">详细地址</TableHead>
-                  <TableHead className="w-[100px]">单位性质</TableHead>
-                  <TableHead className="w-[120px]">所属单位</TableHead>
+                  <TableHead className="w-[130px]">单位性质</TableHead>
+                  <TableHead className="w-[150px]">所属单位</TableHead>
                   <TableHead className="w-[80px]">创建人</TableHead>
                   <TableHead className="w-[110px]">发布时间</TableHead>
                   <TableHead className="w-[120px]">运营方式</TableHead>
@@ -558,17 +604,7 @@ export function WarehouseInfo({ roleType = "warehouse-unit" }: WarehouseInfoProp
                     <TableCell className="text-sm">{row.address}</TableCell>
 
                     {/* 单位性质 */}
-                    <TableCell>
-                      {row.unitNature === "中国铁建" ? (
-                        <Badge className="bg-primary/10 text-primary border-primary/20 font-normal">
-                          中国铁建
-                        </Badge>
-                      ) : (
-                        <Badge className="bg-orange-500/10 text-orange-600 border-orange-500/20 font-normal">
-                          合作用户
-                        </Badge>
-                      )}
-                    </TableCell>
+                    <TableCell>{getUnitNatureBadge(row.unitNature)}</TableCell>
 
                     {/* 所属单位 */}
                     <TableCell className="text-sm">{row.belongUnit}</TableCell>
