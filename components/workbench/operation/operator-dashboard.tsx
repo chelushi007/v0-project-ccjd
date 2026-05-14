@@ -80,19 +80,19 @@ const businessShortcuts: Shortcut[] = [
 const todos = [
   {
     id: 1,
-    title: "新基地入驻审核",
-    desc: "中铁十六局 · 番禺南沙临港基地（5,200 ㎡）",
-    type: "审核",
-    level: "high",
+    title: "仓储站点申请审核",
+    desc: "中铁十六局 · 番禺南沙临港基地（5,200 ㎡）资质待核验",
+    type: "站点入驻",
+    level: "urgent",
     time: "刚刚",
   },
   {
     id: 2,
-    title: "服务费收款确认",
-    desc: "中铁十四局 · ¥58,200（仓储租赁分成 6 月）",
-    type: "收款",
+    title: "专运单位申请审核",
+    desc: "粤运通物流有限公司 · 危化品专运资质 + 车辆 12 辆",
+    type: "专运入驻",
     level: "high",
-    time: "10 分钟前",
+    time: "8 分钟前",
   },
   {
     id: 3,
@@ -104,19 +104,43 @@ const todos = [
   },
   {
     id: 4,
-    title: "合同合规审核",
-    desc: "WZXS20260513001 销售合同 · 涉及金额 ¥3.78M",
-    type: "合同",
-    level: "mid",
+    title: "仓储站点退出审核",
+    desc: "中铁十四局-花都北二期 · 申请退出 · 在租合同 3 份未结清",
+    type: "站点退出",
+    level: "high",
     time: "1 小时前",
   },
   {
     id: 5,
+    title: "专运单位退出审核",
+    desc: "穗安运输服务 · 申请注销 · 未完结运单 5 单需移交",
+    type: "专运退出",
+    level: "high",
+    time: "1 小时前",
+  },
+  {
+    id: 6,
+    title: "服务费收款确认",
+    desc: "中铁十四局 · ¥58,200（仓储租赁分成 6 月）",
+    type: "收款",
+    level: "mid",
+    time: "2 小时前",
+  },
+  {
+    id: 7,
+    title: "合同合规审核",
+    desc: "WZXS20260513001 销售合同 · 涉及金额 ¥3.78M",
+    type: "合同",
+    level: "mid",
+    time: "3 小时前",
+  },
+  {
+    id: 8,
     title: "物料目录上架",
     desc: "盘扣式脚手架配件包（新 SKU）· 待平台审核",
     type: "上架",
     level: "mid",
-    time: "2 小时前",
+    time: "4 小时前",
   },
 ]
 
@@ -447,7 +471,7 @@ export function OperatorDashboard() {
           <div>
             <CardTitle className="text-base flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-indigo-600" />
-              交易统计
+              ��易统计
             </CardTitle>
             <CardDescription className="text-xs">
               本月平台流水概览 · 含 GMV、服务费、订单与争议
