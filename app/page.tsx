@@ -21,6 +21,10 @@ export default function HomePage() {
   const [currentPage, setCurrentPage] = useState("home")
   // 发布页面默认tab
   const [publishDefaultTab, setPublishDefaultTab] = useState<"quick" | "detail">("quick")
+  // 智能匹配默认需求类型
+  const [smartMatchInitialType, setSmartMatchInitialType] = useState<
+    "rent" | "material" | "purchase"
+  >("rent")
 
   const handleTabChange = (tab: string, subTab?: string) => {
     setActiveTab(tab)
@@ -64,6 +68,24 @@ export default function HomePage() {
       setCurrentPage("material-publish")
       setActiveSubTab("material-publish")
       return
+    } else if (
+      page === "smart-match-rent" ||
+      page === "smart-match-material" ||
+      page === "smart-match-purchase"
+    ) {
+      const type = page.replace("smart-match-", "") as
+        | "rent"
+        | "material"
+        | "purchase"
+      setSmartMatchInitialType(type)
+      setCurrentPage("smart-match")
+      setActiveSubTab("smart-match")
+      return
+    } else if (page === "smart-match") {
+      setSmartMatchInitialType("rent")
+      setCurrentPage("smart-match")
+      setActiveSubTab("smart-match")
+      return
     }
 
     setCurrentPage(page)
@@ -90,7 +112,12 @@ export default function HomePage() {
         case "warehouse-list":
           return <WarehouseListPage onNavigate={handleNavigate} />
         case "smart-match":
-          return <SmartMatchPage onNavigate={handleNavigate} />
+          return (
+            <SmartMatchPage
+              onNavigate={handleNavigate}
+              initialType={smartMatchInitialType}
+            />
+          )
         case "detail-publish":
           return <DetailPublishPage onNavigate={handleNavigate} defaultTab={publishDefaultTab} />
         case "material-publish":

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Sparkles,
   ChevronRight,
@@ -10,11 +10,13 @@ import {
   CheckCircle,
   Star,
   ArrowRight,
+  ArrowLeft,
   Package,
   Weight,
   ShoppingCart,
   Search,
   Warehouse,
+  X,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -223,6 +225,13 @@ export function SmartMatchPage({
   const [hasResults, setHasResults] = useState(false)
   const [isMatching, setIsMatching] = useState(false)
 
+  // 入口联动：当外部 initialType 变化时同步切换需求类型并重置匹配结果
+  useEffect(() => {
+    setDemandType(initialType)
+    setHasResults(false)
+    setTextDescription("")
+  }, [initialType])
+
   const handleMatch = () => {
     setIsMatching(true)
     setTimeout(() => {
@@ -240,17 +249,43 @@ export function SmartMatchPage({
 
   return (
     <div className="space-y-6">
-      {/* 面包屑导航 */}
-      <div className="flex items-center gap-2 text-sm">
+      {/* 顶部操作栏：返回 + 面包屑 + 关闭 */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 gap-1 shrink-0 bg-transparent"
+            onClick={() => onNavigate?.("home")}
+          >
+            <ArrowLeft className="w-4 h-4" />
+            返回
+          </Button>
+          <div className="flex items-center gap-2 text-sm min-w-0">
+            <Button
+              variant="link"
+              className="p-0 h-auto text-muted-foreground hover:text-primary"
+              onClick={() => onNavigate?.("home")}
+            >
+              首页
+            </Button>
+            <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+            <span className="text-foreground truncate">智能匹配</span>
+            <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+            <Badge variant="secondary" className="shrink-0">
+              {typeConfig[demandType].label}
+            </Badge>
+          </div>
+        </div>
         <Button
-          variant="link"
-          className="p-0 h-auto text-muted-foreground hover:text-primary"
-          onClick={() => onNavigate?.("frontend")}
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 shrink-0 text-muted-foreground hover:text-foreground"
+          onClick={() => onNavigate?.("home")}
+          aria-label="关闭"
         >
-          首页
+          <X className="w-4 h-4" />
         </Button>
-        <ChevronRight className="w-4 h-4 text-muted-foreground" />
-        <span className="text-foreground">智能匹配</span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -58,7 +58,7 @@ export function SmartMatch({ onNavigate }: SmartMatchProps) {
         <Button
           variant="link"
           className="text-primary px-0"
-          onClick={() => onNavigate?.("smart-match")}
+          onClick={() => onNavigate?.("smart-match-rent")}
         >
           进入智能匹配
           <ArrowRight className="w-4 h-4 ml-1" />
@@ -79,7 +79,7 @@ export function SmartMatch({ onNavigate }: SmartMatchProps) {
                 <button
                   key={entry.key}
                   type="button"
-                  onClick={() => onNavigate?.("smart-match")}
+                  onClick={() => onNavigate?.(`smart-match-${entry.key}`)}
                   className={cn(
                     "group rounded-xl border border-border bg-card p-4",
                     "flex flex-col items-start gap-2 transition-all hover:shadow-sm text-left h-full",
