@@ -114,9 +114,6 @@ export function WarehouseOpportunity({ onNavigate }: WarehouseOpportunityProps =
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg font-bold text-primary">{item.price}</span>
                 <span className="text-xs text-muted-foreground">元/m²/天</span>
-                <Badge variant="secondary" className="ml-auto text-xs">
-                  {item.priceStatus}
-                </Badge>
               </div>
 
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
