@@ -44,7 +44,7 @@ export function FrontendPage({ onNavigate }: FrontendPageProps) {
       <TiejianWarehouse onNavigate={onNavigate} />
       <PlatformRecommend onNavigate={onNavigate} />
       <HotSites onNavigate={onNavigate} />
-      <FeaturedTransport />
+      <FeaturedTransport onNavigate={onNavigate} />
       <MaterialRecommend />
 
       {/* 成交公告 */}

@@ -52,7 +52,12 @@ const transportUnits = [
   },
 ]
 
-export function FeaturedTransport() {
+interface FeaturedTransportProps {
+  onNavigate?: (page: string) => void
+}
+
+export function FeaturedTransport({ onNavigate }: FeaturedTransportProps = {}) {
+  const goDetail = () => onNavigate?.("transport-detail")
   return (
     <section className="w-full">
       <div className="flex items-center justify-between mb-4">
@@ -74,6 +79,7 @@ export function FeaturedTransport() {
         {transportUnits.map((unit) => (
           <Card
             key={unit.id}
+            onClick={goDetail}
             className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
           >
             {/* 头部图片 */}
@@ -139,8 +145,15 @@ export function FeaturedTransport() {
                   <Package className="w-4 h-4" />
                   <span>专业运营</span>
                 </div>
-                <Button size="sm" variant="outline">
-                  联系咨询
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    goDetail()
+                  }}
+                >
+                  托管咨询
                 </Button>
               </div>
             </CardContent>
