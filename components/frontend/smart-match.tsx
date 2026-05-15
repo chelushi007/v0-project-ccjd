@@ -3,7 +3,6 @@
 import { Sparkles, ArrowRight, Warehouse, Search, ShoppingCart, Lightbulb } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
 interface SmartMatchProps {
@@ -51,18 +50,7 @@ export function SmartMatch({ onNavigate }: SmartMatchProps) {
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-accent" />
           <h2 className="text-lg font-semibold text-foreground">智能匹配</h2>
-          <Badge variant="secondary" className="bg-accent/10 text-accent">
-            AI 推荐
-          </Badge>
         </div>
-        <Button
-          variant="link"
-          className="text-primary px-0"
-          onClick={() => onNavigate?.("smart-match-rent")}
-        >
-          进入智能匹配
-          <ArrowRight className="w-4 h-4 ml-1" />
-        </Button>
       </div>
 
       {/* 单卡片包裹三入口，撑满与左侧同高 */}
