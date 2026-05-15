@@ -29,7 +29,7 @@ interface MaterialPublishPageProps {
   onNavigate: (page: string) => void
 }
 
-// 循环物料库模拟数据
+// 循环物资库模拟数据
 const materialLibrary = [
   {
     id: "M001",
@@ -121,7 +121,7 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
   const [contactPhone, setContactPhone] = useState("")
   const [agreed, setAgreed] = useState(false)
 
-  // 每条物料出租的价格和说明状态
+  // 每条物资出租的价格和说明状态
   const [rentPrices, setRentPrices] = useState<Record<string, string>>({})
   const [rentUnits, setRentUnits] = useState<Record<string, string>>({})
   const [rentRemarks, setRentRemarks] = useState<Record<string, string>>({})
@@ -161,11 +161,11 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
           className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="w-4 h-4" />
-          {step === "form" ? "返回选择物料" : "返回"}
+          {step === "form" ? "返回选择物资" : "返回"}
         </Button>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span className={step === "select" ? "text-primary font-medium" : ""}>
-            1. 选择物料
+            1. 选择物资
           </span>
           <span className="text-border">›</span>
           <span className={step === "form" ? "text-primary font-medium" : ""}>
@@ -176,12 +176,12 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
 
       {step === "select" ? (
         <>
-          {/* 步骤一：从循环物料库选择物料 */}
+          {/* 步骤一：从循环物资库选择物资 */}
           <Card>
             <CardContent className="p-6">
-              <SectionTitle title="从循环物料库选择物料" />
+              <SectionTitle title="从循环物资库选择物资" />
               <p className="text-sm text-muted-foreground mb-4">
-                请选择您要发布出租的物料，可多选
+                请选择您要发布出租的物资，可多选
               </p>
 
               {/* 搜索和筛选 */}
@@ -189,7 +189,7 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
                 <div className="relative flex-1 max-w-xs">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
-                    placeholder="搜索物料名称、规格..."
+                    placeholder="搜索物资名称、规格..."
                     className="pl-9"
                     value={searchKeyword}
                     onChange={e => setSearchKeyword(e.target.value)}
@@ -209,14 +209,14 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
                 </div>
               </div>
 
-              {/* 物料列表 */}
+              {/* 物资列表 */}
               <div className="border rounded-lg overflow-hidden">
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-muted/50">
                       <TableHead className="w-10"></TableHead>
                       <TableHead className="w-[56px] text-center">序号</TableHead>
-                      <TableHead>物料名称</TableHead>
+                      <TableHead>物资名称</TableHead>
                       <TableHead>类别</TableHead>
                       <TableHead>规格</TableHead>
                       <TableHead>可租数量</TableHead>
@@ -277,7 +277,7 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
                     <>
                       <CheckCircle2 className="w-4 h-4 text-accent" />
                       <span className="text-foreground">
-                        已选择 <span className="font-semibold text-primary">{selectedMaterials.length}</span> 条物料
+                        已选择 <span className="font-semibold text-primary">{selectedMaterials.length}</span> 条物资
                       </span>
                       <div className="flex gap-1 flex-wrap ml-2">
                         {selectedItems.map(m => (
@@ -292,7 +292,7 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
                       </div>
                     </>
                   ) : (
-                    <span className="text-muted-foreground">请至少选择一条物料</span>
+                    <span className="text-muted-foreground">请至少选择一条物资</span>
                   )}
                 </div>
                 <Button
@@ -309,10 +309,10 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
         <>
           {/* 步骤二：填写发布信息 */}
 
-          {/* 已选物料及出租信息 */}
+          {/* 已选物资及出租信息 */}
           <Card>
             <CardContent className="p-6">
-              <SectionTitle title="出租物料信息" />
+              <SectionTitle title="出租物资信息" />
               <div className="space-y-4">
                 {selectedItems.map(material => (
                   <div key={material.id} className="border border-border rounded-lg p-4 bg-muted/20">
@@ -412,7 +412,7 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
                   作为服务费用。
                 </p>
                 <p className="mt-2">
-                  物料出租发布后，平台将在信息审核通过后对外展示。承租方提交申请后，双方可在线沟通确认，平台提供合同签署及结算服务。
+                  物资出租发布后，平台将在信息审核通过后对外展示。承租方提交申请后，双方可在线沟通确认，平台提供合同签署及结算服务。
                 </p>
               </div>
               <label className="flex items-center gap-2 cursor-pointer">
@@ -423,7 +423,7 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
                 <span className="text-sm">
                   我已阅读并同意
                   <Button variant="link" className="p-0 h-auto text-sm text-primary">
-                    《物料租赁条例》
+                    《物资租赁条例》
                   </Button>
                 </span>
               </label>

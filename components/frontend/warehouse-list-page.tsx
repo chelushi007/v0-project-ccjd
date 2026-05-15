@@ -96,7 +96,7 @@ const warehouseData = [
   },
   {
     id: 6,
-    name: "中铁二十四局中山火炬物料仓储基地",
+    name: "中铁二十四局中山火炬物资仓储基地",
     type: "综合仓储",
     location: "广东省中山市火炬开发区",
     rentType: "自主出租",

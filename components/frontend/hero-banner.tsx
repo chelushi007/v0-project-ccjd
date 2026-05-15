@@ -9,14 +9,14 @@ const bannerSlides = [
   {
     id: 1,
     title: "智慧仓储 · 资源共享",
-    subtitle: "打造中国铁建循环物料共享平台",
+    subtitle: "打造中国铁建循环物资共享平台",
     description: "整合全国仓储资源，提供一站式仓储出租、委托运营、智能匹配服务",
     image: "linear-gradient(135deg, oklch(0.45 0.15 250) 0%, oklch(0.35 0.12 270) 100%)",
   },
   {
     id: 2,
-    title: "物料托管 · 专业运营",
-    subtitle: "让闲置物料创造更大价值",
+    title: "物资托管 · 专业运营",
+    subtitle: "让闲置物资创造更大价值",
     description: "分成模式、整租模式灵活选择，专业团队全程运营管理",
     image: "linear-gradient(135deg, oklch(0.55 0.18 145) 0%, oklch(0.45 0.15 160) 100%)",
   },

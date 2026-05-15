@@ -28,7 +28,7 @@ const materials = [
     price: "800",
     unit: "元/方",
     condition: "七成新",
-    supplier: "中铁建物料华南专业运营有限公司",
+    supplier: "中铁建物资华南专业运营有限公司",
     views: 312,
     publishTime: "3小时前",
     features: ["现货供应", "可配送"],
@@ -70,11 +70,11 @@ export function MaterialRecommend() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Recycle className="w-5 h-5 text-accent" />
-          <h2 className="text-lg font-semibold text-foreground">物料推荐</h2>
-          <Badge variant="secondary" className="ml-2 bg-accent/10 text-accent">循环物料</Badge>
+          <h2 className="text-lg font-semibold text-foreground">闲置物资</h2>
+          <Badge variant="secondary" className="ml-2 bg-accent/10 text-accent">循环复用</Badge>
         </div>
         <Button variant="link" className="text-primary">
-          更多物料
+          查看更多
           <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
       </div>

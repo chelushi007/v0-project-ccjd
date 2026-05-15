@@ -36,7 +36,7 @@ const opportunities = [
   },
   {
     id: 3,
-    name: "中铁建东莞虎门大型物料堆场",
+    name: "中铁建东莞虎门大型物资堆场",
     location: "广东省东莞市虎门镇",
     type: "露天堆场",
     area: "15000",

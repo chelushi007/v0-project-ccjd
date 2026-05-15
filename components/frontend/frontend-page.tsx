@@ -20,13 +20,13 @@ interface FrontendPageProps {
 export function FrontendPage({ onNavigate }: FrontendPageProps) {
   return (
     <div className="space-y-8">
-      {/* Banner轮播图 */}
+      {/* Banner 轮播图 */}
       <HeroBanner />
 
       {/* 搜索引擎 */}
       <SearchEngine onNavigate={onNavigate} />
 
-      {/* 需求发布 + 智能推荐 */}
+      {/* 需求发布 + 智能匹配 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <DemandPublish onNavigate={onNavigate} />
         <SmartMatch onNavigate={onNavigate} />
@@ -35,23 +35,13 @@ export function FrontendPage({ onNavigate }: FrontendPageProps) {
       {/* 仓储地图 */}
       <WarehouseMap onNavigate={onNavigate} />
 
-      {/* 仓储商机 */}
+      {/* 资讯板块（按要求顺序：仓储商机 → 铁建仓储 → 平台推荐 → 热门站点 → 精选专运单位 → 闲置物资） */}
       <WarehouseOpportunity />
-
-      {/* 物料推荐 */}
-      <MaterialRecommend />
-
-      {/* 平台推荐 */}
-      <PlatformRecommend />
-
-      {/* 铁建仓储 */}
       <TiejianWarehouse />
-
-      {/* 热门站点 */}
+      <PlatformRecommend />
       <HotSites />
-
-      {/* 精选专运单位 */}
       <FeaturedTransport />
+      <MaterialRecommend />
 
       {/* 成交公告 */}
       <TransactionNotice />
@@ -59,7 +49,7 @@ export function FrontendPage({ onNavigate }: FrontendPageProps) {
       {/* 页脚 */}
       <footer className="py-8 border-t border-border">
         <div className="text-center text-sm text-muted-foreground">
-          <p>提供专业的仓储资源服务，助力物料循环利用</p>
+          <p>提供专业的仓储资源服务，助力物资循环利用</p>
         </div>
       </footer>
     </div>

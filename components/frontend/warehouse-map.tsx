@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps"
+import { cn } from "@/lib/utils"
 
 interface WarehouseMapProps {
   onNavigate?: (page: string) => void
@@ -14,42 +15,50 @@ interface WarehouseMapProps {
 // 中国地图 GeoJSON URL
 const CHINA_GEO_URL = "https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json"
 
-// 省份仓储数据
-const provinceData: Record<string, { warehouses: number; totalArea: number; rentableArea: number; infoCount: number }> = {
-  "广东省": { warehouses: 23, totalArea: 23422, rentableArea: 20110, infoCount: 897 },
-  "福建省": { warehouses: 15, totalArea: 12000, rentableArea: 8500, infoCount: 342 },
-  "江西省": { warehouses: 10, totalArea: 7800, rentableArea: 5600, infoCount: 186 },
-  "湖南省": { warehouses: 14, totalArea: 10500, rentableArea: 7800, infoCount: 298 },
-  "湖北省": { warehouses: 18, totalArea: 15000, rentableArea: 11200, infoCount: 412 },
-  "河南省": { warehouses: 20, totalArea: 18000, rentableArea: 14000, infoCount: 523 },
-  "山东省": { warehouses: 25, totalArea: 22000, rentableArea: 17500, infoCount: 645 },
-  "江苏省": { warehouses: 28, totalArea: 25000, rentableArea: 19800, infoCount: 712 },
-  "浙江省": { warehouses: 22, totalArea: 19500, rentableArea: 15200, infoCount: 534 },
-  "上海市": { warehouses: 30, totalArea: 28000, rentableArea: 21000, infoCount: 823 },
-  "北京市": { warehouses: 35, totalArea: 32000, rentableArea: 24500, infoCount: 956 },
-  "四川省": { warehouses: 21, totalArea: 18500, rentableArea: 14200, infoCount: 478 },
-  "辽宁省": { warehouses: 18, totalArea: 15500, rentableArea: 11800, infoCount: 367 },
-  "新疆维吾尔自治区": { warehouses: 6, totalArea: 4500, rentableArea: 3200, infoCount: 89 },
-  "西藏自治区": { warehouses: 2, totalArea: 1200, rentableArea: 800, infoCount: 23 },
-  "内蒙古自治区": { warehouses: 7, totalArea: 5200, rentableArea: 3800, infoCount: 112 },
-  "黑龙江省": { warehouses: 14, totalArea: 11500, rentableArea: 8500, infoCount: 278 },
-  "云南省": { warehouses: 11, totalArea: 8000, rentableArea: 5800, infoCount: 198 },
-  "广西壮族自治区": { warehouses: 12, totalArea: 8500, rentableArea: 6200, infoCount: 234 },
-  "海南省": { warehouses: 6, totalArea: 4200, rentableArea: 3100, infoCount: 87 },
-  "天津市": { warehouses: 16, totalArea: 13000, rentableArea: 9800, infoCount: 312 },
-  "重庆市": { warehouses: 19, totalArea: 16000, rentableArea: 12000, infoCount: 398 },
-  "河北省": { warehouses: 22, totalArea: 19000, rentableArea: 14500, infoCount: 487 },
-  "山西省": { warehouses: 12, totalArea: 9500, rentableArea: 6800, infoCount: 212 },
-  "陕西省": { warehouses: 15, totalArea: 12500, rentableArea: 9000, infoCount: 298 },
-  "甘肃省": { warehouses: 8, totalArea: 6000, rentableArea: 4200, infoCount: 134 },
-  "青海省": { warehouses: 4, totalArea: 2800, rentableArea: 1800, infoCount: 56 },
-  "宁夏回族自治区": { warehouses: 5, totalArea: 3500, rentableArea: 2400, infoCount: 78 },
-  "吉林省": { warehouses: 13, totalArea: 10000, rentableArea: 7200, infoCount: 234 },
-  "安徽省": { warehouses: 17, totalArea: 14000, rentableArea: 10500, infoCount: 356 },
-  "贵州省": { warehouses: 9, totalArea: 6800, rentableArea: 4800, infoCount: 156 },
-  "台湾省": { warehouses: 0, totalArea: 0, rentableArea: 0, infoCount: 0 },
-  "香港特别行政区": { warehouses: 8, totalArea: 5500, rentableArea: 4000, infoCount: 145 },
-  "澳门特别行政区": { warehouses: 2, totalArea: 800, rentableArea: 500, infoCount: 32 },
+type ProvinceMetrics = {
+  warehouses: number
+  totalArea: number
+  rentableArea: number
+  transactionAmount: number // 万元
+  publishCount: number
+}
+
+// 省份仓储数据（含交易金额：万元 / 发布单数）
+const provinceData: Record<string, ProvinceMetrics> = {
+  广东省: { warehouses: 23, totalArea: 23422, rentableArea: 20110, transactionAmount: 18650, publishCount: 897 },
+  福建省: { warehouses: 15, totalArea: 12000, rentableArea: 8500, transactionAmount: 6420, publishCount: 342 },
+  江西省: { warehouses: 10, totalArea: 7800, rentableArea: 5600, transactionAmount: 3210, publishCount: 186 },
+  湖南省: { warehouses: 14, totalArea: 10500, rentableArea: 7800, transactionAmount: 5180, publishCount: 298 },
+  湖北省: { warehouses: 18, totalArea: 15000, rentableArea: 11200, transactionAmount: 7820, publishCount: 412 },
+  河南省: { warehouses: 20, totalArea: 18000, rentableArea: 14000, transactionAmount: 9650, publishCount: 523 },
+  山东省: { warehouses: 25, totalArea: 22000, rentableArea: 17500, transactionAmount: 12450, publishCount: 645 },
+  江苏省: { warehouses: 28, totalArea: 25000, rentableArea: 19800, transactionAmount: 15320, publishCount: 712 },
+  浙江省: { warehouses: 22, totalArea: 19500, rentableArea: 15200, transactionAmount: 11280, publishCount: 534 },
+  上海市: { warehouses: 30, totalArea: 28000, rentableArea: 21000, transactionAmount: 19840, publishCount: 823 },
+  北京市: { warehouses: 35, totalArea: 32000, rentableArea: 24500, transactionAmount: 22680, publishCount: 956 },
+  四川省: { warehouses: 21, totalArea: 18500, rentableArea: 14200, transactionAmount: 9420, publishCount: 478 },
+  辽宁省: { warehouses: 18, totalArea: 15500, rentableArea: 11800, transactionAmount: 6850, publishCount: 367 },
+  新疆维吾尔自治区: { warehouses: 6, totalArea: 4500, rentableArea: 3200, transactionAmount: 1280, publishCount: 89 },
+  西藏自治区: { warehouses: 2, totalArea: 1200, rentableArea: 800, transactionAmount: 320, publishCount: 23 },
+  内蒙古自治区: { warehouses: 7, totalArea: 5200, rentableArea: 3800, transactionAmount: 1820, publishCount: 112 },
+  黑龙江省: { warehouses: 14, totalArea: 11500, rentableArea: 8500, transactionAmount: 4920, publishCount: 278 },
+  云南省: { warehouses: 11, totalArea: 8000, rentableArea: 5800, transactionAmount: 3450, publishCount: 198 },
+  广西壮族自治区: { warehouses: 12, totalArea: 8500, rentableArea: 6200, transactionAmount: 3820, publishCount: 234 },
+  海南省: { warehouses: 6, totalArea: 4200, rentableArea: 3100, transactionAmount: 1480, publishCount: 87 },
+  天津市: { warehouses: 16, totalArea: 13000, rentableArea: 9800, transactionAmount: 5680, publishCount: 312 },
+  重庆市: { warehouses: 19, totalArea: 16000, rentableArea: 12000, transactionAmount: 7280, publishCount: 398 },
+  河北省: { warehouses: 22, totalArea: 19000, rentableArea: 14500, transactionAmount: 8920, publishCount: 487 },
+  山西省: { warehouses: 12, totalArea: 9500, rentableArea: 6800, transactionAmount: 3520, publishCount: 212 },
+  陕西省: { warehouses: 15, totalArea: 12500, rentableArea: 9000, transactionAmount: 5180, publishCount: 298 },
+  甘肃省: { warehouses: 8, totalArea: 6000, rentableArea: 4200, transactionAmount: 2120, publishCount: 134 },
+  青海省: { warehouses: 4, totalArea: 2800, rentableArea: 1800, transactionAmount: 720, publishCount: 56 },
+  宁夏回族自治区: { warehouses: 5, totalArea: 3500, rentableArea: 2400, transactionAmount: 1080, publishCount: 78 },
+  吉林省: { warehouses: 13, totalArea: 10000, rentableArea: 7200, transactionAmount: 4280, publishCount: 234 },
+  安徽省: { warehouses: 17, totalArea: 14000, rentableArea: 10500, transactionAmount: 6420, publishCount: 356 },
+  贵州省: { warehouses: 9, totalArea: 6800, rentableArea: 4800, transactionAmount: 2680, publishCount: 156 },
+  台湾省: { warehouses: 0, totalArea: 0, rentableArea: 0, transactionAmount: 0, publishCount: 0 },
+  香港特别行政区: { warehouses: 8, totalArea: 5500, rentableArea: 4000, transactionAmount: 3920, publishCount: 145 },
+  澳门特别行政区: { warehouses: 2, totalArea: 800, rentableArea: 500, transactionAmount: 480, publishCount: 32 },
 }
 
 // 仓储列表数据
@@ -57,7 +66,6 @@ const warehouseList = [
   {
     id: 1,
     name: "新出2字头 黄埔带16-32吨行吊钢构18000平可分租",
-    type: "平面仓储",
     location: "广东省-广州市-黄埔香雪",
     rentType: "委托出租",
     price: "0.56",
@@ -67,8 +75,7 @@ const warehouseList = [
   {
     id: 2,
     name: "深圳宝安立体库 自动化设备齐全",
-    type: "立体库",
-    location: "广东省-广州市-番禺万博",
+    location: "广东省-深圳市-宝安区",
     rentType: "自主出租",
     price: "0.52",
     area: "300",
@@ -77,8 +84,7 @@ const warehouseList = [
   {
     id: 3,
     name: "东莞虎门港 大型堆场近港口",
-    type: "平面仓储",
-    location: "广东省-广州市-黄埔香雪",
+    location: "广东省-东莞市-虎门镇",
     rentType: "委托出租",
     price: "0.56",
     area: "800",
@@ -86,21 +92,57 @@ const warehouseList = [
   },
 ]
 
-// 根据仓库数量获取颜色
-function getProvinceColor(warehouses: number, isSelected: boolean, isHovered: boolean) {
-  if (isSelected) return "#1e88e5"
-  if (isHovered) return "#42a5f5"
-  if (warehouses >= 25) return "#1976d2"
-  if (warehouses >= 20) return "#2196f3"
-  if (warehouses >= 15) return "#42a5f5"
-  if (warehouses >= 10) return "#64b5f6"
-  if (warehouses >= 5) return "#90caf9"
-  return "#bbdefb"
+type HeatmapMode = "warehouses" | "transactionAmount"
+
+// 热力分档（按 5 档梯度上色）
+function getHeatColor(value: number, mode: HeatmapMode, isSelected: boolean, isHovered: boolean) {
+  if (isSelected) return "#1d4ed8"
+  if (isHovered) return "#3b82f6"
+
+  if (mode === "warehouses") {
+    if (value >= 25) return "#1e40af"
+    if (value >= 18) return "#2563eb"
+    if (value >= 12) return "#60a5fa"
+    if (value >= 6) return "#93c5fd"
+    if (value > 0) return "#dbeafe"
+    return "#f1f5f9"
+  }
+  // transactionAmount (万元)
+  if (value >= 15000) return "#9a3412"
+  if (value >= 8000) return "#ea580c"
+  if (value >= 4000) return "#fb923c"
+  if (value >= 1500) return "#fdba74"
+  if (value > 0) return "#fed7aa"
+  return "#f1f5f9"
+}
+
+const heatLegend: Record<HeatmapMode, { label: string; bins: { color: string; label: string }[] }> = {
+  warehouses: {
+    label: "仓储数量（座）",
+    bins: [
+      { color: "#dbeafe", label: "1-5" },
+      { color: "#93c5fd", label: "6-11" },
+      { color: "#60a5fa", label: "12-17" },
+      { color: "#2563eb", label: "18-24" },
+      { color: "#1e40af", label: "≥25" },
+    ],
+  },
+  transactionAmount: {
+    label: "交易金额（万元）",
+    bins: [
+      { color: "#fed7aa", label: "<1500" },
+      { color: "#fdba74", label: "1500-3999" },
+      { color: "#fb923c", label: "4000-7999" },
+      { color: "#ea580c", label: "8000-14999" },
+      { color: "#9a3412", label: "≥15000" },
+    ],
+  },
 }
 
 export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
   const [selectedProvince, setSelectedProvince] = useState<string | null>("广东省")
   const [hoveredProvince, setHoveredProvince] = useState<string | null>(null)
+  const [heatmapMode, setHeatmapMode] = useState<HeatmapMode>("warehouses")
 
   // 计算总计数据
   const totalStats = useMemo(() => {
@@ -109,11 +151,13 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
       warehouses: values.reduce((sum, p) => sum + p.warehouses, 0),
       totalArea: values.reduce((sum, p) => sum + p.totalArea, 0),
       rentableArea: values.reduce((sum, p) => sum + p.rentableArea, 0),
-      infoCount: values.reduce((sum, p) => sum + p.infoCount, 0),
+      transactionAmount: values.reduce((sum, p) => sum + p.transactionAmount, 0),
+      publishCount: values.reduce((sum, p) => sum + p.publishCount, 0),
     }
   }, [])
 
   const displayProvince = hoveredProvince || selectedProvince
+  const displayMetrics = displayProvince ? provinceData[displayProvince] : null
 
   return (
     <section className="w-full">
@@ -128,46 +172,65 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
         </Button>
       </div>
 
-      <div className="grid grid-cols-[180px_1fr_260px] gap-0 h-[420px]">
-        {/* 左侧统计面板 - 深蓝色背景 */}
-        <div className="bg-[#1a365d] text-white rounded-l-lg p-4 flex flex-col h-full">
-          <h3 className="text-[#60a5fa] font-medium mb-4 text-sm">全国仓库统计</h3>
-          
+      <div className="grid grid-cols-[200px_1fr_280px] gap-0 h-[460px]">
+        {/* 左侧：全国统计 5 项 */}
+        <div className="bg-[#0f2742] text-white rounded-l-lg p-4 flex flex-col h-full">
+          <h3 className="text-[#60a5fa] font-medium mb-4 text-sm">全国仓储统计</h3>
+
           <div className="space-y-4 flex-1">
-            <div>
-              <div className="text-3xl font-bold text-[#60a5fa]">{totalStats.warehouses.toLocaleString()}</div>
-              <div className="text-xs text-white/70 mt-1">总仓库数量</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-[#60a5fa]">{(totalStats.totalArea / 10000).toFixed(2)}</div>
-              <div className="text-xs text-white/70 mt-1">总面积(万m²)</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-[#60a5fa]">{(totalStats.rentableArea / 10000).toFixed(2)}</div>
-              <div className="text-xs text-white/70 mt-1">可出租面积(万m²)</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-[#60a5fa]">{totalStats.infoCount.toLocaleString()}</div>
-              <div className="text-xs text-white/70 mt-1">发布信息数</div>
-            </div>
+            <StatItem value={totalStats.warehouses.toLocaleString()} label="仓储数量（座）" />
+            <StatItem value={(totalStats.totalArea / 10000).toFixed(2)} label="总面积（万 m²）" />
+            <StatItem value={(totalStats.rentableArea / 10000).toFixed(2)} label="可出租面积（万 m²）" />
+            <StatItem value={(totalStats.transactionAmount / 10000).toFixed(2)} label="交易金额（亿元）" />
+            <StatItem value={totalStats.publishCount.toLocaleString()} label="发布单数（条）" />
           </div>
 
-          <div className="pt-3 border-t border-white/20 mt-auto">
-            <h4 className="text-[#60a5fa] font-medium mb-1 text-xs">选择省份查看详情</h4>
-            <p className="text-xs text-white/60 leading-relaxed">
-              鼠标移至地图上的省份可查看该省份的仓库统计情况
+          <div className="pt-3 border-t border-white/15 mt-auto">
+            <p className="text-[11px] text-white/60 leading-relaxed">
+              鼠标悬停地图省份可查看该地区的明细数据
             </p>
           </div>
         </div>
 
-        {/* 中间地图区域 */}
+        {/* 中间：地图 */}
         <div className="bg-[#e8f4fc] border-y border-border relative h-full overflow-hidden">
+          {/* 热力图模式切换 */}
+          <div className="absolute top-3 left-3 z-20 flex items-center gap-1 bg-white/95 border border-border rounded-md p-0.5 shadow-sm">
+            {(["warehouses", "transactionAmount"] as const).map((mode) => (
+              <button
+                key={mode}
+                onClick={() => setHeatmapMode(mode)}
+                className={cn(
+                  "px-3 py-1 text-xs rounded transition-colors",
+                  heatmapMode === mode
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted",
+                )}
+              >
+                {mode === "warehouses" ? "按仓储数量" : "按交易金额"}
+              </button>
+            ))}
+          </div>
+
+          {/* 图例 */}
+          <div className="absolute bottom-3 left-3 z-20 bg-white/95 border border-border rounded-md px-3 py-2 shadow-sm">
+            <div className="text-[11px] text-muted-foreground mb-1.5">{heatLegend[heatmapMode].label}</div>
+            <div className="flex items-center gap-2">
+              {heatLegend[heatmapMode].bins.map((bin) => (
+                <div key={bin.label} className="flex items-center gap-1">
+                  <span
+                    className="w-3 h-3 rounded-sm border border-black/5"
+                    style={{ backgroundColor: bin.color }}
+                  />
+                  <span className="text-[10px] text-foreground/70">{bin.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <ComposableMap
             projection="geoMercator"
-            projectionConfig={{
-              scale: 420,
-              center: [105, 32],
-            }}
+            projectionConfig={{ scale: 460, center: [105, 32] }}
             style={{ width: "100%", height: "100%" }}
           >
             <ZoomableGroup center={[105, 32]} zoom={1} minZoom={0.5} maxZoom={4}>
@@ -175,7 +238,8 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                 {({ geographies }) =>
                   geographies.map((geo) => {
                     const provinceName = geo.properties.name
-                    const data = provinceData[provinceName] || { warehouses: 0 }
+                    const data = provinceData[provinceName]
+                    const metricValue = data ? data[heatmapMode] : 0
                     const isSelected = selectedProvince === provinceName
                     const isHovered = hoveredProvince === provinceName
 
@@ -183,7 +247,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                       <Geography
                         key={geo.rsmKey}
                         geography={geo}
-                        fill={getProvinceColor(data.warehouses, isSelected, isHovered)}
+                        fill={getHeatColor(metricValue, heatmapMode, isSelected, isHovered)}
                         stroke="#ffffff"
                         strokeWidth={0.8}
                         style={{
@@ -193,9 +257,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                         }}
                         onMouseEnter={() => setHoveredProvince(provinceName)}
                         onMouseLeave={() => setHoveredProvince(null)}
-                        onClick={() => {
-                          setSelectedProvince(provinceName)
-                        }}
+                        onClick={() => setSelectedProvince(provinceName)}
                       />
                     )
                   })
@@ -205,40 +267,37 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
           </ComposableMap>
 
           {/* 省份信息卡片 */}
-          {displayProvince && provinceData[displayProvince] && (
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/95 border border-gray-200 rounded-lg shadow-lg p-4 min-w-[200px] z-10 pointer-events-none">
-              <h4 className="font-bold text-base mb-3 text-gray-800">{displayProvince}</h4>
+          {displayProvince && displayMetrics && (
+            <div className="absolute top-3 right-3 bg-white/97 border border-border rounded-lg shadow-lg p-4 min-w-[230px] z-10 pointer-events-none">
+              <h4 className="font-bold text-base mb-3 text-foreground">{displayProvince}</h4>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">共享仓数量：</span>
-                  <span className="font-semibold text-blue-600">{provinceData[displayProvince].warehouses}座</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">总面积：</span>
-                  <span className="font-semibold">{provinceData[displayProvince].totalArea.toLocaleString()}m²</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">可出租面积：</span>
-                  <span className="font-semibold text-blue-600">{provinceData[displayProvince].rentableArea.toLocaleString()}m²</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">发布信息数：</span>
-                  <span className="font-semibold">{provinceData[displayProvince].infoCount}</span>
-                </div>
+                <DetailRow label="仓储数量" value={`${displayMetrics.warehouses} 座`} highlight />
+                <DetailRow label="总面积" value={`${displayMetrics.totalArea.toLocaleString()} m²`} />
+                <DetailRow
+                  label="可出租面积"
+                  value={`${displayMetrics.rentableArea.toLocaleString()} m²`}
+                  highlight
+                />
+                <DetailRow
+                  label="交易金额"
+                  value={`${displayMetrics.transactionAmount.toLocaleString()} 万元`}
+                />
+                <DetailRow label="发布单数" value={`${displayMetrics.publishCount.toLocaleString()} 条`} />
               </div>
             </div>
           )}
-
         </div>
 
-        {/* 右侧仓储列表 */}
+        {/* 右侧：仓储列表 */}
         <Card className="rounded-l-none rounded-r-lg border-l-0 h-full flex flex-col">
           <CardContent className="p-3 flex-1 flex flex-col h-full overflow-hidden">
             <div className="flex-1 space-y-2 overflow-auto">
               {warehouseList.map((warehouse) => (
-                <div key={warehouse.id} className="border border-border rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer bg-card">
+                <div
+                  key={warehouse.id}
+                  className="border border-border rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer bg-card"
+                >
                   <div className="flex">
-                    {/* 图片 */}
                     <div className="w-20 h-20 bg-muted relative flex-shrink-0">
                       <div className="absolute inset-0 flex items-center justify-center">
                         <Building2 className="w-5 h-5 text-muted-foreground/30" />
@@ -247,7 +306,6 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                         出租
                       </Badge>
                     </div>
-                    {/* 信息 */}
                     <div className="flex-1 p-2 min-w-0">
                       <Badge variant="outline" className="text-[10px] mb-1 px-1 py-0">
                         {warehouse.rentType}
@@ -259,11 +317,14 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                       <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-1">
                         <Maximize2 className="w-3 h-3" />
                         <span>{warehouse.area}m²</span>
-                        <Badge variant="secondary" className="text-[10px] bg-green-100 text-green-600 px-1 py-0 ml-1">
+                        <Badge
+                          variant="secondary"
+                          className="text-[10px] bg-green-100 text-green-600 px-1 py-0 ml-1"
+                        >
                           {warehouse.priceStatus}
                         </Badge>
                       </div>
-                      <div className="text-[10px] text-muted-foreground line-clamp-1">
+                      <div className="text-[10px] text-muted-foreground line-clamp-2 leading-tight">
                         {warehouse.name}
                       </div>
                     </div>
@@ -272,20 +333,37 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
               ))}
             </div>
 
-            {/* 分页和更多 */}
             <div className="pt-2 mt-auto border-t border-border">
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <span className="w-2 h-2 rounded-full bg-primary"></span>
-                <span className="w-2 h-2 rounded-full bg-gray-300"></span>
-                <span className="w-2 h-2 rounded-full bg-gray-300"></span>
-              </div>
-              <Button variant="link" className="w-full text-primary text-xs h-6" onClick={() => onNavigate?.("warehouse-list")}>
-                更多 &gt;&gt;
+              <Button
+                variant="link"
+                className="w-full text-primary text-xs h-6"
+                onClick={() => onNavigate?.("warehouse-list")}
+              >
+                查看更多
+                <ArrowRight className="w-3 h-3 ml-1" />
               </Button>
             </div>
           </CardContent>
         </Card>
       </div>
     </section>
+  )
+}
+
+function StatItem({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <div className="text-2xl font-bold text-[#60a5fa] leading-none">{value}</div>
+      <div className="text-[11px] text-white/70 mt-1.5">{label}</div>
+    </div>
+  )
+}
+
+function DetailRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+  return (
+    <div className="flex justify-between gap-3">
+      <span className="text-muted-foreground">{label}：</span>
+      <span className={cn("font-semibold", highlight ? "text-primary" : "text-foreground")}>{value}</span>
+    </div>
   )
 }

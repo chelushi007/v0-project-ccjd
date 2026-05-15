@@ -73,7 +73,7 @@ const warehouseResults = [
   },
 ]
 
-// 物料匹配结果
+// 物资匹配结果
 const materialResults = [
   {
     id: 1,
@@ -90,7 +90,7 @@ const materialResults = [
   {
     id: 2,
     name: "建筑钢管脚手架",
-    provider: "中铁建物料华南专业运营有限公司",
+    provider: "中铁建物资华南专业运营有限公司",
     location: "广东省深圳市宝安区",
     materialType: "脚手架类",
     quantity: "2000套可租",
@@ -175,7 +175,7 @@ export function SmartMatchPage({ onNavigate, initialType = "rent" }: SmartMatchP
                     onClick={() => setDemandType("material")}
                   >
                     <span className="text-xl">🔍</span>
-                    <span>物料寻找</span>
+                    <span>物资寻找</span>
                   </Button>
                   <Button
                     variant={demandType === "rent" ? "default" : "outline"}
@@ -210,10 +210,10 @@ export function SmartMatchPage({ onNavigate, initialType = "rent" }: SmartMatchP
                   </div>
 
                   <div className="space-y-2">
-                    <Label>物料类型</Label>
+                    <Label>物资类型</Label>
                     <Select>
                       <SelectTrigger>
-                        <SelectValue placeholder="选择物料类型" />
+                        <SelectValue placeholder="选择物资类型" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="template">模板类</SelectItem>
@@ -281,7 +281,7 @@ export function SmartMatchPage({ onNavigate, initialType = "rent" }: SmartMatchP
               <div className="space-y-2 mb-6">
                 <Label>需求描述（支持自然语言）</Label>
                 <Textarea
-                  placeholder="例如：我需要在广州番禺区找一个3000平方米左右的仓库，最好有铁路专用线，用于存放建材物料..."
+                  placeholder="例如：我需要在广州番禺区找一个3000平方米左右的仓库，最好有铁路专用线，用于存放建材物资..."
                   value={textDescription}
                   onChange={(e) => setTextDescription(e.target.value)}
                   className="min-h-[120px]"
@@ -326,18 +326,18 @@ export function SmartMatchPage({ onNavigate, initialType = "rent" }: SmartMatchP
                 </h3>
                 <p className="text-sm text-muted-foreground text-center max-w-md">
                   {demandType === "material" 
-                    ? "支持自然语言描述，系统将根据区域、物料类型、数量等维度进行智能分析，为您推荐最合适的循环物料"
+                    ? "支持自然语言描述，系统将根据区域、物资类型、数量等维度进行智能分析，为您推荐最合适的循环物资"
                     : "支持自然语言描述，系统将根据区域、类型、面积、配套设施等维度进行智能分析，为您推荐最合适的仓储资源"
                   }
                 </p>
               </CardContent>
             </Card>
           ) : demandType === "material" ? (
-            // 物料匹配结果
+            // 物资匹配结果
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-semibold">物料匹配结果</h3>
+                  <h3 className="text-lg font-semibold">物资匹配结果</h3>
                   <Badge variant="secondary">
                     找到 {materialResults.length} 个匹配
                   </Badge>

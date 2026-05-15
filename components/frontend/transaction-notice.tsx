@@ -17,7 +17,7 @@ const transactions = [
   {
     id: 1,
     name: "中铁建广州南沙仓储基地租赁项目",
-    lessor: "中铁建物料华南仓储有限公司",
+    lessor: "中铁建物资华南仓储有限公司",
     lessee: "中铁十一局广深城际项目部",
     amount: "360万元",
     date: "2026-02-28",
@@ -25,7 +25,7 @@ const transactions = [
   {
     id: 2,
     name: "中铁建深圳前海智慧仓储租赁项目",
-    lessor: "中铁建物料华南专业运营有限公司",
+    lessor: "中铁建物资华南专业运营有限公司",
     lessee: "中铁十四局深圳地铁13号线项目部",
     amount: "280万元",
     date: "2026-02-27",
