@@ -2,12 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react"
 import {
-  ComposableMap,
-  Geographies,
-  Geography,
-  ZoomableGroup,
-} from "react-simple-maps"
-import {
   ResponsiveContainer,
   AreaChart,
   Area,
@@ -35,8 +29,47 @@ import {
   ChevronRight,
 } from "lucide-react"
 
-const CHINA_GEO_URL =
-  "https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json"
+// 中国地图底图（用户上传素材）
+const CHINA_MAP_IMG =
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/%E4%B8%8B%E8%BD%BD-pWQJMDERqh5FaOT1WHhzsw5iTgUNnG.png"
+
+// 各省/直辖市/自治区/特别行政区在中国地图图片上的近似中心点（百分比）
+const PROVINCE_CENTER_PCT: Record<string, { x: number; y: number }> = {
+  北京市: { x: 67.5, y: 31 },
+  天津市: { x: 69.5, y: 33 },
+  上海市: { x: 78, y: 51 },
+  重庆市: { x: 55, y: 55 },
+  河北省: { x: 66, y: 35 },
+  山西省: { x: 62, y: 39 },
+  辽宁省: { x: 76, y: 26 },
+  吉林省: { x: 80, y: 21 },
+  黑龙江省: { x: 78, y: 13 },
+  江苏省: { x: 75, y: 47 },
+  浙江省: { x: 76, y: 55 },
+  安徽省: { x: 70, y: 49 },
+  福建省: { x: 72, y: 63 },
+  江西省: { x: 67, y: 60 },
+  山东省: { x: 70, y: 39 },
+  河南省: { x: 64, y: 45 },
+  湖北省: { x: 62, y: 52 },
+  湖南省: { x: 60, y: 60 },
+  广东省: { x: 64, y: 70 },
+  海南省: { x: 60, y: 82 },
+  四川省: { x: 49, y: 55 },
+  贵州省: { x: 54, y: 64 },
+  云南省: { x: 46, y: 68 },
+  陕西省: { x: 57, y: 45 },
+  甘肃省: { x: 48, y: 41 },
+  青海省: { x: 38, y: 43 },
+  台湾省: { x: 80, y: 67 },
+  内蒙古自治区: { x: 55, y: 24 },
+  广西壮族自治区: { x: 56, y: 70 },
+  西藏自治区: { x: 25, y: 53 },
+  宁夏回族自治区: { x: 53, y: 39 },
+  新疆维吾尔自治区: { x: 20, y: 30 },
+  香港特别行政区: { x: 67, y: 73 },
+  澳门特别行政区: { x: 65, y: 74 },
+}
 
 // ───────── 数据 ─────────
 const provinceData: Record<
@@ -388,7 +421,7 @@ export function OperatorVisualScreen({ onClose }: { onClose: () => void }) {
             <div className="relative flex-1 rounded-lg border border-cyan-500/20 bg-gradient-to-br from-[#0b1e3f]/80 to-[#020817]/90 overflow-hidden">
               <CornerDeco />
               <div className="absolute top-3 left-4 z-10">
-                <div className="text-xs text-cyan-200/80 tracking-widest">全国仓储 · 交易热力分布</div>
+                <div className="text-xs text-cyan-200/80 tracking-widest">全国仓储 · 交易热���分布</div>
                 <div className="text-[10px] text-cyan-300/40 tracking-[0.2em] mt-0.5">CHINA WAREHOUSE HEATMAP</div>
               </div>
               <div className="absolute top-3 right-4 z-10 flex items-center gap-3 text-[10px] text-cyan-200/80">
@@ -398,42 +431,40 @@ export function OperatorVisualScreen({ onClose }: { onClose: () => void }) {
                 <Legend color="#a855f7" label="100-400" />
                 <Legend color="#3b82f6" label="≤100" />
               </div>
-              <ComposableMap
-                projection="geoMercator"
-                projectionConfig={{ scale: 700, center: [105, 36] }}
-                style={{ width: "100%", height: "100%" }}
-              >
-                <ZoomableGroup center={[105, 36]} zoom={1}>
-                  <Geographies geography={CHINA_GEO_URL}>
-                    {({ geographies }) =>
-                      geographies.map((geo) => {
-                        const name = geo.properties.name as string
-                        const stat = provinceData[name]
-                        const v = stat?.gmv ?? 0
-                        return (
-                          <Geography
-                            key={geo.rsmKey}
-                            geography={geo}
-                            fill={heat(v, maxGmv)}
-                            stroke="#22d3ee"
-                            strokeOpacity={0.35}
-                            strokeWidth={0.5}
-                            style={{
-                              default: { outline: "none", transition: "fill 0.3s" },
-                              hover: {
-                                outline: "none",
-                                fill: "#22d3ee",
-                                cursor: "pointer",
-                              },
-                              pressed: { outline: "none" },
-                            }}
-                          />
-                        )
-                      })
-                    }
-                  </Geographies>
-                </ZoomableGroup>
-              </ComposableMap>
+              {/* 中国地图底图 + 各省份仓储数量标签（按 GMV 着色） */}
+              <div className="absolute inset-0 flex items-center justify-center p-10">
+                <div className="relative w-full h-full aspect-[785/645] mx-auto">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={CHINA_MAP_IMG || "/placeholder.svg"}
+                    alt="中国地图"
+                    className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none opacity-90 mix-blend-screen"
+                    draggable={false}
+                  />
+                  {Object.entries(PROVINCE_CENTER_PCT).map(([name, pos]) => {
+                    const stat = provinceData[name]
+                    if (!stat) return null
+                    const color = heat(stat.gmv, maxGmv)
+                    return (
+                      <div
+                        key={name}
+                        className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none"
+                        style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+                      >
+                        <span
+                          className="rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums shadow-[0_0_6px_rgba(34,211,238,0.6)] border border-cyan-300/40 bg-[#020817]/80"
+                          style={{ color }}
+                        >
+                          {stat.warehouses}
+                        </span>
+                        <span className="mt-0.5 text-[9px] text-cyan-100/85 leading-none whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+                          {name.replace(/(省|市|自治区|特别行政区|维吾尔|壮族|回族)/g, "")}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
 
               {/* 底部三个全国汇总数字 */}
               <div className="absolute left-4 right-4 bottom-3 grid grid-cols-3 gap-2 z-10">
