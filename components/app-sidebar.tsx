@@ -257,21 +257,21 @@ export function AppSidebar({
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 z-40 h-screen bg-sidebar text-sidebar-foreground transition-all duration-300 flex flex-col",
+        "fixed left-0 top-0 z-40 h-screen bg-[#f1f5f9] text-slate-700 transition-all duration-300 flex flex-col border-r border-slate-200",
         collapsed ? "w-16" : "w-64",
       )}
     >
       {/* Logo 区域（置顶） */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-white/10 shrink-0 bg-[#1e293b] text-white">
-        <div className="flex items-center justify-center w-9 h-9 rounded-full bg-white shrink-0 shadow-sm">
-          <span className="text-[9px] font-extrabold text-[#1e293b] leading-none tracking-tight">
+      <div className="flex items-center gap-3 px-4 h-16 border-b border-slate-200 shrink-0 bg-[#f1f5f9] text-slate-800">
+        <div className="flex items-center justify-center w-9 h-9 rounded-full bg-white shrink-0 shadow-sm border border-slate-200">
+          <span className="text-[9px] font-extrabold text-slate-800 leading-none tracking-tight">
             CRCC
           </span>
         </div>
         {!collapsed && (
           <div className="flex flex-col leading-tight min-w-0">
             <span className="font-semibold text-sm truncate">中国铁建</span>
-            <span className="text-[11px] text-white/70 truncate">
+            <span className="text-[11px] text-slate-500 truncate">
               盘古·循环资源
             </span>
           </div>
@@ -294,14 +294,14 @@ export function AppSidebar({
                 className={cn(
                   "w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group",
                   isActive
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                    : "hover:bg-sidebar-accent/50 text-sidebar-foreground/80 hover:text-sidebar-foreground",
+                    ? "bg-slate-200 text-slate-900"
+                    : "hover:bg-slate-200/60 text-slate-700 hover:text-slate-900",
                 )}
               >
                 <SectionIcon
                   className={cn(
                     "w-5 h-5 shrink-0",
-                    isActive && "text-sidebar-primary",
+                    isActive && "text-blue-600",
                   )}
                 />
                 {!collapsed && (
@@ -310,7 +310,7 @@ export function AppSidebar({
                       <span className="text-sm font-medium truncate w-full">
                         {section.label}
                       </span>
-                      <span className="text-xs text-sidebar-foreground/50 truncate w-full">
+                      <span className="text-xs text-slate-500 truncate w-full">
                         {section.description}
                       </span>
                     </div>
@@ -328,7 +328,7 @@ export function AppSidebar({
 
               {/* 二级菜单 */}
               {hasItems && !collapsed && isSectionExpanded && (
-                <div className="ml-4 mt-1 space-y-1 border-l border-sidebar-border pl-3">
+                <div className="ml-4 mt-1 space-y-1 border-l border-slate-300 pl-3">
                   {section.items!.map((item) => {
                     const ItemIcon = item.icon
                     const itemActive = isItemActive(section.id, item)
@@ -343,10 +343,10 @@ export function AppSidebar({
                           className={cn(
                             "w-full flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-200 text-sm",
                             itemActive && !hasChildren
-                              ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                              ? "bg-blue-600 text-white"
                               : itemActive && hasChildren
-                                ? "bg-sidebar-accent/60 text-sidebar-foreground font-medium"
-                                : "hover:bg-sidebar-accent/50 text-sidebar-foreground/70 hover:text-sidebar-foreground",
+                                ? "bg-slate-200/80 text-slate-900 font-medium"
+                                : "hover:bg-slate-200/60 text-slate-600 hover:text-slate-900",
                           )}
                         >
                           <ItemIcon className="w-4 h-4 shrink-0" />
@@ -356,7 +356,7 @@ export function AppSidebar({
                           {hasChildren && (
                             <ChevronDown
                               className={cn(
-                                "w-3.5 h-3.5 shrink-0 transition-transform duration-200 text-sidebar-foreground/60",
+                                "w-3.5 h-3.5 shrink-0 transition-transform duration-200 text-slate-500",
                                 itemExpanded && "rotate-180",
                               )}
                             />
@@ -365,7 +365,7 @@ export function AppSidebar({
 
                         {/* 三级菜单 */}
                         {hasChildren && itemExpanded && (
-                          <div className="ml-3 mt-1 space-y-0.5 border-l border-sidebar-border pl-3">
+                          <div className="ml-3 mt-1 space-y-0.5 border-l border-slate-300 pl-3">
                             {item.children!.map((child) => {
                               const ChildIcon = child.icon
                               const childActive =
@@ -381,8 +381,8 @@ export function AppSidebar({
                                   className={cn(
                                     "w-full flex items-center gap-2 px-3 py-1.5 rounded-md transition-all duration-200 text-xs",
                                     childActive
-                                      ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                                      : "hover:bg-sidebar-accent/50 text-sidebar-foreground/60 hover:text-sidebar-foreground",
+                                      ? "bg-blue-600 text-white"
+                                      : "hover:bg-slate-200/60 text-slate-600 hover:text-slate-900",
                                   )}
                                 >
                                   <ChildIcon className="w-3.5 h-3.5 shrink-0" />
@@ -405,7 +405,7 @@ export function AppSidebar({
       </nav>
 
       {/* 收起/展开按钮 */}
-      <div className="p-2 border-t border-sidebar-border shrink-0">
+      <div className="p-2 border-t border-slate-200 shrink-0">
         <Button
           variant="ghost"
           size="sm"
