@@ -308,10 +308,6 @@ export function OperatorDashboard() {
               </Badge>
             )}
           </Button>
-          <Button size="sm">
-            可视化大屏
-            <ChevronRight className="w-4 h-4 ml-1" />
-          </Button>
         </div>
       </div>
 
