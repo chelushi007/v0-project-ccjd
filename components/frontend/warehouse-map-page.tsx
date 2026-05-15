@@ -16,6 +16,7 @@ import {
   Maximize2,
   Eye,
   Navigation,
+  ArrowLeft,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -297,6 +298,17 @@ export function WarehouseMapPage({ onNavigate }: WarehouseMapPageProps) {
 
       {/* ===================== 顶部浮层：定位 + 区域 + 搜索 + 筛选 ===================== */}
       <div className="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-center gap-2">
+        {/* 返回 */}
+        <Button
+          variant="default"
+          size="sm"
+          className="h-10 gap-1.5 shadow-lg bg-white text-slate-900 hover:bg-white hover:text-primary border border-slate-200 px-3"
+          onClick={() => onNavigate?.("warehouse-list")}
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span className="font-medium">返回</span>
+        </Button>
+
         {/* 当前位置 + 三级切换 */}
         <Popover open={regionOpen} onOpenChange={setRegionOpen}>
           <PopoverTrigger asChild>
