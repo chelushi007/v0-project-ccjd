@@ -68,16 +68,21 @@ const materials = [
   },
 ]
 
-export function MaterialRecommend() {
+interface MaterialRecommendProps {
+  onNavigate?: (page: string) => void
+}
+
+export function MaterialRecommend({ onNavigate }: MaterialRecommendProps = {}) {
+  const goDetail = () => onNavigate?.("material-detail")
   return (
     <section className="w-full">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Recycle className="w-5 h-5 text-accent" />
           <h2 className="text-lg font-semibold text-foreground">闲置物资</h2>
-          <Badge variant="secondary" className="ml-2 bg-accent/10 text-accent">循环复用</Badge>
+          <Badge variant="secondary" className="ml-2 bg-accent/10 text-accent">周转盘活</Badge>
         </div>
-        <Button variant="link" className="text-primary">
+        <Button variant="link" className="text-primary" onClick={goDetail}>
           查看更多
           <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
@@ -85,7 +90,11 @@ export function MaterialRecommend() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {materials.map((item) => (
-          <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group">
+          <Card
+            key={item.id}
+            onClick={goDetail}
+            className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
+          >
             {/* 头部图片 */}
             <div className="h-32 bg-gradient-to-br from-accent/10 to-accent/5 relative">
               <div className="absolute inset-0 flex items-center justify-center">

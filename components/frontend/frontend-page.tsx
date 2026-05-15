@@ -45,7 +45,7 @@ export function FrontendPage({ onNavigate }: FrontendPageProps) {
       <PlatformRecommend onNavigate={onNavigate} />
       <HotSites onNavigate={onNavigate} />
       <FeaturedTransport onNavigate={onNavigate} />
-      <MaterialRecommend />
+      <MaterialRecommend onNavigate={onNavigate} />
 
       {/* 成交公告 */}
       <TransactionNotice />
