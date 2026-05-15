@@ -99,36 +99,58 @@ const provinceData: Record<string, ProvinceMetrics> = {
   澳门特别行政区: { warehouses: 2, totalArea: 800, rentableArea: 500, transactionAmount: 480, publishCount: 32 },
 }
 
-// 仓储列表数据
-const warehouseList = [
-  {
-    id: 1,
-    name: "新出2字头 黄埔带16-32吨行吊钢构18000平可分租",
-    location: "广东省-广州市-黄埔香雪",
-    rentType: "委托出租",
-    price: "0.56",
-    area: "800",
-    priceStatus: "竞价中",
-  },
-  {
-    id: 2,
-    name: "深圳宝安立体库 自动化设备齐全",
-    location: "广东省-深圳市-宝安区",
-    rentType: "自主出租",
-    price: "0.52",
-    area: "300",
-    priceStatus: "竞价中",
-  },
-  {
-    id: 3,
-    name: "东莞虎门港 大型堆场近港口",
-    location: "广东省-东莞市-虎门镇",
-    rentType: "委托出租",
-    price: "0.56",
-    area: "800",
-    priceStatus: "竞价中",
-  },
-]
+type WarehouseItem = {
+  id: number
+  name: string
+  location: string
+  price: string
+  area: string
+  priceStatus: string
+}
+
+// 各省份仓储出租列表（鼠标移入/选中省份时联动展示）
+const warehouseListByProvince: Record<string, WarehouseItem[]> = {
+  广东省: [
+    { id: 101, name: "新出2字头 黄埔带16-32吨行吊钢构18000平可分租", location: "广东省-广州市-黄埔香雪", price: "0.56", area: "800", priceStatus: "竞价中" },
+    { id: 102, name: "深圳宝安立体库 自动化设备齐全 近高速口", location: "广东省-深圳市-宝安区", price: "0.52", area: "300", priceStatus: "竞价中" },
+    { id: 103, name: "东莞虎门港 大型堆场近港口 配 24h 看管", location: "广东省-东莞市-虎门镇", price: "0.46", area: "1200", priceStatus: "竞价中" },
+  ],
+  北京市: [
+    { id: 201, name: "通州物流园 9% 增票 重载地面 整租优先", location: "北京市-通州区-马驹桥", price: "0.78", area: "1500", priceStatus: "竞价中" },
+    { id: 202, name: "大兴亦庄保税仓 紧邻新机场", location: "北京市-大兴区-亦庄", price: "0.82", area: "600", priceStatus: "固定价" },
+  ],
+  上海市: [
+    { id: 301, name: "外高桥保税区现成标准仓 可天车装卸", location: "上海市-浦东新区-外高桥", price: "0.92", area: "2000", priceStatus: "竞价中" },
+    { id: 302, name: "青浦综合保税仓 适用电商分拨", location: "上海市-青浦区-华新", price: "0.86", area: "1100", priceStatus: "竞价中" },
+  ],
+  江苏省: [
+    { id: 401, name: "苏州工业园甲类乙类仓 配双回路", location: "江苏省-苏州市-工业园区", price: "0.62", area: "1800", priceStatus: "竞价中" },
+    { id: 402, name: "南京江宁立体库 可分租 24h 安保", location: "江苏省-南京市-江宁区", price: "0.58", area: "900", priceStatus: "固定价" },
+  ],
+  浙江省: [
+    { id: 501, name: "宁波北仑港堆场 钢材模板托管", location: "浙江省-宁波市-北仑区", price: "0.48", area: "2200", priceStatus: "竞价中" },
+    { id: 502, name: "杭州萧山综合仓 近机场高速", location: "浙江省-杭州市-萧山区", price: "0.66", area: "700", priceStatus: "竞价中" },
+  ],
+  山东省: [
+    { id: 601, name: "青岛胶州保税仓 整租优先", location: "山东省-青岛市-胶州", price: "0.42", area: "2500", priceStatus: "竞价中" },
+    { id: 602, name: "济南章丘冷链仓 -22℃可控", location: "山东省-济南市-章丘区", price: "0.95", area: "500", priceStatus: "固定价" },
+  ],
+  河南省: [
+    { id: 701, name: "郑州航空港综合仓 9% 增票", location: "河南省-郑州市-航空港区", price: "0.38", area: "3000", priceStatus: "竞价中" },
+  ],
+  四川省: [
+    { id: 801, name: "成都新都物流园 重载地面可分租", location: "四川省-成都市-新都区", price: "0.36", area: "1600", priceStatus: "竞价中" },
+  ],
+  福建省: [
+    { id: 901, name: "厦门海沧保税港区标准仓", location: "福建省-厦门市-海沧区", price: "0.52", area: "1200", priceStatus: "竞价中" },
+  ],
+  湖北省: [
+    { id: 1001, name: "武汉东西湖综合仓 近多式联运", location: "湖北省-武汉市-东西湖区", price: "0.40", area: "1800", priceStatus: "竞价中" },
+  ],
+  重庆市: [
+    { id: 1101, name: "两江新区综合保税仓 月结", location: "重庆市-两江新区-鱼复", price: "0.44", area: "1400", priceStatus: "竞价中" },
+  ],
+}
 
 type HeatmapMode = "warehouses" | "transactionAmount"
 
@@ -196,6 +218,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
 
   const displayProvince = hoveredProvince || selectedProvince
   const displayMetrics = displayProvince ? provinceData[displayProvince] : null
+  const currentList = displayProvince ? warehouseListByProvince[displayProvince] ?? [] : []
 
   return (
     <section className="w-full">
@@ -346,49 +369,66 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
           )}
         </div>
 
-        {/* 右侧：仓储列表 */}
+        {/* 右侧：仓储列表（跟随地图省份联动） */}
         <Card className="rounded-l-none rounded-r-lg border-l-0 h-full flex flex-col">
           <CardContent className="p-3 flex-1 flex flex-col h-full overflow-hidden">
+            <div className="flex items-center justify-between mb-2 pb-2 border-b border-border">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+                <span className="text-xs font-medium text-foreground truncate">
+                  {displayProvince || "全国"}仓储出租
+                </span>
+              </div>
+              <span className="text-[10px] text-muted-foreground shrink-0">
+                共 {currentList.length} 条
+              </span>
+            </div>
+
             <div className="flex-1 space-y-2 overflow-auto">
-              {warehouseList.map((warehouse) => (
-                <div
-                  key={warehouse.id}
-                  className="border border-border rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer bg-card"
-                >
-                  <div className="flex">
-                    <div className="w-20 h-20 bg-muted relative flex-shrink-0">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Building2 className="w-5 h-5 text-muted-foreground/30" />
-                      </div>
-                      <Badge className="absolute top-1 left-1 text-[10px] bg-green-500 text-white px-1 py-0">
-                        出租
-                      </Badge>
-                    </div>
-                    <div className="flex-1 p-2 min-w-0">
-                      <Badge variant="outline" className="text-[10px] mb-1 px-1 py-0">
-                        {warehouse.rentType}
-                      </Badge>
-                      <div className="flex items-baseline gap-1 mb-1">
-                        <span className="text-primary font-bold text-sm">{warehouse.price}</span>
-                        <span className="text-[10px] text-muted-foreground">元/m²/天</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-1">
-                        <Maximize2 className="w-3 h-3" />
-                        <span>{warehouse.area}m²</span>
-                        <Badge
-                          variant="secondary"
-                          className="text-[10px] bg-green-100 text-green-600 px-1 py-0 ml-1"
-                        >
-                          {warehouse.priceStatus}
+              {currentList.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground py-8">
+                  <Building2 className="w-8 h-8 mb-2 opacity-40" />
+                  <p className="text-xs">该地区暂无仓储出租信息</p>
+                  <p className="text-[10px] mt-1 opacity-70">悬停其他省份查看</p>
+                </div>
+              ) : (
+                currentList.map((warehouse) => (
+                  <div
+                    key={warehouse.id}
+                    className="border border-border rounded-lg overflow-hidden hover:shadow-md hover:border-primary/40 transition-all cursor-pointer bg-card"
+                  >
+                    <div className="flex">
+                      <div className="w-20 h-20 bg-muted relative flex-shrink-0">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Building2 className="w-5 h-5 text-muted-foreground/30" />
+                        </div>
+                        <Badge className="absolute top-1 left-1 text-[10px] bg-green-500 text-white px-1 py-0">
+                          出租
                         </Badge>
                       </div>
-                      <div className="text-[10px] text-muted-foreground line-clamp-2 leading-tight">
-                        {warehouse.name}
+                      <div className="flex-1 p-2 min-w-0">
+                        <div className="flex items-baseline gap-1 mb-1">
+                          <span className="text-primary font-bold text-sm">{warehouse.price}</span>
+                          <span className="text-[10px] text-muted-foreground">元/m²/天</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-1">
+                          <Maximize2 className="w-3 h-3" />
+                          <span>{warehouse.area}m²</span>
+                          <Badge
+                            variant="secondary"
+                            className="text-[10px] bg-green-100 text-green-600 px-1 py-0 ml-1"
+                          >
+                            {warehouse.priceStatus}
+                          </Badge>
+                        </div>
+                        <div className="text-[10px] text-muted-foreground line-clamp-2 leading-tight">
+                          {warehouse.name}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
 
             <div className="pt-2 mt-auto border-t border-border">
