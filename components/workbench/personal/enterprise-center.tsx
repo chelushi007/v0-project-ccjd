@@ -18,15 +18,36 @@ import {
   Mail,
   Globe,
   ArrowUpRight,
+  LogOut,
   Calendar,
   Briefcase,
   CreditCard,
   Award,
+  Upload,
+  AlertTriangle,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 // 六种企业角色对应的实际企业数据
 const enterpriseRoles = [
@@ -53,14 +74,14 @@ const enterpriseRoles = [
       phone: "020-8888 8888",
       email: "contact@crcc14-gz.com",
       address: "广东省广州市天河区珠江新城华夏路30号",
-      businessScope: "市政与轨道交通施工、隧道与桥梁工程、项目物料采购与调配、工程供应链管理",
+      businessScope:
+        "市政与轨道交通施工、隧道与桥梁工程、项目物料采购与调配、工程供应链管理",
       certifications: ["AAA信用企业", "中央驻穗单位", "ISO9001质量体系"],
       stats: [
-        { label: "在管物料种类", value: "286", unit: "类" },
-        { label: "在用物料价值", value: "12.6", unit: "亿元" },
-        { label: "在建项目", value: "48", unit: "个" },
+        { label: "物资存放数量", value: "1,286", unit: "批" },
+        { label: "物资托管数量", value: "862", unit: "批" },
+        { label: "物资关联仓储数量", value: "32", unit: "座" },
       ],
-      relatedRoles: [],
     },
   },
   {
@@ -86,14 +107,14 @@ const enterpriseRoles = [
       phone: "020-3838 6666",
       email: "warehouse@crccm-hn.com",
       address: "广东省广州市天河区科韵路38号铁建大厦",
-      businessScope: "工程物料仓储与中转、工程机械周转管理、循环物料入出库与配送、库存数据化管理",
+      businessScope:
+        "工程物料仓储与中转、工程机械周转管理、循环物料入出库与配送、库存数据化管理",
       certifications: ["仓储服务一级资质", "ISO9001质量体系", "AA级信用企业"],
       stats: [
         { label: "运营仓储面积", value: "12.5", unit: "万m²" },
-        { label: "下辖站点", value: "8", unit: "个" },
-        { label: "服务局/分公司", value: "126", unit: "家" },
+        { label: "物资托管数量", value: "862", unit: "批" },
+        { label: "物资存放数量", value: "1,286", unit: "批" },
       ],
-      relatedRoles: ["申请为站点单位"],
     },
   },
   {
@@ -119,14 +140,14 @@ const enterpriseRoles = [
       phone: "020-3456 7890",
       email: "nansha.site@crccm-hn.com",
       address: "广东省广州市南沙区进港大道15号铁建仓储园",
-      businessScope: "工程钢构与轨道物料仓储、危化品仓储、循环周转物料管理、铁路专用线装卸",
+      businessScope:
+        "工程钢构与轨道物料仓储、危化品仓储、循环周转物料管理、铁路专用线装卸",
       certifications: ["危化品仓储许可证", "消防安全合格证", "海关监管资质"],
       stats: [
         { label: "可用仓储面积", value: "3.2", unit: "万m²" },
         { label: "在库物料批次", value: "1,286", unit: "批" },
         { label: "出租率", value: "86", unit: "%" },
       ],
-      relatedRoles: ["申请为专运单位"],
     },
   },
   {
@@ -158,9 +179,8 @@ const enterpriseRoles = [
       stats: [
         { label: "在运营物料", value: "326", unit: "类" },
         { label: "合作物权单位", value: "18", unit: "家" },
-        { label: "整租金额", value: "1.28", unit: "亿元" },
+        { label: "交易金额", value: "1.28", unit: "亿元" },
       ],
-      relatedRoles: [],
     },
   },
   {
@@ -189,11 +209,10 @@ const enterpriseRoles = [
       businessScope: "广深城际高铁施工、城市轨道交通建设、市政基础工程、工程物料计划与领用",
       certifications: ["特级建造资质", "市政公用工程一级", "安全生产许可证"],
       stats: [
-        { label: "在建项目", value: "16", unit: "个" },
-        { label: "年物料计划", value: "5.8", unit: "亿元" },
-        { label: "合作年限", value: "12", unit: "年" },
+        { label: "在用物料数量", value: "1,862", unit: "批" },
+        { label: "在用物资价值", value: "8.62", unit: "亿元" },
+        { label: "在用物资种类", value: "236", unit: "类" },
       ],
-      relatedRoles: [],
     },
   },
   {
@@ -227,13 +246,19 @@ const enterpriseRoles = [
         { label: "服务局/分公司", value: "62", unit: "家" },
         { label: "委托交易金额", value: "3.86", unit: "亿元" },
       ],
-      relatedRoles: [],
     },
   },
 ]
 
+type RoleAction =
+  | { type: "apply-site" }
+  | { type: "apply-transport" }
+  | { type: "exit-transport" }
+  | null
+
 export function EnterpriseCenter() {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [action, setAction] = useState<RoleAction>(null)
   const active = enterpriseRoles[activeIndex]
   const Icon = active.icon
 
@@ -402,7 +427,9 @@ export function EnterpriseCenter() {
         <CardContent className="space-y-6">
           {/* 认证状态横幅：仅需认证角色显示 */}
           {active.needCertify && (
-            <div className={`flex items-start gap-3 p-4 rounded-lg ${active.bg} border ${active.border}`}>
+            <div
+              className={`flex items-start gap-3 p-4 rounded-lg ${active.bg} border ${active.border}`}
+            >
               <CheckCircle2 className={`w-5 h-5 ${active.color} shrink-0 mt-0.5`} />
               <div className="flex-1">
                 <p className="font-medium text-sm">已通过企业资质认证</p>
@@ -471,33 +498,419 @@ export function EnterpriseCenter() {
             </div>
           )}
 
-          {/* 角色升级入口 */}
-          {active.enterprise.relatedRoles.length > 0 && (
-            <div className="rounded-lg border border-dashed border-primary/30 bg-primary/5 p-4">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <ArrowUpRight className="w-5 h-5 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium text-sm">角色升级</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {active.role === "仓储单位"
-                      ? "作为仓储单位，您可申请将旗下仓库登记为「站点单位」，获取更精细化的站点运营能力。"
-                      : "作为仓储站点，您可进一步申请成为「专运单位」，承接平台的专业运营托管业务。"}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  {active.enterprise.relatedRoles.map((label) => (
-                    <Button key={label} size="sm" className="whitespace-nowrap">
-                      {label}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            </div>
+          {/* 角色操作入口（去除文字说明，仅保留按钮） */}
+          {active.id === "warehouse-unit" && (
+            <RoleActionBar
+              actions={[
+                {
+                  label: "申请为站点单位",
+                  icon: ArrowUpRight,
+                  onClick: () => setAction({ type: "apply-site" }),
+                },
+              ]}
+            />
+          )}
+          {active.id === "warehouse-site" && (
+            <RoleActionBar
+              actions={[
+                {
+                  label: "申请为专运单位",
+                  icon: ArrowUpRight,
+                  onClick: () => setAction({ type: "apply-transport" }),
+                },
+              ]}
+            />
+          )}
+          {active.id === "transport-unit" && (
+            <RoleActionBar
+              actions={[
+                {
+                  label: "退出专运单位申请",
+                  icon: LogOut,
+                  variant: "destructive",
+                  onClick: () => setAction({ type: "exit-transport" }),
+                },
+              ]}
+            />
           )}
         </CardContent>
       </Card>
+
+      {/* 申请为站点单位 */}
+      <ApplySiteDialog
+        open={action?.type === "apply-site"}
+        onOpenChange={(o) => !o && setAction(null)}
+      />
+      {/* 申请为专运单位 */}
+      <ApplyTransportDialog
+        open={action?.type === "apply-transport"}
+        onOpenChange={(o) => !o && setAction(null)}
+      />
+      {/* 退出专运单位申请 */}
+      <ExitTransportDialog
+        open={action?.type === "exit-transport"}
+        onOpenChange={(o) => !o && setAction(null)}
+      />
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────
+// 角色操作按钮条（取代文字说明）
+// ─────────────────────────────────────────────
+function RoleActionBar({
+  actions,
+}: {
+  actions: {
+    label: string
+    icon: React.ComponentType<{ className?: string }>
+    onClick: () => void
+    variant?: "default" | "destructive"
+  }[]
+}) {
+  return (
+    <div className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-dashed border-border">
+      {actions.map((a) => {
+        const I = a.icon
+        return (
+          <Button
+            key={a.label}
+            size="sm"
+            variant={a.variant === "destructive" ? "outline" : "default"}
+            onClick={a.onClick}
+            className={
+              a.variant === "destructive"
+                ? "text-destructive border-destructive/40 hover:bg-destructive/10 hover:text-destructive"
+                : ""
+            }
+          >
+            <I className="w-4 h-4 mr-1.5" />
+            {a.label}
+          </Button>
+        )
+      })}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────
+// 申请为「站点单位」表单
+// ─────────────────────────────────────────────
+function ApplySiteDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean
+  onOpenChange: (o: boolean) => void
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <MapPin className="w-5 h-5 text-orange-500" />
+            申请为站点单位
+          </DialogTitle>
+          <DialogDescription>
+            将旗下仓库登记为「站点单位」后，可在平台独立承接物资托管、出租与运营业务。
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="grid gap-4">
+          <FieldRow>
+            <Field label="站点名称" required>
+              <Input placeholder="例：中铁建广州南沙综合仓储基地" />
+            </Field>
+            <Field label="站点类型" required>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="请选择" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="comprehensive">综合仓储基地</SelectItem>
+                  <SelectItem value="steel">钢构物料仓</SelectItem>
+                  <SelectItem value="chem">危化品仓</SelectItem>
+                  <SelectItem value="cold">冷链/恒温仓</SelectItem>
+                  <SelectItem value="open">露天堆场</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+          </FieldRow>
+
+          <FieldRow>
+            <Field label="所属省/市" required>
+              <Input placeholder="例：广东省广州市南沙区" />
+            </Field>
+            <Field label="详细地址" required>
+              <Input placeholder="例：进港大道15号铁建仓储园" />
+            </Field>
+          </FieldRow>
+
+          <FieldRow>
+            <Field label="占地面积（m²）" required>
+              <Input type="number" placeholder="例：32000" />
+            </Field>
+            <Field label="可租面积（m²）" required>
+              <Input type="number" placeholder="例：28000" />
+            </Field>
+          </FieldRow>
+
+          <FieldRow>
+            <Field label="站点负责人" required>
+              <Input placeholder="例：刘大鹏" />
+            </Field>
+            <Field label="负责人电话" required>
+              <Input placeholder="例：13800001234" />
+            </Field>
+          </FieldRow>
+
+          <Field label="站点资质说明">
+            <Textarea
+              rows={3}
+              placeholder="可填写已取得的仓储许可证、危化品仓储资质、消防安全合格证等资质情况……"
+            />
+          </Field>
+
+          <Field label="资质文件上传">
+            <UploadBox hint="支持 PDF / JPG / PNG，单文件 ≤ 10MB，最多 6 份" />
+          </Field>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            取消
+          </Button>
+          <Button onClick={() => onOpenChange(false)}>提交申请</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+// ─────────────────────────────────────────────
+// 申请为「专运单位」表单
+// ─────────────────────────────────────────────
+function ApplyTransportDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean
+  onOpenChange: (o: boolean) => void
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Truck className="w-5 h-5 text-purple-500" />
+            申请为专运单位
+          </DialogTitle>
+          <DialogDescription>
+            升级为「专运单位」后，可承接平台物权单位的物料专业运营托管业务。
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="grid gap-4">
+          <FieldRow>
+            <Field label="申请主体" required>
+              <Input defaultValue="中铁建广州南沙综合仓储基地" />
+            </Field>
+            <Field label="统一社会信用代码" required>
+              <Input placeholder="例：9144000000000000XW" />
+            </Field>
+          </FieldRow>
+
+          <FieldRow>
+            <Field label="拟运营物料类别" required>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="请选择" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="rail">轨道与钢轨</SelectItem>
+                  <SelectItem value="steel">钢构与型材</SelectItem>
+                  <SelectItem value="machine">工程机械周转</SelectItem>
+                  <SelectItem value="formwork">模板与脚手架</SelectItem>
+                  <SelectItem value="all">综合类（多品类）</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="结算模式" required>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="请选择" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="share">运营收益分成</SelectItem>
+                  <SelectItem value="rent">物料整租</SelectItem>
+                  <SelectItem value="both">两种模式并行</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+          </FieldRow>
+
+          <FieldRow>
+            <Field label="拟服务区域" required>
+              <Input placeholder="例：粤港澳大湾区" />
+            </Field>
+            <Field label="预计年运营规模（万元）" required>
+              <Input type="number" placeholder="例：12800" />
+            </Field>
+          </FieldRow>
+
+          <FieldRow>
+            <Field label="业务负责人" required>
+              <Input placeholder="例：周明辉" />
+            </Field>
+            <Field label="负责人电话" required>
+              <Input placeholder="例：13900001234" />
+            </Field>
+          </FieldRow>
+
+          <Field label="运营能力说明">
+            <Textarea
+              rows={3}
+              placeholder="可填写团队规模、专业设备、信息化能力、过往运营业绩等……"
+            />
+          </Field>
+
+          <Field label="承诺函与资质文件">
+            <UploadBox hint="须上传《专业运营承诺函》、运营资质证书等，PDF / JPG / PNG" />
+          </Field>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            取消
+          </Button>
+          <Button onClick={() => onOpenChange(false)}>提交申请</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+// ─────────────────────────────────────────────
+// 退出「专运单位」申请表单
+// ─────────────────────────────────────────────
+function ExitTransportDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean
+  onOpenChange: (o: boolean) => void
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-destructive">
+            <LogOut className="w-5 h-5" />
+            退出专运单位申请
+          </DialogTitle>
+          <DialogDescription>
+            提交后平台将冻结新业务受理，待存量合同结清并完成清算后正式注销专运资格。
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="flex items-start gap-3 p-3 rounded-lg bg-destructive/5 border border-destructive/20">
+          <AlertTriangle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+          <div className="text-xs text-muted-foreground leading-relaxed">
+            退出前请确认：① 所有在租 / 在运合同已结清；② 物权单位已书面确认；③ 平台保证金可正常退还。
+            退出审核周期约 15 个工作日。
+          </div>
+        </div>
+
+        <div className="grid gap-4 mt-2">
+          <FieldRow>
+            <Field label="退出主体" required>
+              <Input defaultValue="中铁建物料华南专业运营有限公司" disabled />
+            </Field>
+            <Field label="退出生效日期" required>
+              <Input type="date" />
+            </Field>
+          </FieldRow>
+
+          <Field label="退出原因" required>
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="请选择退出原因" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="strategy">战略调整 / 业务收缩</SelectItem>
+                <SelectItem value="restructure">企业重组 / 主体变更</SelectItem>
+                <SelectItem value="capacity">运营能力不足</SelectItem>
+                <SelectItem value="contract">合作方协商终止</SelectItem>
+                <SelectItem value="other">其他</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
+
+          <Field label="存量业务处理方案" required>
+            <Textarea
+              rows={3}
+              placeholder="请说明在租物料、在运订单、未结合同等存量业务的处理与移交方案……"
+            />
+          </Field>
+
+          <Field label="退出说明">
+            <Textarea
+              rows={2}
+              placeholder="可补充退出后的合作意向、续约设想或其他备注……"
+            />
+          </Field>
+
+          <Field label="退出申请附件">
+            <UploadBox hint="须上传董事会决议 / 股东会决议 / 内部审批文件等" />
+          </Field>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            取消
+          </Button>
+          <Button variant="destructive" onClick={() => onOpenChange(false)}>
+            提交退出申请
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+// ─────────────────────────────────────────────
+// 通用表单元素
+// ─────────────────────────────────────────────
+function FieldRow({ children }: { children: React.ReactNode }) {
+  return <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
+}
+
+function Field({
+  label,
+  required,
+  children,
+}: {
+  label: string
+  required?: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <div className="grid gap-1.5">
+      <Label className="text-xs font-medium">
+        {label}
+        {required && <span className="text-destructive ml-0.5">*</span>}
+      </Label>
+      {children}
+    </div>
+  )
+}
+
+function UploadBox({ hint }: { hint: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-1 py-5 rounded-lg border border-dashed border-border bg-muted/30 hover:border-primary/40 transition-colors cursor-pointer">
+      <Upload className="w-5 h-5 text-muted-foreground" />
+      <p className="text-xs text-foreground">点击或拖拽文件至此上传</p>
+      <p className="text-[11px] text-muted-foreground">{hint}</p>
     </div>
   )
 }
