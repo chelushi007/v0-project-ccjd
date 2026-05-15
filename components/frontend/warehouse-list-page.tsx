@@ -115,11 +115,10 @@ const warehouseData: WarehouseListItem[] = [
     id: 3,
     source: "quick",
     rentMode: "self",
-    title: "急寻物资托管 月需 5000m² 标准仓",
+    title: "广州黄埔保税区现成标准仓出租",
     location: "广东省广州市黄埔区",
     tier: "二级",
-    rentableArea: "5,000",
-    description: "工程项目临时存放钢材与模板，要求重载地面、可天车装卸，长期合作优先。",
+    description: "项目部自有标准仓对外开放，重载地面，可天车装卸，长期合作优先，欢迎来电洽谈。",
     features: ["重载地面", "天车装卸", "长期合作"],
     contactName: "张工",
     contactPhone: "137****8901",
@@ -152,12 +151,11 @@ const warehouseData: WarehouseListItem[] = [
     id: 5,
     source: "quick",
     rentMode: "entrust",
-    title: "急租周转钢管堆场 约 2000m²",
+    title: "佛山顺德周转钢管堆场对外出租",
     location: "广东省佛山市顺德区",
     tier: "二级",
-    rentableArea: "2,000",
-    description: "项目部需短期托管周转钢管与扣件，周边便于运输，配 24h 看管最佳。",
-    features: ["短租", "看管服务", "近高速"],
+    description: "自有堆场长期托管周转钢管与扣件，周边便于运输，配 24h 看管，可签短租或长租合同。",
+    features: ["可短租", "看管服务", "近高速"],
     contactName: "刘工",
     contactPhone: "135****7711",
     views: 87,
@@ -209,11 +207,10 @@ const warehouseData: WarehouseListItem[] = [
     id: 8,
     source: "quick",
     rentMode: "self",
-    title: "寻找综合仓储 接收周转模板及钢管",
+    title: "珠海金湾综合仓储对外出租",
     location: "广东省珠海市金湾区",
     tier: "二级",
-    rentableArea: "3,500",
-    description: "施工项目需托管周转材料，要求支持分租、装卸便捷，能开 9% 增票。",
+    description: "自有综合仓储对外开放，支持分租、装卸便捷，可开 9% 增值税专票，详情来电咨询。",
     features: ["可分租", "装卸便捷", "开票合规"],
     contactName: "赵工",
     contactPhone: "137****4422",
@@ -224,16 +221,18 @@ const warehouseData: WarehouseListItem[] = [
 
 const sourceMeta = {
   detail: {
-    label: "仓储出租",
+    label: "详细发布",
     short: "出租",
     icon: FileText,
     badgeClass: "bg-accent text-accent-foreground",
+    sourceBadgeClass: "bg-primary/10 text-primary border-primary/30",
   },
   quick: {
-    label: "快捷需求",
-    short: "求租",
+    label: "快捷发布",
+    short: "出租",
     icon: Zap,
-    badgeClass: "bg-primary text-primary-foreground",
+    badgeClass: "bg-accent text-accent-foreground",
+    sourceBadgeClass: "bg-amber-500/10 text-amber-700 border-amber-500/40",
   },
 } as const
 
@@ -425,14 +424,14 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
             </TabsTrigger>
             <TabsTrigger value="detail">
               <FileText className="w-3.5 h-3.5 mr-1" />
-              仓储出租
+              详细发布
               <Badge variant="secondary" className="ml-2 h-5 px-1.5 text-[10px]">
                 {counts.detail}
               </Badge>
             </TabsTrigger>
             <TabsTrigger value="quick">
               <Zap className="w-3.5 h-3.5 mr-1" />
-              快捷需求
+              快捷发布
               <Badge variant="secondary" className="ml-2 h-5 px-1.5 text-[10px]">
                 {counts.quick}
               </Badge>
@@ -444,7 +443,7 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
             </span>
             <Button size="sm" variant="outline" onClick={goQuickPublish}>
               <Zap className="w-3.5 h-3.5 mr-1" />
-              我要发布需求
+              快捷发布仓储
             </Button>
           </div>
         </div>
@@ -464,23 +463,10 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
               <CardContent className="p-0">
                 <div className="flex">
                   {/* 左侧图片 */}
-                  <div
-                    className={cn(
-                      "relative w-48 shrink-0 hidden md:flex items-center justify-center",
-                      item.source === "detail"
-                        ? "bg-gradient-to-br from-primary/15 via-primary/5 to-transparent"
-                        : "bg-gradient-to-br from-accent/15 via-accent/5 to-transparent",
-                    )}
-                  >
-                    <Building2
-                      className={cn(
-                        "w-16 h-16",
-                        item.source === "detail" ? "text-primary/30" : "text-accent/30",
-                      )}
-                    />
-                    <Badge className={cn("absolute top-3 left-3 gap-1 text-xs", meta.badgeClass)}>
-                      <SourceIcon className="w-3 h-3" />
-                      {meta.short}
+                  <div className="relative w-48 shrink-0 hidden md:flex items-center justify-center bg-gradient-to-br from-primary/15 via-primary/5 to-transparent">
+                    <Building2 className="w-16 h-16 text-primary/30" />
+                    <Badge className="absolute top-3 left-3 gap-1 text-xs bg-accent text-accent-foreground">
+                      出租
                     </Badge>
                     {item.isHot && (
                       <Badge className="absolute bottom-3 left-3 bg-destructive text-xs">
@@ -491,7 +477,7 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
 
                   {/* 中间信息 */}
                   <div className="flex-1 p-4 min-w-0 flex flex-col gap-2">
-                    {/* 标题 + Tier */}
+                    {/* 标题 + Tier + 来源 */}
                     <div className="flex items-start gap-2 flex-wrap">
                       <Badge
                         variant={item.tier === "一级" ? "default" : "outline"}
@@ -507,6 +493,16 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
                       </Badge>
                       <Badge variant="outline" className="text-[10px] px-1.5 py-0 shrink-0">
                         {rentModeLabel[item.rentMode]}运营
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "text-[10px] gap-0.5 px-1.5 py-0 shrink-0",
+                          meta.sourceBadgeClass,
+                        )}
+                      >
+                        <SourceIcon className="w-2.5 h-2.5" />
+                        {meta.label}
                       </Badge>
                       <h3 className="font-medium text-card-foreground text-base leading-snug line-clamp-1 group-hover:text-primary transition-colors flex-1 min-w-0">
                         {item.title}
@@ -597,12 +593,13 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
                       </div>
                     ) : (
                       <div className="text-right">
-                        <div className="text-[11px] text-muted-foreground">需求类型</div>
+                        <div className="text-[11px] text-muted-foreground">租金</div>
                         <div className="flex items-baseline gap-1 justify-end">
-                          <span className="text-lg font-semibold text-accent">寻找仓储</span>
+                          <span className="text-2xl font-bold text-primary">面议</span>
                         </div>
-                        <div className="text-[11px] text-muted-foreground mt-1">
-                          {item.rentMode === "self" ? "自主托管" : "委托运营"}
+                        <div className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1 justify-end">
+                          <Zap className="w-2.5 h-2.5 text-amber-600" />
+                          快捷发布 · 详询联系人
                         </div>
                       </div>
                     )}
@@ -633,7 +630,7 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
                         }}
                       >
                         <FileSignature className="w-3.5 h-3.5" />
-                        {item.source === "detail" ? "立即下单" : "对接需求"}
+                        立即下单
                       </Button>
                     </div>
                   </div>
