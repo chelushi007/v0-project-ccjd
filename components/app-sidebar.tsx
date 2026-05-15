@@ -262,9 +262,9 @@ export function AppSidebar({
       )}
     >
       {/* Logo 区域（置顶） */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-white/10 shrink-0 bg-[#1e293b] text-white">
+      <div className="flex items-center gap-3 px-4 h-16 border-b border-white/10 shrink-0 bg-[#537bbc] text-white">
         <div className="flex items-center justify-center w-9 h-9 rounded-full bg-white shrink-0 shadow-sm">
-          <span className="text-[9px] font-extrabold text-[#1e293b] leading-none tracking-tight">
+          <span className="text-[9px] font-extrabold text-[#537bbc] leading-none tracking-tight">
             CRCC
           </span>
         </div>
