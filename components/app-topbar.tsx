@@ -48,28 +48,46 @@ export function AppTopbar({
 
   const [company, setCompany] = useState(companyOptions[0])
 
+  const isFrontend = kind === "frontend"
+
   return (
     <header
       className={cn(
         "fixed top-0 right-0 z-40 h-16 flex items-center",
         "transition-[left] duration-300",
         sidebarCollapsed ? "left-16" : "left-64",
-        "bg-[#5584d1] text-white",
-        "border-b border-white/10 shadow-sm",
+        isFrontend
+          ? "bg-white text-slate-900 border-b border-slate-200 shadow-sm"
+          : "bg-[#5584d1] text-white border-b border-white/10 shadow-sm",
       )}
     >
       {/* 左侧：平台 / 系统 品牌 + 工作台标题 */}
       <div className="flex items-center h-full pl-6 pr-6 min-w-0 flex-1 gap-4">
         <div className="flex flex-col leading-none shrink-0">
           <span className="text-xl font-bold tracking-wide">循环资源</span>
-          <span className="text-xs text-white/70 mt-1 tracking-[0.2em]">
+          <span
+            className={cn(
+              "text-xs mt-1 tracking-[0.2em]",
+              isFrontend ? "text-slate-500" : "text-white/70",
+            )}
+          >
             仓储共享
           </span>
         </div>
         {titleMap[kind] && (
           <>
-            <span className="h-8 w-px bg-white/20 shrink-0" />
-            <h1 className="text-base font-medium leading-tight truncate text-white/90">
+            <span
+              className={cn(
+                "h-8 w-px shrink-0",
+                isFrontend ? "bg-slate-200" : "bg-white/20",
+              )}
+            />
+            <h1
+              className={cn(
+                "text-base font-medium leading-tight truncate",
+                isFrontend ? "text-slate-700" : "text-white/90",
+              )}
+            >
               {titleMap[kind]}
             </h1>
           </>
@@ -109,7 +127,12 @@ export function AppTopbar({
           </DropdownMenu>
         )}
 
-        <button className="flex items-center gap-2 text-sm hover:opacity-90 transition-opacity">
+        <button
+          className={cn(
+            "flex items-center gap-2 text-sm transition-opacity",
+            isFrontend ? "hover:text-primary" : "hover:opacity-90",
+          )}
+        >
           <UserCircle2 className="w-5 h-5" />
           <span className="font-medium">梁文翔</span>
         </button>
