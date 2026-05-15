@@ -31,7 +31,7 @@ import {
 
 // 中国地图底图（用户上传素材）
 const CHINA_MAP_IMG =
-  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/%E4%B8%8B%E8%BD%BD-pWQJMDERqh5FaOT1WHhzsw5iTgUNnG.png"
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/%E4%B8%8B%E8%BD%BD-2drN6TNcIeP8zhLodBv0DnsuBaPKZk.png"
 
 // 各省/直辖市/自治区/特别行政区在中国地图图片上的近似中心点（百分比）
 const PROVINCE_CENTER_PCT: Record<string, { x: number; y: number }> = {
