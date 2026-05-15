@@ -257,14 +257,14 @@ export function AppSidebar({
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 z-40 h-screen bg-[#262626] text-white/85 transition-all duration-300 flex flex-col",
+        "fixed left-0 top-0 z-40 h-screen bg-sidebar text-sidebar-foreground transition-all duration-300 flex flex-col",
         collapsed ? "w-16" : "w-64",
       )}
     >
       {/* Logo 区域（置顶） */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-white/10 shrink-0 bg-[#262626] text-white">
+      <div className="flex items-center gap-3 px-4 h-16 border-b border-white/10 shrink-0 bg-[#1e293b] text-white">
         <div className="flex items-center justify-center w-9 h-9 rounded-full bg-white shrink-0 shadow-sm">
-          <span className="text-[9px] font-extrabold text-[#262626] leading-none tracking-tight">
+          <span className="text-[9px] font-extrabold text-[#1e293b] leading-none tracking-tight">
             CRCC
           </span>
         </div>
