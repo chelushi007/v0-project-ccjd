@@ -1,6 +1,6 @@
 "use client"
 
-import { TrendingUp, ArrowRight, Building2, MapPin, Maximize2, Eye, Clock } from "lucide-react"
+import { TrendingUp, ArrowRight, Building2, MapPin, Maximize2, Eye, Clock, FileSignature } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -90,11 +90,8 @@ export function WarehouseOpportunity() {
               <Badge className="absolute top-2 left-2 bg-accent">
                 出租
               </Badge>
-              <Badge variant="outline" className="absolute top-2 right-2 bg-card/90 text-xs">
-                {item.rentType}
-              </Badge>
               {item.isHot && (
-                <Badge className="absolute bottom-2 left-2 bg-destructive text-xs">
+                <Badge className="absolute top-2 right-2 bg-destructive text-xs">
                   热门
                 </Badge>
               )}
@@ -143,6 +140,15 @@ export function WarehouseOpportunity() {
                   {item.publishTime}
                 </span>
               </div>
+
+              <Button
+                size="sm"
+                className="w-full mt-3 h-8 gap-1"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <FileSignature className="w-3.5 h-3.5" />
+                下单对接
+              </Button>
             </CardContent>
           </Card>
         ))}
