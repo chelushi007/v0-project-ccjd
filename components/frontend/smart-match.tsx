@@ -23,7 +23,7 @@ const quickEntries = [
   },
   {
     key: "material",
-    title: "物资寻找",
+    title: "物资寻租",
     desc: "找租赁物资",
     icon: Search,
     iconBg: "bg-accent/10",

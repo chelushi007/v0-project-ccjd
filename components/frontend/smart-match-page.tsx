@@ -209,12 +209,12 @@ const typeConfig: Record<
   DemandType,
   { label: string; sub: string; icon: typeof Search; emoji: string }
 > = {
-  material: { label: "物资寻找", sub: "寻找出租中的循环物资", icon: Search, emoji: "🔍" },
+    material: { label: "物资寻租", sub: "寻找出租中的循环物资", icon: Search, emoji: "🔍" },
   purchase: { label: "物资采购", sub: "采购闲置/出售中的物资", icon: ShoppingCart, emoji: "🛒" },
   rent: { label: "仓储承租", sub: "寻找合适的仓储空间", icon: Warehouse, emoji: "🏭" },
 }
 
-const typeOrder: DemandType[] = ["material", "purchase", "rent"]
+  const typeOrder: DemandType[] = ["rent", "material", "purchase"]
 
 export function SmartMatchPage({
   onNavigate,
