@@ -58,11 +58,22 @@ export function AppTopbar({
         "border-b border-white/10 shadow-sm",
       )}
     >
-      {/* 左侧：标题 */}
-      <div className="flex items-center h-full pl-6 pr-6 min-w-0 flex-1">
-        <h1 className="text-lg font-semibold leading-tight truncate">
-          {titleMap[kind]}
-        </h1>
+      {/* 左侧：平台 / 系统 品牌 + 工作台标题 */}
+      <div className="flex items-center h-full pl-6 pr-6 min-w-0 flex-1 gap-4">
+        <div className="flex flex-col leading-none shrink-0">
+          <span className="text-xl font-bold tracking-wide">循环资源</span>
+          <span className="text-xs text-white/70 mt-1 tracking-[0.2em]">
+            仓储共享
+          </span>
+        </div>
+        {titleMap[kind] && (
+          <>
+            <span className="h-8 w-px bg-white/20 shrink-0" />
+            <h1 className="text-base font-medium leading-tight truncate text-white/90">
+              {titleMap[kind]}
+            </h1>
+          </>
+        )}
       </div>
 
       {/* 右侧：公司选择 + 用户 + 门户入口 */}
@@ -100,7 +111,7 @@ export function AppTopbar({
 
         <button className="flex items-center gap-2 text-sm hover:opacity-90 transition-opacity">
           <UserCircle2 className="w-5 h-5" />
-          <span className="font-medium">王庆祥</span>
+          <span className="font-medium">梁文翔</span>
         </button>
 
         {kind !== "frontend" && (
