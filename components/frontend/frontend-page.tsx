@@ -12,6 +12,7 @@ import { TiejianWarehouse } from "./tiejian-warehouse"
 import { HotSites } from "./hot-sites"
 import { FeaturedTransport } from "./featured-transport"
 import { TransactionNotice } from "./transaction-notice"
+import { TransactionTicker } from "./transaction-ticker"
 
 interface FrontendPageProps {
   onNavigate?: (page: string) => void
@@ -22,6 +23,9 @@ export function FrontendPage({ onNavigate }: FrontendPageProps) {
     <div className="space-y-8">
       {/* Banner 轮播图 */}
       <HeroBanner />
+
+      {/* 实时成交滚动信息 */}
+      <TransactionTicker />
 
       {/* 搜索引擎 */}
       <SearchEngine onNavigate={onNavigate} />
