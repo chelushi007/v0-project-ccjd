@@ -88,57 +88,6 @@ const CLUSTERS_BY_CITY: Record<string, Cluster[]> = {
   ],
 }
 
-/** 各省/直辖市/自治区/特别行政区在中国地图图片上的近似中心点（百分比） */
-const PROVINCE_CENTER_PCT: Record<string, { x: number; y: number }> = {
-  北京市: { x: 67.5, y: 31 },
-  天津市: { x: 69.5, y: 33 },
-  上海市: { x: 78, y: 51 },
-  重庆市: { x: 55, y: 55 },
-  河北省: { x: 66, y: 33 },
-  山西省: { x: 62, y: 37 },
-  辽宁省: { x: 76, y: 26 },
-  吉林省: { x: 80, y: 21 },
-  黑龙江省: { x: 78, y: 13 },
-  江苏省: { x: 75, y: 47 },
-  浙江省: { x: 76, y: 55 },
-  安徽省: { x: 70, y: 49 },
-  福建省: { x: 72, y: 63 },
-  江西省: { x: 67, y: 60 },
-  山东省: { x: 70, y: 39 },
-  河南省: { x: 64, y: 45 },
-  湖北省: { x: 62, y: 52 },
-  湖南省: { x: 60, y: 60 },
-  广东省: { x: 64, y: 70 },
-  海南省: { x: 60, y: 80 },
-  四川省: { x: 49, y: 55 },
-  贵州省: { x: 54, y: 64 },
-  云南省: { x: 46, y: 68 },
-  陕西省: { x: 57, y: 45 },
-  甘肃省: { x: 48, y: 41 },
-  青海省: { x: 38, y: 43 },
-  台湾省: { x: 80, y: 67 },
-  内蒙古自治区: { x: 55, y: 24 },
-  广西壮族自治区: { x: 56, y: 70 },
-  西藏自治区: { x: 25, y: 53 },
-  宁夏回族自治区: { x: 53, y: 39 },
-  新疆维吾尔自治区: { x: 20, y: 30 },
-  香港特别行政区: { x: 67, y: 72 },
-  澳门特别行政区: { x: 65, y: 73 },
-}
-
-function getProvinceCenter(province: string) {
-  return PROVINCE_CENTER_PCT[province] ?? { x: 60, y: 50 }
-}
-
-/** 将 cluster 原始 0~100 范围坐标映射为：以省份中心为基点 ±5% 的偏移 */
-function projectCluster(c: Cluster, province: string, zoom: number) {
-  const center = getProvinceCenter(province)
-  const radius = 5 * zoom // 围绕中心半径（百分比）
-  const dx = ((c.x - 50) / 50) * radius
-  const dy = ((c.y - 50) / 50) * radius
-  return { left: center.x + dx, top: center.y + dy }
-}
-
 function getClusterColor(count: number) {
   if (count >= 30) return { bg: "#dc2626", ring: "rgba(220,38,38,0.25)" } // red-600
   if (count >= 15) return { bg: "#f97316", ring: "rgba(249,115,22,0.25)" } // orange-500
@@ -196,47 +145,113 @@ export function WarehouseMapPage({ onNavigate }: WarehouseMapPageProps) {
 
   return (
     <div className="relative w-full h-[calc(100vh-8rem)] min-h-[640px] rounded-lg overflow-hidden border border-border bg-[#eef2f7]">
-      {/* ===================== 地图底图：中国地图 ===================== */}
-      <div className="absolute inset-0 overflow-hidden bg-white">
-        <div
-          className="w-full h-full flex items-center justify-center"
+      {/* ===================== 地图底图（伪地图：网格 + 道路 + 水域） ===================== */}
+      <div className="absolute inset-0">
+        <svg
+          viewBox="0 0 1000 700"
+          preserveAspectRatio="xMidYMid slice"
+          className="w-full h-full"
           style={{
             transform: `scale(${zoom})`,
             transformOrigin: "center center",
             transition: "transform 200ms ease-out",
           }}
         >
-          {/* 使用 img 标签以便保持图片比例并响应容器尺寸 */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/%E4%B8%AD%E5%9B%BD%E5%9C%B0%E5%9B%BE-m2O6GfrqQqv1wBsOQExIjhgbVfmfRH.png"
-            alt="中国地图"
-            className="max-w-full max-h-full object-contain select-none pointer-events-none"
-            draggable={false}
+          <defs>
+            <pattern id="map-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#dde4ee" strokeWidth="0.5" />
+            </pattern>
+            <pattern id="map-grid-major" width="200" height="200" patternUnits="userSpaceOnUse">
+              <path d="M 200 0 L 0 0 0 200" fill="none" stroke="#c5d0df" strokeWidth="0.8" />
+            </pattern>
+            <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#cfe3f5" />
+              <stop offset="100%" stopColor="#aacae4" />
+            </linearGradient>
+            <linearGradient id="park" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#d8ecd2" />
+              <stop offset="100%" stopColor="#c3e1bb" />
+            </linearGradient>
+          </defs>
+          {/* 网格 */}
+          <rect width="1000" height="700" fill="url(#map-grid)" />
+          <rect width="1000" height="700" fill="url(#map-grid-major)" />
+
+          {/* 水域：海岸线 + 内陆河 */}
+          <path
+            d="M 760 0 L 1000 0 L 1000 700 L 720 700 C 760 600 700 520 780 440 C 860 360 740 280 800 200 C 860 120 760 80 760 0 Z"
+            fill="url(#water)"
+            opacity="0.85"
           />
-        </div>
+          <path
+            d="M 0 240 C 120 220 220 280 340 250 C 460 220 560 300 700 280 C 760 270 800 290 860 270"
+            fill="none"
+            stroke="#9cc4e3"
+            strokeWidth="6"
+            opacity="0.7"
+          />
+          <path
+            d="M 0 240 C 120 220 220 280 340 250 C 460 220 560 300 700 280 C 760 270 800 290 860 270"
+            fill="none"
+            stroke="#c4dcef"
+            strokeWidth="2"
+          />
+
+          {/* 公园/绿地 */}
+          <path d="M 80 460 Q 160 420 240 470 T 380 480 L 380 580 L 80 580 Z" fill="url(#park)" opacity="0.6" />
+          <circle cx="540" cy="140" r="60" fill="url(#park)" opacity="0.6" />
+
+          {/* 高速公路（粗白线带描边） */}
+          <g>
+            <path d="M 40 360 C 220 320 360 380 540 340 C 720 300 840 360 980 340"
+              stroke="#f9c75d" strokeWidth="10" fill="none" strokeLinecap="round" />
+            <path d="M 40 360 C 220 320 360 380 540 340 C 720 300 840 360 980 340"
+              stroke="#ffe9a8" strokeWidth="4" fill="none" strokeDasharray="14 10" />
+
+            <path d="M 220 40 C 260 200 200 380 280 540 C 320 620 360 660 380 700"
+              stroke="#ffffff" strokeWidth="8" fill="none" strokeLinecap="round" opacity="0.95" />
+            <path d="M 220 40 C 260 200 200 380 280 540 C 320 620 360 660 380 700"
+              stroke="#dfe6f1" strokeWidth="1.5" fill="none" />
+
+            <path d="M 620 60 C 580 220 660 380 600 540 C 580 600 620 660 640 700"
+              stroke="#ffffff" strokeWidth="8" fill="none" strokeLinecap="round" opacity="0.95" />
+            <path d="M 620 60 C 580 220 660 380 600 540 C 580 600 620 660 640 700"
+              stroke="#dfe6f1" strokeWidth="1.5" fill="none" />
+          </g>
+
+          {/* 次要街道 */}
+          <g stroke="#ffffff" strokeWidth="3" fill="none" opacity="0.85">
+            <path d="M 60 120 L 720 140" />
+            <path d="M 40 520 L 940 480" />
+            <path d="M 380 40 L 420 700" />
+            <path d="M 820 40 L 800 700" />
+            <path d="M 120 240 L 940 260" />
+            <path d="M 80 620 L 940 600" />
+          </g>
+
+          {/* 城市/地标标签 */}
+          <g fill="#5a6677" fontSize="12" fontFamily="sans-serif">
+            <text x="160" y="180">中心商务区</text>
+            <text x="600" y="140">滨海港区</text>
+            <text x="420" y="420">物流园区</text>
+            <text x="780" y="540">保税仓集群</text>
+            <text x="180" y="540">综合产业园</text>
+          </g>
+        </svg>
       </div>
 
       {/* ===================== 聚合圆圈 marker ===================== */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          transform: `scale(${zoom})`,
-          transformOrigin: "center center",
-          transition: "transform 200ms ease-out",
-        }}
-      >
+      <div className="absolute inset-0 pointer-events-none">
         {clusters.map((c) => {
-          const size = getClusterSize(c.count, 1)
+          const size = getClusterSize(c.count, zoom)
           const { bg, ring } = getClusterColor(c.count)
           const isActive = activeCluster === c.id
-          const pos = projectCluster(c, location.province, 1)
           return (
             <button
               key={c.id}
               onClick={() => setActiveCluster(isActive ? null : c.id)}
               className="absolute pointer-events-auto -translate-x-1/2 -translate-y-1/2 group"
-              style={{ left: `${pos.left}%`, top: `${pos.top}%` }}
+              style={{ left: `${c.x}%`, top: `${c.y}%` }}
             >
               {/* 外圈光晕 */}
               <span
