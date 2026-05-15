@@ -40,10 +40,10 @@ export function FrontendPage({ onNavigate }: FrontendPageProps) {
       <WarehouseMap onNavigate={onNavigate} />
 
       {/* 资讯板块（按要求顺序：仓储商机 → 铁建仓储 → 平台推荐 → 热门站点 → 精选专运单位 → 闲置物资） */}
-      <WarehouseOpportunity />
-      <TiejianWarehouse />
-      <PlatformRecommend />
-      <HotSites />
+      <WarehouseOpportunity onNavigate={onNavigate} />
+      <TiejianWarehouse onNavigate={onNavigate} />
+      <PlatformRecommend onNavigate={onNavigate} />
+      <HotSites onNavigate={onNavigate} />
       <FeaturedTransport />
       <MaterialRecommend />
 

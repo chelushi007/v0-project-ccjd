@@ -56,7 +56,12 @@ const tiejianWarehouses = [
   },
 ]
 
-export function TiejianWarehouse() {
+interface TiejianWarehouseProps {
+  onNavigate?: (page: string) => void
+}
+
+export function TiejianWarehouse({ onNavigate }: TiejianWarehouseProps = {}) {
+  const goDetail = () => onNavigate?.("warehouse-detail")
   return (
     <section className="w-full">
       <div className="flex items-center justify-between mb-4">
@@ -78,6 +83,7 @@ export function TiejianWarehouse() {
         {tiejianWarehouses.map((warehouse) => (
           <Card
             key={warehouse.id}
+            onClick={goDetail}
             className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group border-primary/20"
           >
             {/* 头部图片 */}
@@ -140,7 +146,14 @@ export function TiejianWarehouse() {
                   <span className="text-lg font-bold text-primary">{warehouse.price}</span>
                   <span className="text-xs text-muted-foreground ml-1">元/m²/天</span>
                 </div>
-                <Button size="sm" variant="outline">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    goDetail()
+                  }}
+                >
                   查看详情
                 </Button>
               </div>

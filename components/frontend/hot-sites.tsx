@@ -56,7 +56,12 @@ const hotSites = [
   },
 ]
 
-export function HotSites() {
+interface HotSitesProps {
+  onNavigate?: (page: string) => void
+}
+
+export function HotSites({ onNavigate }: HotSitesProps = {}) {
+  const goDetail = () => onNavigate?.("warehouse-detail")
   return (
     <section className="w-full">
       <div className="flex items-center justify-between mb-4">
@@ -77,6 +82,7 @@ export function HotSites() {
         {hotSites.map((site, index) => (
           <Card
             key={site.id}
+            onClick={goDetail}
             className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
           >
             {/* 头部图片 */}
@@ -133,7 +139,14 @@ export function HotSites() {
                   <Users className="w-4 h-4" />
                   <span>{site.customers}家客户</span>
                 </div>
-                <Button size="sm" variant="outline">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    goDetail()
+                  }}
+                >
                   了解详情
                 </Button>
               </div>

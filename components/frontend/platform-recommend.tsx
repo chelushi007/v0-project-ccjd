@@ -64,7 +64,12 @@ const recommendedWarehouses = [
   },
 ]
 
-export function PlatformRecommend() {
+interface PlatformRecommendProps {
+  onNavigate?: (page: string) => void
+}
+
+export function PlatformRecommend({ onNavigate }: PlatformRecommendProps = {}) {
+  const goDetail = () => onNavigate?.("warehouse-detail")
   return (
     <section className="w-full">
       <div className="flex items-center justify-between mb-4">
@@ -83,6 +88,7 @@ export function PlatformRecommend() {
         {recommendedWarehouses.map((warehouse) => (
           <Card
             key={warehouse.id}
+            onClick={goDetail}
             className="group overflow-hidden hover:shadow-lg transition-all hover:border-primary/50 cursor-pointer"
           >
             {/* 头部图片区域 */}
@@ -137,7 +143,14 @@ export function PlatformRecommend() {
 
               <div className="flex items-center justify-between pt-3 border-t border-border">
                 <span className="text-xs text-muted-foreground">{warehouse.reviews}条评价</span>
-                <Button size="sm" variant="outline">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    goDetail()
+                  }}
+                >
                   查看详情
                 </Button>
               </div>

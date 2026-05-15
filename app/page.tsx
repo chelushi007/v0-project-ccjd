@@ -7,6 +7,7 @@ import { WarehouseMapPage } from "@/components/frontend/warehouse-map-page"
 import { WarehouseListPage } from "@/components/frontend/warehouse-list-page"
 import { SmartMatchPage } from "@/components/frontend/smart-match-page"
 import { DetailPublishPage } from "@/components/frontend/detail-publish-page"
+import { WarehouseDetailPage } from "@/components/frontend/warehouse-detail-page"
 import { MaterialPublishPage } from "@/components/frontend/material-publish-page"
 import { PersonalWorkbench } from "@/components/workbench/personal-workbench"
 import { OperationWorkbench } from "@/components/workbench/operation-workbench"
@@ -120,6 +121,8 @@ export default function HomePage() {
           )
         case "detail-publish":
           return <DetailPublishPage onNavigate={handleNavigate} defaultTab={publishDefaultTab} />
+        case "warehouse-detail":
+          return <WarehouseDetailPage onNavigate={handleNavigate} />
         case "material-publish":
           return <MaterialPublishPage onNavigate={handleNavigate} />
         case "home":

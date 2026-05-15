@@ -64,7 +64,12 @@ const opportunities = [
   },
 ]
 
-export function WarehouseOpportunity() {
+interface WarehouseOpportunityProps {
+  onNavigate?: (page: string) => void
+}
+
+export function WarehouseOpportunity({ onNavigate }: WarehouseOpportunityProps = {}) {
+  const goDetail = () => onNavigate?.("warehouse-detail")
   return (
     <section className="w-full">
       <div className="flex items-center justify-between mb-4">
@@ -81,7 +86,11 @@ export function WarehouseOpportunity() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {opportunities.map((item) => (
-          <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group">
+          <Card
+            key={item.id}
+            onClick={goDetail}
+            className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
+          >
             {/* 头部图片 */}
             <div className="h-32 bg-gradient-to-br from-primary/10 to-primary/5 relative">
               <div className="absolute inset-0 flex items-center justify-center">
@@ -144,7 +153,10 @@ export function WarehouseOpportunity() {
               <Button
                 size="sm"
                 className="w-full mt-3 h-8 gap-1"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  goDetail()
+                }}
               >
                 <FileSignature className="w-3.5 h-3.5" />
                 下单对接
