@@ -5,15 +5,53 @@ import { MapPin, Building2, ArrowRight, Maximize2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps"
 import { cn } from "@/lib/utils"
 
 interface WarehouseMapProps {
   onNavigate?: (page: string) => void
 }
 
-// 中国地图 GeoJSON URL
-const CHINA_GEO_URL = "https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json"
+// 中国地图底图（用户上传素材）
+const CHINA_MAP_IMG =
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/%E4%B8%AD%E5%9B%BD%E5%9C%B0%E5%9B%BE-m2O6GfrqQqv1wBsOQExIjhgbVfmfRH.png"
+
+// 各省/直辖市/自治区/特别行政区在中国地图图片上的近似中心点（百分比）
+const PROVINCE_CENTER_PCT: Record<string, { x: number; y: number }> = {
+  北京市: { x: 67.5, y: 31 },
+  天津市: { x: 69.5, y: 33 },
+  上海市: { x: 78, y: 51 },
+  重庆市: { x: 55, y: 55 },
+  河北省: { x: 66, y: 33 },
+  山西省: { x: 62, y: 37 },
+  辽宁省: { x: 76, y: 26 },
+  吉林省: { x: 80, y: 21 },
+  黑龙江省: { x: 78, y: 13 },
+  江苏省: { x: 75, y: 47 },
+  浙江省: { x: 76, y: 55 },
+  安徽省: { x: 70, y: 49 },
+  福建省: { x: 72, y: 63 },
+  江西省: { x: 67, y: 60 },
+  山东省: { x: 70, y: 39 },
+  河南省: { x: 64, y: 45 },
+  湖北省: { x: 62, y: 52 },
+  湖南省: { x: 60, y: 60 },
+  广东省: { x: 64, y: 70 },
+  海南省: { x: 60, y: 80 },
+  四川省: { x: 49, y: 55 },
+  贵州省: { x: 54, y: 64 },
+  云南省: { x: 46, y: 68 },
+  陕西省: { x: 57, y: 45 },
+  甘肃省: { x: 48, y: 41 },
+  青海省: { x: 38, y: 43 },
+  台湾省: { x: 80, y: 67 },
+  内蒙古自治区: { x: 55, y: 24 },
+  广西壮族自治区: { x: 56, y: 70 },
+  西藏自治区: { x: 25, y: 53 },
+  宁夏回族自治区: { x: 53, y: 39 },
+  新疆维吾尔自治区: { x: 20, y: 30 },
+  香港特别行政区: { x: 67, y: 72 },
+  澳门特别行政区: { x: 65, y: 73 },
+}
 
 type ProvinceMetrics = {
   warehouses: number
@@ -228,43 +266,65 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
             </div>
           </div>
 
-          <ComposableMap
-            projection="geoMercator"
-            projectionConfig={{ scale: 460, center: [105, 32] }}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <ZoomableGroup center={[105, 32]} zoom={1} minZoom={0.5} maxZoom={4}>
-              <Geographies geography={CHINA_GEO_URL}>
-                {({ geographies }) =>
-                  geographies.map((geo) => {
-                    const provinceName = geo.properties.name
-                    const data = provinceData[provinceName]
-                    const metricValue = data ? data[heatmapMode] : 0
-                    const isSelected = selectedProvince === provinceName
-                    const isHovered = hoveredProvince === provinceName
+          {/* 中国地图底图 */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={CHINA_MAP_IMG || "/placeholder.svg"}
+              alt="中国地图"
+              className="max-w-full max-h-full object-contain select-none pointer-events-none"
+              draggable={false}
+            />
+          </div>
 
-                    return (
-                      <Geography
-                        key={geo.rsmKey}
-                        geography={geo}
-                        fill={getHeatColor(metricValue, heatmapMode, isSelected, isHovered)}
-                        stroke="#ffffff"
-                        strokeWidth={0.8}
-                        style={{
-                          default: { outline: "none" },
-                          hover: { outline: "none", cursor: "pointer" },
-                          pressed: { outline: "none" },
-                        }}
-                        onMouseEnter={() => setHoveredProvince(provinceName)}
-                        onMouseLeave={() => setHoveredProvince(null)}
-                        onClick={() => setSelectedProvince(provinceName)}
-                      />
-                    )
-                  })
-                }
-              </Geographies>
-            </ZoomableGroup>
-          </ComposableMap>
+          {/* 各省份热力圆点（按指标值上色与缩放） */}
+          <div className="absolute inset-0">
+            {Object.entries(PROVINCE_CENTER_PCT).map(([province, pos]) => {
+              const data = provinceData[province]
+              if (!data) return null
+              const metricValue = data[heatmapMode]
+              const isSelected = selectedProvince === province
+              const isHovered = hoveredProvince === province
+              const fill = getHeatColor(metricValue, heatmapMode, isSelected, isHovered)
+              // 按数值缩放圆点尺寸：14 ~ 40 px
+              const maxValue =
+                heatmapMode === "warehouses"
+                  ? 35
+                  : Math.max(...Object.values(provinceData).map((d) => d.transactionAmount))
+              const ratio = Math.min(1, metricValue / maxValue)
+              const size = 14 + ratio * 26
+              return (
+                <button
+                  key={province}
+                  onMouseEnter={() => setHoveredProvince(province)}
+                  onMouseLeave={() => setHoveredProvince(null)}
+                  onClick={() => setSelectedProvince(province)}
+                  className={cn(
+                    "absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-md flex items-center justify-center transition-all hover:scale-110",
+                    isSelected && "ring-2 ring-primary ring-offset-1 z-10",
+                  )}
+                  style={{
+                    left: `${pos.x}%`,
+                    top: `${pos.y}%`,
+                    width: size,
+                    height: size,
+                    backgroundColor: fill,
+                  }}
+                  title={`${province} · ${
+                    heatmapMode === "warehouses"
+                      ? `${metricValue} 座`
+                      : `${metricValue.toLocaleString()} 万元`
+                  }`}
+                >
+                  {metricValue > 0 && size >= 24 && (
+                    <span className="text-[10px] font-semibold text-white leading-none drop-shadow">
+                      {heatmapMode === "warehouses" ? metricValue : Math.round(metricValue / 1000) + "k"}
+                    </span>
+                  )}
+                </button>
+              )
+            })}
+          </div>
 
           {/* 省份信息卡片 */}
           {displayProvince && displayMetrics && (
