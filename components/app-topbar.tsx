@@ -54,8 +54,8 @@ export function AppTopbar({
         "fixed top-0 right-0 z-40 h-16 flex items-center",
         "transition-[left] duration-300",
         sidebarCollapsed ? "left-16" : "left-64",
-        "bg-[#f1f5f9] text-slate-800",
-        "border-b border-slate-200 shadow-sm",
+        "bg-[#1e293b] text-white",
+        "border-b border-white/10 shadow-sm",
       )}
     >
       {/* 左侧：标题 */}
@@ -73,9 +73,9 @@ export function AppTopbar({
               <button
                 className={cn(
                   "flex items-center gap-2 h-9 px-4 rounded-full",
-                  "bg-white hover:bg-slate-50 transition-colors",
-                  "text-sm font-medium text-slate-800",
-                  "border border-slate-200",
+                  "bg-white/15 hover:bg-white/25 transition-colors",
+                  "text-sm font-medium text-white",
+                  "border border-white/20",
                 )}
               >
                 <span className="max-w-[200px] truncate">{company}</span>
