@@ -37,6 +37,7 @@ import {
   MonitorPlay,
 } from "lucide-react"
 import { OperatorVisualScreen } from "./operator-visual-screen"
+import { cn } from "@/lib/utils"
 
 // 统计周期
 type Period = "today" | "week" | "month" | "year"
@@ -52,12 +53,6 @@ const periodFactors: Record<Period, number> = {
   month: 1,
   year: 12,
 }
-import {
-  ComposableMap,
-  Geographies,
-  Geography,
-  ZoomableGroup,
-} from "react-simple-maps"
 import {
   ResponsiveContainer,
   BarChart,
@@ -328,7 +323,47 @@ const userPie = [
 ]
 
 // 4. 仓储地理分布
-const CHINA_GEO_URL = "https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json"
+// 中国地图底图（用户上传素材）
+const CHINA_MAP_IMG =
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/%E4%B8%8B%E8%BD%BD-PAHeFmw1z2BWjQJMV9jST4xO5vq4PB.png"
+
+// 各省/直辖市/自治区/特别行政区在中国地图图片上的近似中心点（百分比）
+const PROVINCE_CENTER_PCT: Record<string, { x: number; y: number }> = {
+  北京市: { x: 67.5, y: 31 },
+  天津市: { x: 69.5, y: 33 },
+  上海市: { x: 78, y: 51 },
+  重庆市: { x: 55, y: 55 },
+  河北省: { x: 66, y: 35 },
+  山西省: { x: 62, y: 39 },
+  辽宁省: { x: 76, y: 26 },
+  吉林省: { x: 80, y: 21 },
+  黑龙江省: { x: 78, y: 13 },
+  江苏省: { x: 75, y: 47 },
+  浙江省: { x: 76, y: 55 },
+  安徽省: { x: 70, y: 49 },
+  福建省: { x: 72, y: 63 },
+  江西省: { x: 67, y: 60 },
+  山东省: { x: 70, y: 39 },
+  河南省: { x: 64, y: 45 },
+  湖北省: { x: 62, y: 52 },
+  湖南省: { x: 60, y: 60 },
+  广东省: { x: 64, y: 70 },
+  海南省: { x: 60, y: 82 },
+  四川省: { x: 49, y: 55 },
+  贵州省: { x: 54, y: 64 },
+  云南省: { x: 46, y: 68 },
+  陕西省: { x: 57, y: 45 },
+  甘肃省: { x: 48, y: 41 },
+  青海省: { x: 38, y: 43 },
+  台湾省: { x: 80, y: 67 },
+  内蒙古自治区: { x: 55, y: 24 },
+  广西壮族自治区: { x: 56, y: 70 },
+  西藏自治区: { x: 25, y: 53 },
+  宁夏回族自治区: { x: 53, y: 39 },
+  新疆维吾尔自治区: { x: 20, y: 30 },
+  香港特别行政区: { x: 67, y: 73 },
+  澳门特别行政区: { x: 65, y: 74 },
+}
 
 type ProvinceStat = {
   warehouses: number
@@ -873,71 +908,88 @@ function ChinaHeatmap({ period }: { period: Period }) {
               setTip(null)
             }}
           >
-            <ComposableMap
-              projection="geoMercator"
-              projectionConfig={{ scale: 520, center: [105, 36] }}
-              style={{ width: "100%", height: 460 }}
-            >
-              <ZoomableGroup center={[105, 36]} zoom={1} minZoom={0.8} maxZoom={4}>
-                <Geographies geography={CHINA_GEO_URL}>
-                  {({ geographies }) =>
-                    geographies.map((geo) => {
-                      const name = geo.properties.name as string
-                      const stat = provinceData[name]
-                      const value = stat
-                        ? mode === "warehouses"
-                          ? stat.warehouses
-                          : stat.gmv * factor
-                        : 0
-                      const fill = heatColor(value, max, mode)
-                      const isHover = hovered === name
-                      return (
-                        <Geography
-                          key={geo.rsmKey}
-                          geography={geo}
-                          fill={fill}
-                          stroke="#ffffff"
-                          strokeWidth={0.6}
-                          style={{
-                            default: { outline: "none", transition: "fill 0.2s" },
-                            hover: {
-                              outline: "none",
-                              cursor: "pointer",
-                              fill: mode === "warehouses" ? "#1e40af" : "#991b1b",
-                            },
-                            pressed: { outline: "none" },
-                          }}
-                          onMouseEnter={(e) => {
-                            setHovered(name)
-                            const rect = (
-                              e.currentTarget.ownerSVGElement?.parentElement as HTMLElement
-                            )?.getBoundingClientRect()
-                            if (rect) {
-                              setTip({
-                                x: e.clientX - rect.left,
-                                y: e.clientY - rect.top,
-                              })
-                            }
-                          }}
-                          onMouseMove={(e) => {
-                            const rect = (
-                              e.currentTarget.ownerSVGElement?.parentElement as HTMLElement
-                            )?.getBoundingClientRect()
-                            if (rect) {
-                              setTip({
-                                x: e.clientX - rect.left,
-                                y: e.clientY - rect.top,
-                              })
-                            }
-                          }}
-                          aria-label={`${name} ${isHover ? "hovered" : ""}`}
-                        />
-                      )
-                    })
-                  }
-                </Geographies>
-              </ZoomableGroup>
-            </ComposableMap>
+            <div className="relative w-full" style={{ height: 460 }}>
+              <div className="absolute inset-0 flex items-center justify-center p-4">
+                <div className="relative w-full h-full aspect-[785/645] mx-auto">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={CHINA_MAP_IMG || "/placeholder.svg"}
+                    alt="中国地图"
+                    className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none"
+                    draggable={false}
+                  />
+                  {Object.entries(PROVINCE_CENTER_PCT).map(([name, pos]) => {
+                    const stat = provinceData[name]
+                    if (!stat) return null
+                    const value =
+                      mode === "warehouses" ? stat.warehouses : stat.gmv * factor
+                    const fill = heatColor(value, max, mode)
+                    const ratio = max > 0 ? Math.min(1, value / max) : 0
+                    const size = 14 + ratio * 28
+                    const isHover = hovered === name
+                    return (
+                      <button
+                        key={name}
+                        type="button"
+                        aria-label={`${name} ${isHover ? "hovered" : ""}`}
+                        onMouseEnter={(e) => {
+                          setHovered(name)
+                          const rect = (
+                            e.currentTarget.closest(
+                              ".relative.bg-slate-50",
+                            ) as HTMLElement | null
+                          )?.getBoundingClientRect()
+                          if (rect) {
+                            setTip({
+                              x: e.clientX - rect.left,
+                              y: e.clientY - rect.top,
+                            })
+                          }
+                        }}
+                        onMouseMove={(e) => {
+                          const rect = (
+                            e.currentTarget.closest(
+                              ".relative.bg-slate-50",
+                            ) as HTMLElement | null
+                          )?.getBoundingClientRect()
+                          if (rect) {
+                            setTip({
+                              x: e.clientX - rect.left,
+                              y: e.clientY - rect.top,
+                            })
+                          }
+                        }}
+                        className={cn(
+                          "absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-md flex items-center justify-center transition-all hover:scale-110 cursor-pointer",
+                          isHover && "ring-2 ring-offset-1 z-10",
+                          isHover &&
+                            (mode === "warehouses"
+                              ? "ring-blue-800"
+                              : "ring-red-800"),
+                        )}
+                        style={{
+                          left: `${pos.x}%`,
+                          top: `${pos.y}%`,
+                          width: size,
+                          height: size,
+                          backgroundColor: fill,
+                        }}
+                      >
+                        {value > 0 && size >= 24 && (
+                          <span className="text-[10px] font-semibold text-white leading-none drop-shadow tabular-nums">
+                            {mode === "warehouses"
+                              ? stat.warehouses
+                              : stat.gmv >= 1000
+                                ? (stat.gmv / 1000).toFixed(1) + "k"
+                                : Math.round(stat.gmv)}
+                          </span>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
 
             {/* 浮动详情 */}
             {hovered && hoveredStat && tip && (
