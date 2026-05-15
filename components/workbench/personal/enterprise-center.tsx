@@ -174,7 +174,7 @@ const enterpriseRoles = [
       email: "operation@crccm-hn.com",
       address: "广东省深圳市南山区前海铁建大厦18层",
       businessScope:
-        "对中铁建体系内物权单位存储在仓储站点的工程物料进行专业化运营（以出租为主），与物权单位采用「运营收益分成」或「物料整租」两种结算模式开展合作",
+        "专运单位即循环资源物资专业运营单位的简称。物权单位将物资托管至专运单位的仓储站点后，双方达成协议，可委托专运单位对托管物资进行运营（出租、出售），所得运营收益按双方事先协商的比例进行分成。",
       certifications: ["物料运营服务资质", "AA级信用企业", "ISO9001质量体系", "供应链管理认证"],
       stats: [
         { label: "在运营物料", value: "326", unit: "类" },
@@ -816,7 +816,7 @@ function ExitTransportDialog({
         <div className="flex items-start gap-3 p-3 rounded-lg bg-destructive/5 border border-destructive/20">
           <AlertTriangle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
           <div className="text-xs text-muted-foreground leading-relaxed">
-            退出前请确认：① 所有在租 / 在运合同已结清；② 物权单位已书面确认；③ 平台保证金可正常退还。
+            退出前请确认：① 所有在租 / 在运合同已结清；�� 物权单位已书面确认；③ 平台保证金可正常退还。
             退出审核周期约 15 个工作日。
           </div>
         </div>
