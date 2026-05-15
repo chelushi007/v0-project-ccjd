@@ -128,7 +128,6 @@ const businessBars = [
   { name: "物资租赁", v: 4216 },
   { name: "物资销售", v: 2842 },
   { name: "物资存放", v: 1820 },
-  { name: "委托代运", v: 1264 },
 ]
 
 const realtimeMessages = [
@@ -292,7 +291,7 @@ export function OperatorVisualScreen({ onClose }: { onClose: () => void }) {
             accent="text-amber-300"
           />
           <KpiBar
-            label="入驻企业总数"
+            label="入驻仓储单位"
             value="1,298"
             unit="家"
             delta="+89"
@@ -421,7 +420,7 @@ export function OperatorVisualScreen({ onClose }: { onClose: () => void }) {
             <div className="relative flex-1 rounded-lg border border-cyan-500/20 bg-gradient-to-br from-[#0b1e3f]/80 to-[#020817]/90 overflow-hidden">
               <CornerDeco />
               <div className="absolute top-3 left-4 z-10">
-                <div className="text-xs text-cyan-200/80 tracking-widest">全国仓储 · 交易热���分布</div>
+                <div className="text-xs text-cyan-200/80 tracking-widest">全国仓储 · 交易热力分布</div>
                 <div className="text-[10px] text-cyan-300/40 tracking-[0.2em] mt-0.5">CHINA WAREHOUSE HEATMAP</div>
               </div>
               <div className="absolute top-3 right-4 z-10 flex items-center gap-3 text-[10px] text-cyan-200/80">
