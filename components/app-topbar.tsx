@@ -54,7 +54,7 @@ export function AppTopbar({
         "fixed top-0 right-0 z-40 h-16 flex items-center",
         "transition-[left] duration-300",
         sidebarCollapsed ? "left-16" : "left-64",
-        "bg-[#537bbc] text-white",
+        "bg-[#1e293b] text-white",
         "border-b border-white/10 shadow-sm",
       )}
     >
