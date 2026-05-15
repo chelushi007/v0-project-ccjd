@@ -155,6 +155,7 @@ function heat(v: number, max: number) {
 export function OperatorVisualScreen({ onClose }: { onClose: () => void }) {
   const [now, setNow] = useState(new Date())
   const [isFull, setIsFull] = useState(false)
+  const [heatMode, setHeatMode] = useState<"gmv" | "warehouses">("gmv")
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
@@ -165,6 +166,34 @@ export function OperatorVisualScreen({ onClose }: { onClose: () => void }) {
     () => Math.max(...Object.values(provinceData).map((p) => p.gmv)),
     [],
   )
+  const maxWarehouses = useMemo(
+    () => Math.max(...Object.values(provinceData).map((p) => p.warehouses)),
+    [],
+  )
+  const currentMax = heatMode === "gmv" ? maxGmv : maxWarehouses
+  const heatLegends =
+    heatMode === "gmv"
+      ? [
+          { color: "#fde047", label: "≥1500" },
+          { color: "#fb923c", label: "800-1500" },
+          { color: "#ef4444", label: "400-800" },
+          { color: "#a855f7", label: "100-400" },
+          { color: "#3b82f6", label: "≤100" },
+        ]
+      : (() => {
+          const m = maxWarehouses
+          const t1 = Math.round(m * 0.85)
+          const t2 = Math.round(m * 0.65)
+          const t3 = Math.round(m * 0.45)
+          const t4 = Math.round(m * 0.3)
+          return [
+            { color: "#fde047", label: `≥${t1}` },
+            { color: "#fb923c", label: `${t2}-${t1}` },
+            { color: "#ef4444", label: `${t3}-${t2}` },
+            { color: "#a855f7", label: `${t4}-${t3}` },
+            { color: "#3b82f6", label: `≤${t4}` },
+          ]
+        })()
 
   const totals = useMemo(() => {
     const vals = Object.values(provinceData)
@@ -419,16 +448,44 @@ export function OperatorVisualScreen({ onClose }: { onClose: () => void }) {
           <div className="col-span-6 flex flex-col gap-3 min-h-0">
             <div className="relative flex-1 rounded-lg border border-cyan-500/20 bg-gradient-to-br from-[#0b1e3f]/80 to-[#020817]/90 overflow-hidden">
               <CornerDeco />
-              <div className="absolute top-3 left-4 z-10">
-                <div className="text-xs text-cyan-200/80 tracking-widest">全国仓储 · 交易热力分布</div>
-                <div className="text-[10px] text-cyan-300/40 tracking-[0.2em] mt-0.5">CHINA WAREHOUSE HEATMAP</div>
+              <div className="absolute top-3 left-4 z-10 flex items-center gap-3">
+                <div>
+                  <div className="text-xs text-cyan-200/80 tracking-widest">
+                    全国仓储 · {heatMode === "gmv" ? "交易热力分布" : "仓储数量热力分布"}
+                  </div>
+                  <div className="text-[10px] text-cyan-300/40 tracking-[0.2em] mt-0.5">
+                    {heatMode === "gmv" ? "CHINA TRADE HEATMAP" : "CHINA WAREHOUSE HEATMAP"}
+                  </div>
+                </div>
+                <div className="flex items-center gap-0.5 rounded-md border border-cyan-500/30 bg-cyan-500/10 p-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setHeatMode("gmv")}
+                    className={`px-2 py-0.5 rounded text-[10px] tracking-wide transition-colors ${
+                      heatMode === "gmv"
+                        ? "bg-cyan-400/90 text-slate-900 font-semibold"
+                        : "text-cyan-200/80 hover:text-cyan-100"
+                    }`}
+                  >
+                    交易热力
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setHeatMode("warehouses")}
+                    className={`px-2 py-0.5 rounded text-[10px] tracking-wide transition-colors ${
+                      heatMode === "warehouses"
+                        ? "bg-cyan-400/90 text-slate-900 font-semibold"
+                        : "text-cyan-200/80 hover:text-cyan-100"
+                    }`}
+                  >
+                    仓储数量
+                  </button>
+                </div>
               </div>
               <div className="absolute top-3 right-4 z-10 flex items-center gap-3 text-[10px] text-cyan-200/80">
-                <Legend color="#fde047" label="≥1500" />
-                <Legend color="#fb923c" label="800-1500" />
-                <Legend color="#ef4444" label="400-800" />
-                <Legend color="#a855f7" label="100-400" />
-                <Legend color="#3b82f6" label="≤100" />
+                {heatLegends.map((l) => (
+                  <Legend key={l.label} color={l.color} label={l.label} />
+                ))}
               </div>
               {/* 中国地图底图 + 各省份仓储数量标签（按 GMV 着色） */}
               <div className="absolute inset-0 flex items-center justify-center p-10">
@@ -443,7 +500,8 @@ export function OperatorVisualScreen({ onClose }: { onClose: () => void }) {
                   {Object.entries(PROVINCE_CENTER_PCT).map(([name, pos]) => {
                     const stat = provinceData[name]
                     if (!stat) return null
-                    const color = heat(stat.gmv, maxGmv)
+                    const metric = heatMode === "gmv" ? stat.gmv : stat.warehouses
+                    const color = heat(metric, currentMax)
                     return (
                       <div
                         key={name}
@@ -454,7 +512,11 @@ export function OperatorVisualScreen({ onClose }: { onClose: () => void }) {
                           className="rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums shadow-[0_0_6px_rgba(34,211,238,0.6)] border border-cyan-300/40 bg-[#020817]/80"
                           style={{ color }}
                         >
-                          {stat.warehouses}
+                          {heatMode === "gmv"
+                            ? stat.gmv >= 1000
+                              ? (stat.gmv / 1000).toFixed(1) + "k"
+                              : stat.gmv
+                            : stat.warehouses}
                         </span>
                         <span className="mt-0.5 text-[9px] text-cyan-100/85 leading-none whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
                           {name.replace(/(省|市|自治区|特别行政区|维吾尔|壮族|回族)/g, "")}
