@@ -221,14 +221,14 @@ const warehouseData: WarehouseListItem[] = [
 
 const sourceMeta = {
   detail: {
-    label: "详细发布",
+    label: "详细需求",
     short: "出租",
     icon: FileText,
     badgeClass: "bg-accent text-accent-foreground",
     sourceBadgeClass: "bg-primary/10 text-primary border-primary/30",
   },
   quick: {
-    label: "快捷发布",
+    label: "快捷需求",
     short: "出租",
     icon: Zap,
     badgeClass: "bg-accent text-accent-foreground",
@@ -288,7 +288,6 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
 
   const goDetail = () => onNavigate?.("warehouse-detail")
   const goMap = () => onNavigate?.("warehouse-map")
-  const goQuickPublish = () => onNavigate?.("detail-publish-quick")
 
   return (
     <div className="space-y-4">
@@ -424,14 +423,14 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
             </TabsTrigger>
             <TabsTrigger value="detail">
               <FileText className="w-3.5 h-3.5 mr-1" />
-              详细发布
+              详细需求
               <Badge variant="secondary" className="ml-2 h-5 px-1.5 text-[10px]">
                 {counts.detail}
               </Badge>
             </TabsTrigger>
             <TabsTrigger value="quick">
               <Zap className="w-3.5 h-3.5 mr-1" />
-              快捷发布
+              快捷需求
               <Badge variant="secondary" className="ml-2 h-5 px-1.5 text-[10px]">
                 {counts.quick}
               </Badge>
@@ -441,10 +440,6 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
             <span className="text-sm text-muted-foreground">
               共 <span className="text-primary font-medium">{filtered.length}</span> 条
             </span>
-            <Button size="sm" variant="outline" onClick={goQuickPublish}>
-              <Zap className="w-3.5 h-3.5 mr-1" />
-              快捷发布仓储
-            </Button>
           </div>
         </div>
       </Tabs>
@@ -599,7 +594,7 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
                         </div>
                         <div className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1 justify-end">
                           <Zap className="w-2.5 h-2.5 text-amber-600" />
-                          快捷发布 · 详询联系人
+                          快捷需求 · 详询联系人
                         </div>
                       </div>
                     )}
