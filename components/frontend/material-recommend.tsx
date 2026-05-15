@@ -11,7 +11,6 @@ const materials = [
     name: "二手钢管扣件 约500吨",
     category: "拼装类",
     location: "广东省广州市黄埔区",
-    dealType: "出售" as const,
     price: "3500",
     unit: "元/吨",
     condition: "八成新",
@@ -26,9 +25,8 @@ const materials = [
     name: "工地周转木方 约200方",
     category: "房屋建筑类",
     location: "广东省深圳市龙岗区",
-    dealType: "出租" as const,
-    price: "12",
-    unit: "元/方/月",
+    price: "800",
+    unit: "元/方",
     condition: "七成新",
     supplier: "中铁建物资华南专业运营有限公司",
     views: 312,
@@ -41,9 +39,8 @@ const materials = [
     name: "塔吊标准节 10节",
     category: "其他材料",
     location: "广东省东莞市虎门镇",
-    dealType: "出租" as const,
-    price: "1800",
-    unit: "元/节/月",
+    price: "面议",
+    unit: "",
     condition: "九成新",
     supplier: "中铁十六局集团华南分公司",
     views: 256,
@@ -56,7 +53,6 @@ const materials = [
     name: "建筑模板 约1000张",
     category: "模板类",
     location: "广东省佛山市顺德区",
-    dealType: "出售" as const,
     price: "45",
     unit: "元/张",
     condition: "六成新",
@@ -91,17 +87,10 @@ export function MaterialRecommend() {
               <div className="absolute inset-0 flex items-center justify-center">
                 <Package className="w-12 h-12 text-accent/20" />
               </div>
-              <Badge
-                className={`absolute top-2 left-2 ${
-                  item.dealType === "出租" ? "bg-primary" : "bg-accent"
-                }`}
-              >
-                {item.dealType}
-              </Badge>
-              <Badge variant="outline" className="absolute top-2 right-2 bg-card/90 text-xs">
+              <Badge className="absolute top-2 left-2 bg-accent">
                 {item.category}
               </Badge>
-              <Badge variant="outline" className="absolute bottom-2 right-2 bg-card/90 text-xs">
+              <Badge variant="outline" className="absolute top-2 right-2 bg-card/90 text-xs">
                 {item.condition}
               </Badge>
               {item.isHot && (
@@ -113,13 +102,7 @@ export function MaterialRecommend() {
 
             <CardContent className="p-3">
               <div className="flex items-center gap-2 mb-2">
-                <span
-                  className={`text-lg font-bold ${
-                    item.dealType === "出租" ? "text-primary" : "text-accent"
-                  }`}
-                >
-                  {item.price}
-                </span>
+                <span className="text-lg font-bold text-accent">{item.price}</span>
                 <span className="text-xs text-muted-foreground">{item.unit}</span>
               </div>
 
