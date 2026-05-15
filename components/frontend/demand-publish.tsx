@@ -72,7 +72,6 @@ export function DemandPublish({ onNavigate }: DemandPublishProps) {
           <FileText className="w-5 h-5 text-primary" />
           <h2 className="text-lg font-semibold text-foreground">需求发布</h2>
         </div>
-        <span className="text-xs text-muted-foreground">快速对接全平台用户</span>
       </div>
 
       {/* 卡片列表 */}
