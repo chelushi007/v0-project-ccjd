@@ -104,11 +104,11 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
         </div>
       </div>
 
-      {/* 业务类型 */}
+      {/* 运营模式 */}
       <div>
-        <SectionTitle title="业务类型" />
+        <SectionTitle title="运营模式" />
         <div className="flex items-center gap-2">
-          <Label className="whitespace-nowrap shrink-0">租赁类型<span className="text-destructive">*</span></Label>
+          <Label className="whitespace-nowrap shrink-0">运营模式<span className="text-destructive">*</span></Label>
           <RadioGroup value={rentType} onValueChange={setRentType} className="flex gap-6">
             <label className="flex items-center gap-2 cursor-pointer">
               <RadioGroupItem value="self" />
@@ -189,11 +189,11 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
         </div>
       </div>
 
-      {/* 业务类型 */}
+      {/* 运营模式 */}
       <div>
-        <SectionTitle title="业务类型" />
+        <SectionTitle title="运营模式" />
         <div className="flex items-center gap-2">
-          <Label className="whitespace-nowrap shrink-0">租赁类型<span className="text-destructive">*</span></Label>
+          <Label className="whitespace-nowrap shrink-0">运营模式<span className="text-destructive">*</span></Label>
           <RadioGroup value={rentType} onValueChange={setRentType} className="flex gap-6">
             <label className="flex items-center gap-2 cursor-pointer">
               <RadioGroupItem value="self" />
@@ -345,7 +345,7 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
                   <SelectValue placeholder="钢结构" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="steel">钢结构</SelectItem>
+                  <SelectItem value="steel">��结构</SelectItem>
                   <SelectItem value="concrete">混凝土结构</SelectItem>
                   <SelectItem value="brick">砖混结构</SelectItem>
                 </SelectContent>
