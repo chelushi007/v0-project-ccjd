@@ -210,7 +210,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
         </Button>
       </div>
 
-      <div className="grid grid-cols-[200px_1fr_280px] gap-0 h-[460px]">
+      <div className="grid grid-cols-[minmax(180px,18%)_minmax(0,1fr)_minmax(240px,24%)] gap-0 h-[460px]">
         {/* 左侧：全国统计 5 项 */}
         <div className="bg-[#0f2742] text-white rounded-l-lg p-4 flex flex-col h-full">
           <h3 className="text-[#60a5fa] font-medium mb-4 text-sm">全国仓储统计</h3>
@@ -266,64 +266,62 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
             </div>
           </div>
 
-          {/* 中国地图底图 */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={CHINA_MAP_IMG || "/placeholder.svg"}
-              alt="中国地图"
-              className="max-w-full max-h-full object-contain select-none pointer-events-none"
-              draggable={false}
-            />
-          </div>
-
-          {/* 各省份热力圆点（按指标值上色与缩放） */}
-          <div className="absolute inset-0">
-            {Object.entries(PROVINCE_CENTER_PCT).map(([province, pos]) => {
-              const data = provinceData[province]
-              if (!data) return null
-              const metricValue = data[heatmapMode]
-              const isSelected = selectedProvince === province
-              const isHovered = hoveredProvince === province
-              const fill = getHeatColor(metricValue, heatmapMode, isSelected, isHovered)
-              // 按数值缩放圆点尺寸：14 ~ 40 px
-              const maxValue =
-                heatmapMode === "warehouses"
-                  ? 35
-                  : Math.max(...Object.values(provinceData).map((d) => d.transactionAmount))
-              const ratio = Math.min(1, metricValue / maxValue)
-              const size = 14 + ratio * 26
-              return (
-                <button
-                  key={province}
-                  onMouseEnter={() => setHoveredProvince(province)}
-                  onMouseLeave={() => setHoveredProvince(null)}
-                  onClick={() => setSelectedProvince(province)}
-                  className={cn(
-                    "absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-md flex items-center justify-center transition-all hover:scale-110",
-                    isSelected && "ring-2 ring-primary ring-offset-1 z-10",
-                  )}
-                  style={{
-                    left: `${pos.x}%`,
-                    top: `${pos.y}%`,
-                    width: size,
-                    height: size,
-                    backgroundColor: fill,
-                  }}
-                  title={`${province} · ${
-                    heatmapMode === "warehouses"
-                      ? `${metricValue} 座`
-                      : `${metricValue.toLocaleString()} 万元`
-                  }`}
-                >
-                  {metricValue > 0 && size >= 24 && (
-                    <span className="text-[10px] font-semibold text-white leading-none drop-shadow">
-                      {heatmapMode === "warehouses" ? metricValue : Math.round(metricValue / 1000) + "k"}
-                    </span>
-                  )}
-                </button>
-              )
-            })}
+          {/* 中国地图底图 + 热力圆点（共享同一容器与比例，保证圆点与省份对齐） */}
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <div className="relative w-full h-full max-w-full max-h-full aspect-[785/645] mx-auto">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={CHINA_MAP_IMG || "/placeholder.svg"}
+                alt="中国地图"
+                className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none"
+                draggable={false}
+              />
+              {/* 各省份热力圆点（按指标值上色与缩放） */}
+              {Object.entries(PROVINCE_CENTER_PCT).map(([province, pos]) => {
+                const data = provinceData[province]
+                if (!data) return null
+                const metricValue = data[heatmapMode]
+                const isSelected = selectedProvince === province
+                const isHovered = hoveredProvince === province
+                const fill = getHeatColor(metricValue, heatmapMode, isSelected, isHovered)
+                const maxValue =
+                  heatmapMode === "warehouses"
+                    ? 35
+                    : Math.max(...Object.values(provinceData).map((d) => d.transactionAmount))
+                const ratio = Math.min(1, metricValue / maxValue)
+                const size = 14 + ratio * 26
+                return (
+                  <button
+                    key={province}
+                    onMouseEnter={() => setHoveredProvince(province)}
+                    onMouseLeave={() => setHoveredProvince(null)}
+                    onClick={() => setSelectedProvince(province)}
+                    className={cn(
+                      "absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-md flex items-center justify-center transition-all hover:scale-110",
+                      isSelected && "ring-2 ring-primary ring-offset-1 z-10",
+                    )}
+                    style={{
+                      left: `${pos.x}%`,
+                      top: `${pos.y}%`,
+                      width: size,
+                      height: size,
+                      backgroundColor: fill,
+                    }}
+                    title={`${province} · ${
+                      heatmapMode === "warehouses"
+                        ? `${metricValue} 座`
+                        : `${metricValue.toLocaleString()} 万元`
+                    }`}
+                  >
+                    {metricValue > 0 && size >= 24 && (
+                      <span className="text-[10px] font-semibold text-white leading-none drop-shadow">
+                        {heatmapMode === "warehouses" ? metricValue : Math.round(metricValue / 1000) + "k"}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           {/* 省份信息卡片 */}
