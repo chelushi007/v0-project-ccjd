@@ -1,6 +1,6 @@
 "use client"
 
-import { Building, ArrowRight, MapPin, Maximize2, Star, Shield } from "lucide-react"
+import { Building, ArrowRight, MapPin, Maximize2, Star, Shield, Crown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -17,6 +17,7 @@ const tiejianWarehouses = [
     rating: 4.9,
     features: ["铁路专用线", "大型装卸设备", "24小时安保", "ISO认证"],
     certifications: ["央企资质", "安全生产标准化"],
+    tier: "一级" as const,
   },
   {
     id: 2,
@@ -29,6 +30,7 @@ const tiejianWarehouses = [
     rating: 4.8,
     features: ["自动化设备", "WMS系统", "恒温区", "消防达标"],
     certifications: ["央企资质", "AAAA物流企业"],
+    tier: "一级" as const,
   },
   {
     id: 3,
@@ -41,6 +43,7 @@ const tiejianWarehouses = [
     rating: 4.7,
     features: ["近虎门港", "海关监管", "大型堆场", "重载地面"],
     certifications: ["央企资质", "保税仓资质"],
+    tier: "一级" as const,
   },
   {
     id: 4,
@@ -53,6 +56,7 @@ const tiejianWarehouses = [
     rating: 4.8,
     features: ["钢材专用", "天车设备", "防锈处理", "质检服务"],
     certifications: ["央企资质", "钢材仓储资质"],
+    tier: "二级" as const,
   },
 ]
 
@@ -108,6 +112,19 @@ export function TiejianWarehouse({ onNavigate }: TiejianWarehouseProps = {}) {
             </div>
 
             <CardContent className="p-4">
+              <div className="mb-2">
+                <Badge
+                  variant={warehouse.tier === "一级" ? "default" : "outline"}
+                  className={
+                    warehouse.tier === "一级"
+                      ? "bg-amber-500 hover:bg-amber-500 text-white text-[10px] gap-0.5 px-1.5 py-0"
+                      : "text-[10px] gap-0.5 px-1.5 py-0 text-slate-600 border-slate-300"
+                  }
+                >
+                  {warehouse.tier === "一级" && <Crown className="w-2.5 h-2.5" />}
+                  {warehouse.tier}站点
+                </Badge>
+              </div>
               <h3 className="font-medium text-card-foreground mb-2 line-clamp-1 group-hover:text-primary transition-colors">
                 {warehouse.name}
               </h3>

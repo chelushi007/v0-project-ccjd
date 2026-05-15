@@ -1,6 +1,6 @@
 "use client"
 
-import { Flame, ArrowRight, MapPin, Building2, Star, Users } from "lucide-react"
+import { Flame, ArrowRight, MapPin, Building2, Star, Users, Crown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -16,6 +16,7 @@ const hotSites = [
     rating: 4.9,
     customers: 256,
     features: ["铁路专用线", "港口联运", "综合服务"],
+    tier: "一级" as const,
     isTop: true,
   },
   {
@@ -28,6 +29,7 @@ const hotSites = [
     rating: 4.8,
     customers: 189,
     features: ["智慧物流", "自贸区", "跨境服务"],
+    tier: "一级" as const,
     isTop: true,
   },
   {
@@ -40,6 +42,7 @@ const hotSites = [
     rating: 4.7,
     customers: 312,
     features: ["港口仓储", "大型堆场", "海关监管"],
+    tier: "一级" as const,
     isTop: false,
   },
   {
@@ -52,6 +55,7 @@ const hotSites = [
     rating: 4.6,
     customers: 145,
     features: ["制造配套", "快速响应", "专业服务"],
+    tier: "二级" as const,
     isTop: false,
   },
 ]
@@ -102,6 +106,19 @@ export function HotSites({ onNavigate }: HotSitesProps = {}) {
             </div>
 
             <CardContent className="p-4">
+              <div className="mb-1.5">
+                <Badge
+                  variant={site.tier === "一级" ? "default" : "outline"}
+                  className={
+                    site.tier === "一级"
+                      ? "bg-amber-500 hover:bg-amber-500 text-white text-[10px] gap-0.5 px-1.5 py-0"
+                      : "text-[10px] gap-0.5 px-1.5 py-0 text-slate-600 border-slate-300"
+                  }
+                >
+                  {site.tier === "一级" && <Crown className="w-2.5 h-2.5" />}
+                  {site.tier}站点
+                </Badge>
+              </div>
               <h3 className="font-medium text-card-foreground mb-1 line-clamp-1 group-hover:text-primary transition-colors">
                 {site.name}
               </h3>

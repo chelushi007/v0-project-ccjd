@@ -1,6 +1,6 @@
 "use client"
 
-import { Star, ArrowRight, Building2, MapPin, Award, ThumbsUp } from "lucide-react"
+import { Star, ArrowRight, Building2, MapPin, Award, ThumbsUp, Crown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -17,6 +17,7 @@ const recommendedWarehouses = [
     reviews: 128,
     features: ["铁路专用线", "大型装卸设备", "24小时安保"],
     certifications: ["ISO9001", "安全生产标准化"],
+    tier: "一级" as const,
     isRecommended: true,
     image: "bg-gradient-to-br from-primary/20 to-primary/5",
   },
@@ -31,6 +32,7 @@ const recommendedWarehouses = [
     reviews: 96,
     features: ["自动化设备", "WMS系统", "恒温区"],
     certifications: ["ISO14001", "AAAA物流企业"],
+    tier: "一级" as const,
     isRecommended: true,
     image: "bg-gradient-to-br from-accent/20 to-accent/5",
   },
@@ -45,6 +47,7 @@ const recommendedWarehouses = [
     reviews: 156,
     features: ["近虎门港", "海关监管", "大型堆场"],
     certifications: ["保税仓资质", "危化品资质"],
+    tier: "二级" as const,
     isRecommended: false,
     image: "bg-gradient-to-br from-chart-4/20 to-chart-4/5",
   },
@@ -59,6 +62,7 @@ const recommendedWarehouses = [
     reviews: 78,
     features: ["钢材专用", "天车设备", "防锈处理"],
     certifications: ["钢材仓储资质"],
+    tier: "二级" as const,
     isRecommended: false,
     image: "bg-gradient-to-br from-chart-3/20 to-chart-3/5",
   },
@@ -109,6 +113,19 @@ export function PlatformRecommend({ onNavigate }: PlatformRecommendProps = {}) {
             </div>
 
             <CardContent className="p-4">
+              <div className="mb-1.5">
+                <Badge
+                  variant={warehouse.tier === "一级" ? "default" : "outline"}
+                  className={
+                    warehouse.tier === "一级"
+                      ? "bg-amber-500 hover:bg-amber-500 text-white text-[10px] gap-0.5 px-1.5 py-0"
+                      : "text-[10px] gap-0.5 px-1.5 py-0 text-slate-600 border-slate-300"
+                  }
+                >
+                  {warehouse.tier === "一级" && <Crown className="w-2.5 h-2.5" />}
+                  {warehouse.tier}站点
+                </Badge>
+              </div>
               <h3 className="font-medium text-card-foreground mb-1 group-hover:text-primary transition-colors line-clamp-1">
                 {warehouse.name}
               </h3>

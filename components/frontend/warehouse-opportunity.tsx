@@ -1,6 +1,6 @@
 "use client"
 
-import { TrendingUp, ArrowRight, Building2, MapPin, Maximize2, Eye, Clock, FileSignature } from "lucide-react"
+import { TrendingUp, ArrowRight, Building2, MapPin, Maximize2, Eye, Clock, FileSignature, Crown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -18,6 +18,7 @@ const opportunities = [
     views: 328,
     publishTime: "2小时前",
     features: ["近地铁", "24小时监控", "消防达标"],
+    tier: "一级" as const,
     isHot: true,
   },
   {
@@ -32,6 +33,7 @@ const opportunities = [
     views: 256,
     publishTime: "5小时前",
     features: ["恒温恒湿", "近港口", "可分租"],
+    tier: "一级" as const,
     isHot: true,
   },
   {
@@ -46,6 +48,7 @@ const opportunities = [
     views: 412,
     publishTime: "1天前",
     features: ["大面积", "近虎门港", "天车设备"],
+    tier: "二级" as const,
     isHot: false,
   },
   {
@@ -60,6 +63,7 @@ const opportunities = [
     views: 189,
     publishTime: "2天前",
     features: ["钢材专用", "防锈处理", "重载地面"],
+    tier: "二级" as const,
     isHot: false,
   },
 ]
@@ -120,6 +124,19 @@ export function WarehouseOpportunity({ onNavigate }: WarehouseOpportunityProps =
                 <span>{item.area}m²</span>
               </div>
 
+              <div className="mb-1.5">
+                <Badge
+                  variant={item.tier === "一级" ? "default" : "outline"}
+                  className={
+                    item.tier === "一级"
+                      ? "bg-amber-500 hover:bg-amber-500 text-white text-[10px] gap-0.5 px-1.5 py-0"
+                      : "text-[10px] gap-0.5 px-1.5 py-0 text-slate-600 border-slate-300"
+                  }
+                >
+                  {item.tier === "一级" && <Crown className="w-2.5 h-2.5" />}
+                  {item.tier}站点
+                </Badge>
+              </div>
               <h3 className="font-medium text-card-foreground mb-2 line-clamp-1 text-sm group-hover:text-primary transition-colors">
                 {item.name}
               </h3>

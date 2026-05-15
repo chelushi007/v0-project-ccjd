@@ -25,6 +25,7 @@ import {
   Award,
   Upload,
   AlertTriangle,
+  Crown,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -131,6 +132,7 @@ const enterpriseRoles = [
       name: "中铁建广州南沙综合仓储基地",
       code: "CRCC-NS-SITE-2022-003",
       type: "仓储站点（中铁建物料华南直属）",
+      tier: "一级" as "一级" | "二级",
       status: "已认证",
       creditScore: 92,
       registeredCapital: "—",
@@ -328,6 +330,19 @@ export function EnterpriseCenter() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h2 className="text-lg font-semibold text-balance">{active.enterprise.name}</h2>
+                  {active.id === "warehouse-site" && "tier" in active.enterprise && (
+                    <Badge
+                      className={
+                        active.enterprise.tier === "一级"
+                          ? "bg-amber-500 hover:bg-amber-500 text-white text-xs gap-1"
+                          : "text-xs gap-1 text-slate-600 border-slate-300 bg-transparent"
+                      }
+                      variant={active.enterprise.tier === "一级" ? "default" : "outline"}
+                    >
+                      {active.enterprise.tier === "一级" && <Crown className="w-3 h-3" />}
+                      {active.enterprise.tier}站点
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
                   企业编码：{active.enterprise.code}

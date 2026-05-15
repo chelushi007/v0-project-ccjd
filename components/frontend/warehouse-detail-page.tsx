@@ -29,6 +29,7 @@ import {
   Eye,
   Clock,
   Tag,
+  Crown,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -46,6 +47,7 @@ interface WarehouseDetailPageProps {
 // 模拟从「详细发布」表单生成的详情数据（与 detail-publish-page.tsx 字段一一对应）
 const detail = {
   name: "中铁建广州南沙综合仓储基地",
+  tier: "一级" as "一级" | "二级",
   tags: ["铁建", "央企品质", "认证仓"],
   rating: 4.9,
   reviews: 128,
@@ -289,6 +291,17 @@ export function WarehouseDetailPage({
         <div className="lg:col-span-5 flex flex-col gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
+              <Badge
+                className={
+                  detail.tier === "一级"
+                    ? "bg-amber-500 hover:bg-amber-500 text-white text-xs gap-1"
+                    : "text-xs gap-1 text-slate-600 border-slate-300 bg-transparent"
+                }
+                variant={detail.tier === "一级" ? "default" : "outline"}
+              >
+                {detail.tier === "一级" && <Crown className="w-3 h-3" />}
+                {detail.tier}站点
+              </Badge>
               {detail.tags.map((t) => (
                 <Badge key={t} variant="secondary" className="bg-primary/10 text-primary text-xs">
                   {t}
@@ -623,9 +636,9 @@ export function WarehouseDetailPage({
               </div>
               <div className="space-y-3">
                 {[
-                  { name: "中铁建深圳前海智慧仓储基地", area: "30,000 m²", price: "0.65" },
-                  { name: "中铁建东莞虎门港务仓储基地", area: "80,000 m²", price: "0.35" },
-                  { name: "中铁十六局佛山顺德钢构仓储基地", area: "20,000 m²", price: "0.42" },
+                  { name: "中铁建深圳前海智慧仓储基地", area: "30,000 m²", price: "0.65", tier: "一级" as const },
+                  { name: "中铁建东莞虎门港务仓储基地", area: "80,000 m²", price: "0.35", tier: "一级" as const },
+                  { name: "中铁十六局佛山顺德钢构仓储基地", area: "20,000 m²", price: "0.42", tier: "二级" as const },
                 ].map((w) => (
                   <button
                     key={w.name}
@@ -636,8 +649,20 @@ export function WarehouseDetailPage({
                       <Building2 className="w-6 h-6 text-primary/40" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium truncate group-hover:text-primary transition-colors">
-                        {w.name}
+                      <div className="flex items-center gap-1.5">
+                        <Badge
+                          variant={w.tier === "一级" ? "default" : "outline"}
+                          className={
+                            w.tier === "一级"
+                              ? "bg-amber-500 hover:bg-amber-500 text-white text-[10px] gap-0.5 px-1 py-0 shrink-0"
+                              : "text-[10px] gap-0.5 px-1 py-0 text-slate-600 border-slate-300 shrink-0"
+                          }
+                        >
+                          {w.tier}
+                        </Badge>
+                        <div className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+                          {w.name}
+                        </div>
                       </div>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                         <span>{w.area}</span>
