@@ -139,8 +139,8 @@ export function FeaturedTransport() {
                   <Package className="w-4 h-4" />
                   <span>专业运营</span>
                 </div>
-                <Button size="sm" variant="outline">
-                  联系咨询
+                <Button size="sm">
+                  委托运营
                 </Button>
               </div>
             </CardContent>

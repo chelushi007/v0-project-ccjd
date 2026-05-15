@@ -26,6 +26,7 @@ interface DetailPublishPageProps {
 export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailPublishPageProps) {
   const [activeTab, setActiveTab] = useState<string>(defaultTab)
   const [rentType, setRentType] = useState("self")
+  const [businessTypes, setBusinessTypes] = useState<string[]>(["仓储出租"])
   const [rentMethod, setRentMethod] = useState<string[]>([])
   const [warehouseFeatures, setWarehouseFeatures] = useState<string[]>([])
   const [loadingEquipment, setLoadingEquipment] = useState<string[]>([])
@@ -104,21 +105,37 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
         </div>
       </div>
 
-      {/* 业务类型 */}
+      {/* 运营模式 */}
       <div>
-        <SectionTitle title="业务类型" />
-        <div className="flex items-center gap-2">
-          <Label className="whitespace-nowrap shrink-0">租赁类型<span className="text-destructive">*</span></Label>
-          <RadioGroup value={rentType} onValueChange={setRentType} className="flex gap-6">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <RadioGroupItem value="self" />
-              <span className="whitespace-nowrap">自主</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <RadioGroupItem value="entrust" />
-              <span className="whitespace-nowrap">委托</span>
-            </label>
-          </RadioGroup>
+        <SectionTitle title="运营模式" />
+        <div className="flex flex-wrap items-center gap-x-12 gap-y-3">
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap shrink-0">运营模式<span className="text-destructive">*</span></Label>
+            <RadioGroup value={rentType} onValueChange={setRentType} className="flex gap-6">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <RadioGroupItem value="self" />
+                <span className="whitespace-nowrap">自主</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <RadioGroupItem value="entrust" />
+                <span className="whitespace-nowrap">委托</span>
+              </label>
+            </RadioGroup>
+          </div>
+          <div className="flex items-center gap-3">
+            <Label className="whitespace-nowrap shrink-0">业务类型<span className="text-destructive">*</span></Label>
+            <div className="flex items-center gap-4">
+              {["物资存放", "仓储出租"].map((biz) => (
+                <label key={biz} className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={businessTypes.includes(biz)}
+                    onCheckedChange={() => toggleArrayItem(businessTypes, setBusinessTypes, biz)}
+                  />
+                  <span className="text-sm whitespace-nowrap">{biz}</span>
+                </label>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -189,21 +206,37 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
         </div>
       </div>
 
-      {/* 业务类型 */}
+      {/* 运营模式 */}
       <div>
-        <SectionTitle title="业务类型" />
-        <div className="flex items-center gap-2">
-          <Label className="whitespace-nowrap shrink-0">租赁类型<span className="text-destructive">*</span></Label>
-          <RadioGroup value={rentType} onValueChange={setRentType} className="flex gap-6">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <RadioGroupItem value="self" />
-              <span className="whitespace-nowrap">自主</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <RadioGroupItem value="entrust" />
-              <span className="whitespace-nowrap">委托</span>
-            </label>
-          </RadioGroup>
+        <SectionTitle title="运营模式" />
+        <div className="flex flex-wrap items-center gap-x-12 gap-y-3">
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap shrink-0">运营模式<span className="text-destructive">*</span></Label>
+            <RadioGroup value={rentType} onValueChange={setRentType} className="flex gap-6">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <RadioGroupItem value="self" />
+                <span className="whitespace-nowrap">自主</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <RadioGroupItem value="entrust" />
+                <span className="whitespace-nowrap">委托</span>
+              </label>
+            </RadioGroup>
+          </div>
+          <div className="flex items-center gap-3">
+            <Label className="whitespace-nowrap shrink-0">业务类型<span className="text-destructive">*</span></Label>
+            <div className="flex items-center gap-4">
+              {["物资存放", "仓储出租"].map((biz) => (
+                <label key={biz} className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={businessTypes.includes(biz)}
+                    onCheckedChange={() => toggleArrayItem(businessTypes, setBusinessTypes, biz)}
+                  />
+                  <span className="text-sm whitespace-nowrap">{biz}</span>
+                </label>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -345,7 +378,7 @@ export function DetailPublishPage({ onNavigate, defaultTab = "detail" }: DetailP
                   <SelectValue placeholder="钢结构" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="steel">钢结构</SelectItem>
+                  <SelectItem value="steel">��结构</SelectItem>
                   <SelectItem value="concrete">混凝土结构</SelectItem>
                   <SelectItem value="brick">砖混结构</SelectItem>
                 </SelectContent>
