@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -30,7 +31,7 @@ import {
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 
-type DemandType = "rent" | "material" | "purchase"
+type DemandType = "material" | "purchase" | "rent"
 
 interface SmartMatchPageProps {
   onNavigate?: (page: string) => void
@@ -201,23 +202,24 @@ const purchaseResults = [
   },
 ]
 
-// 需求类型配置（仓储承租放最前）
+// 需求类型配置
 const typeConfig: Record<
   DemandType,
-  { label: string; icon: typeof Search }
+  { label: string; sub: string; icon: typeof Search; emoji: string }
 > = {
-  rent: { label: "仓储承租", icon: Warehouse },
-  material: { label: "物资寻找", icon: Search },
-  purchase: { label: "物资采购", icon: ShoppingCart },
+  material: { label: "物资寻找", sub: "寻找出租中的循环物资", icon: Search, emoji: "🔍" },
+  purchase: { label: "物资采购", sub: "采购闲置/出售中的物资", icon: ShoppingCart, emoji: "🛒" },
+  rent: { label: "仓储承租", sub: "寻找合适的仓储空间", icon: Warehouse, emoji: "🏭" },
 }
 
-const typeOrder: DemandType[] = ["rent", "material", "purchase"]
+const typeOrder: DemandType[] = ["material", "purchase", "rent"]
 
 export function SmartMatchPage({
   onNavigate,
   initialType = "rent",
 }: SmartMatchPageProps) {
   const [demandType, setDemandType] = useState<DemandType>(initialType)
+  const [textDescription, setTextDescription] = useState("")
   const [hasResults, setHasResults] = useState(false)
   const [isMatching, setIsMatching] = useState(false)
 
@@ -226,13 +228,15 @@ export function SmartMatchPage({
     setTimeout(() => {
       setIsMatching(false)
       setHasResults(true)
-    }, 1000)
+    }, 1200)
   }
 
-  const handleTypeChange = (t: DemandType) => {
-    setDemandType(t)
-    setHasResults(false)
-  }
+  const placeholder =
+    demandType === "material"
+      ? "例如：项目需要在广州黄埔承租 200 吨 H 型钢，租期 3 个月，需带质保书..."
+      : demandType === "purchase"
+        ? "例如：希望采购 500 张闲置清水模板，1830×915 规格，预算单价不高于 70 元..."
+        : "例如：我需要在广州番禺区找一个 3000 平方米左右的仓库，最好有铁路专用线..."
 
   return (
     <div className="space-y-6">
@@ -249,207 +253,271 @@ export function SmartMatchPage({
         <span className="text-foreground">智能匹配</span>
       </div>
 
-      {/* 标题区 */}
-      <div className="flex items-center gap-2">
-        <Sparkles className="w-5 h-5 text-accent" />
-        <h2 className="text-xl font-semibold">智能匹配</h2>
-        <Badge variant="secondary">AI 匹配</Badge>
-      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* 左侧需求输入 */}
+        <div className="lg:col-span-1">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 mb-6">
+                <Sparkles className="w-5 h-5 text-accent" />
+                <h2 className="text-lg font-semibold">智能匹配</h2>
+                <Badge variant="secondary">AI 匹配</Badge>
+              </div>
 
-      {/* 需求类型切换：横向 Tab */}
-      <div className="grid grid-cols-3 gap-3">
-        {typeOrder.map((t) => {
-          const cfg = typeConfig[t]
-          const TypeIcon = cfg.icon
-          const active = demandType === t
-          return (
-            <button
-              key={t}
-              type="button"
-              onClick={() => handleTypeChange(t)}
-              className={cn(
-                "rounded-lg border px-4 py-3 flex items-center justify-center gap-2 transition-all",
-                active
-                  ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                  : "border-border bg-card text-card-foreground hover:border-primary/40",
+              {/* 需求类型选择 */}
+              <div className="space-y-3 mb-6">
+                <Label>需求类型</Label>
+                <div className="grid grid-cols-3 gap-2">
+                  {typeOrder.map((t) => {
+                    const cfg = typeConfig[t]
+                    const active = demandType === t
+                    return (
+                      <Button
+                        key={t}
+                        variant={active ? "default" : "outline"}
+                        className={cn(
+                          "h-auto py-3 flex-col gap-1 px-1",
+                          active && "shadow-sm",
+                        )}
+                        onClick={() => {
+                          setDemandType(t)
+                          setHasResults(false)
+                        }}
+                      >
+                        <span className="text-lg leading-none">{cfg.emoji}</span>
+                        <span className="text-xs font-medium">{cfg.label}</span>
+                      </Button>
+                    )
+                  })}
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {typeConfig[demandType].sub}
+                </p>
+              </div>
+
+              {/* 快捷输入表单 */}
+              {demandType === "material" && (
+                <div className="space-y-4 mb-6">
+                  <div className="space-y-2">
+                    <Label>期望区域</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择区域" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="guangzhou">广州市</SelectItem>
+                        <SelectItem value="shenzhen">深圳市</SelectItem>
+                        <SelectItem value="dongguan">东莞市</SelectItem>
+                        <SelectItem value="foshan">佛山市</SelectItem>
+                        <SelectItem value="huizhou">惠州市</SelectItem>
+                        <SelectItem value="zhongshan">中山市</SelectItem>
+                        <SelectItem value="zhuhai">珠海市</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>物资类型</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择物资类型" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="template">模板类</SelectItem>
+                        <SelectItem value="support">支护类</SelectItem>
+                        <SelectItem value="scaffold">脚手架类</SelectItem>
+                        <SelectItem value="assembly">拼装类</SelectItem>
+                        <SelectItem value="rail">轨道类</SelectItem>
+                        <SelectItem value="profile">型材类</SelectItem>
+                        <SelectItem value="cable">电线电缆</SelectItem>
+                        <SelectItem value="building">房屋建筑类</SelectItem>
+                        <SelectItem value="other">其他材料</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>承租数量</Label>
+                    <Input placeholder="如：100吨 或 500件" />
+                  </div>
+                </div>
               )}
-            >
-              <TypeIcon className="w-4 h-4" />
-              <span className="text-sm font-medium">{cfg.label}</span>
-            </button>
-          )
-        })}
-      </div>
 
-      {/* 表单区 + 匹配按钮 */}
-      <Card>
-        <CardContent className="p-5">
-          {demandType === "rent" && <RentForm />}
-          {demandType === "material" && <MaterialForm />}
-          {demandType === "purchase" && <PurchaseForm />}
-
-          <div className="mt-5 flex justify-end">
-            <Button onClick={handleMatch} disabled={isMatching} size="lg">
-              {isMatching ? (
-                <>
-                  <span className="animate-spin mr-2">⏳</span>
-                  匹配中...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  开始智能匹配
-                </>
+              {demandType === "purchase" && (
+                <div className="space-y-4 mb-6">
+                  <div className="space-y-2">
+                    <Label>期望区域</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择区域" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="guangzhou">广州市</SelectItem>
+                        <SelectItem value="shenzhen">深圳市</SelectItem>
+                        <SelectItem value="dongguan">东莞市</SelectItem>
+                        <SelectItem value="foshan">佛山市</SelectItem>
+                        <SelectItem value="huizhou">惠州市</SelectItem>
+                        <SelectItem value="zhongshan">中山市</SelectItem>
+                        <SelectItem value="zhuhai">珠海市</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>物资类型</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择物资类型" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="template">模板类</SelectItem>
+                        <SelectItem value="support">支护类</SelectItem>
+                        <SelectItem value="scaffold">脚手架类</SelectItem>
+                        <SelectItem value="profile">型材类</SelectItem>
+                        <SelectItem value="cable">电线电缆</SelectItem>
+                        <SelectItem value="other">其他材料</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label>采购数量</Label>
+                      <Input placeholder="如：500 张" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>预算单价</Label>
+                      <Input placeholder="如：≤70 元/张" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>成色要求</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择成色" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="new">全新未使用</SelectItem>
+                        <SelectItem value="9">9 成新及以上</SelectItem>
+                        <SelectItem value="8">8 成新及以上</SelectItem>
+                        <SelectItem value="any">不限</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* 匹配结果区 */}
-      {hasResults && (
-        <div>
-          {demandType === "rent" && (
+              {demandType === "rent" && (
+                <div className="space-y-4 mb-6">
+                  <div className="space-y-2">
+                    <Label>期望区域</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择区域" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="guangzhou">广州市</SelectItem>
+                        <SelectItem value="shenzhen">深圳市</SelectItem>
+                        <SelectItem value="dongguan">东莞市</SelectItem>
+                        <SelectItem value="foshan">佛山市</SelectItem>
+                        <SelectItem value="huizhou">惠州市</SelectItem>
+                        <SelectItem value="zhongshan">中山市</SelectItem>
+                        <SelectItem value="zhuhai">珠海市</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>仓储类型</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择类型" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="general">综合仓储</SelectItem>
+                        <SelectItem value="cold">冷链仓储</SelectItem>
+                        <SelectItem value="danger">危化品仓储</SelectItem>
+                        <SelectItem value="outdoor">露天堆场</SelectItem>
+                        <SelectItem value="stereo">立体仓库</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>需求面积</Label>
+                    <Input placeholder="如：3000m²" />
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2 mb-6">
+                <Label>需求描述（支持自然语言）</Label>
+                <Textarea
+                  placeholder={placeholder}
+                  value={textDescription}
+                  onChange={(e) => setTextDescription(e.target.value)}
+                  className="min-h-[120px]"
+                />
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  使用自然语言描述需求，AI 将自动提取关键字段并匹配最合适的资源。
+                </p>
+              </div>
+
+              <Button
+                className="w-full"
+                size="lg"
+                onClick={handleMatch}
+                disabled={isMatching}
+              >
+                {isMatching ? (
+                  <>
+                    <span className="animate-spin mr-2">⏳</span>
+                    智能匹配中...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    智能匹配
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* 右侧匹配结果 */}
+        <div className="lg:col-span-2">
+          {!hasResults ? (
+            <Card className="h-full">
+              <CardContent className="h-full flex flex-col items-center justify-center py-16">
+                <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
+                  <Sparkles className="w-10 h-10 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-medium text-muted-foreground mb-2">
+                  输入您的需求，AI 将为您智能匹配
+                </h3>
+                <p className="text-sm text-muted-foreground text-center max-w-md leading-relaxed">
+                  {demandType === "material" &&
+                    "支持自然语言描述，系统将根据区域、物资类型、数量、成色等维度进行智能分析，为您推荐最合适的循环物资租赁资源。"}
+                  {demandType === "purchase" &&
+                    "支持自然语言描述，系统将结合区域、物资类型、采购数量、预算单价、成色要求等维度，为您推荐最合适的闲置 / 出售物资。"}
+                  {demandType === "rent" &&
+                    "支持自然语言描述，系统将根据区域、类型、面积、配套设施等维度进行智能分析，为您推荐最合适的仓储资源。"}
+                </p>
+              </CardContent>
+            </Card>
+          ) : demandType === "material" ? (
+            <MaterialResultList
+              results={materialResults}
+              onReset={() => setHasResults(false)}
+            />
+          ) : demandType === "purchase" ? (
+            <PurchaseResultList
+              results={purchaseResults}
+              onReset={() => setHasResults(false)}
+            />
+          ) : (
             <WarehouseResultList
               results={warehouseResults}
               onReset={() => setHasResults(false)}
             />
           )}
-          {demandType === "material" && (
-            <MaterialResultList
-              results={materialResults}
-              onReset={() => setHasResults(false)}
-            />
-          )}
-          {demandType === "purchase" && (
-            <PurchaseResultList
-              results={purchaseResults}
-              onReset={() => setHasResults(false)}
-            />
-          )}
         </div>
-      )}
-    </div>
-  )
-}
-
-/* ---------------- 表单：仓储承租 ---------------- */
-function RentForm() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <FieldRegion />
-      <div className="space-y-2">
-        <Label>仓储类型</Label>
-        <Select>
-          <SelectTrigger>
-            <SelectValue placeholder="选择类型" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="general">综合仓储</SelectItem>
-            <SelectItem value="cold">冷链仓储</SelectItem>
-            <SelectItem value="danger">危化品仓储</SelectItem>
-            <SelectItem value="outdoor">露天堆场</SelectItem>
-            <SelectItem value="stereo">立体仓库</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
-      <div className="space-y-2">
-        <Label>需求面积</Label>
-        <Input placeholder="如：3000 m²" />
-      </div>
-    </div>
-  )
-}
-
-/* ---------------- 表单：物资寻找 ---------------- */
-function MaterialForm() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <FieldRegion />
-      <FieldMaterialType />
-      <div className="space-y-2">
-        <Label>承租数量</Label>
-        <Input placeholder="如：100 吨 / 500 套" />
-      </div>
-    </div>
-  )
-}
-
-/* ---------------- 表单：物资采购 ---------------- */
-function PurchaseForm() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <FieldRegion />
-      <FieldMaterialType />
-      <div className="space-y-2">
-        <Label>采购数量</Label>
-        <Input placeholder="如：500 张" />
-      </div>
-      <div className="space-y-2">
-        <Label>预算单价</Label>
-        <Input placeholder="如：≤ 70 元/张" />
-      </div>
-      <div className="space-y-2 md:col-span-2">
-        <Label>成色要求</Label>
-        <Select>
-          <SelectTrigger>
-            <SelectValue placeholder="选择成色" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="new">全新未使用</SelectItem>
-            <SelectItem value="9">9 成新及以上</SelectItem>
-            <SelectItem value="8">8 成新及以上</SelectItem>
-            <SelectItem value="any">不限</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
-  )
-}
-
-/* ---------------- 复用字段 ---------------- */
-function FieldRegion() {
-  return (
-    <div className="space-y-2">
-      <Label>期望区域</Label>
-      <Select>
-        <SelectTrigger>
-          <SelectValue placeholder="选择区域" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="guangzhou">广州市</SelectItem>
-          <SelectItem value="shenzhen">深圳市</SelectItem>
-          <SelectItem value="dongguan">东莞市</SelectItem>
-          <SelectItem value="foshan">佛山市</SelectItem>
-          <SelectItem value="huizhou">惠州市</SelectItem>
-          <SelectItem value="zhongshan">中山市</SelectItem>
-          <SelectItem value="zhuhai">珠海市</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-  )
-}
-
-function FieldMaterialType() {
-  return (
-    <div className="space-y-2">
-      <Label>物资类型</Label>
-      <Select>
-        <SelectTrigger>
-          <SelectValue placeholder="选择物资类型" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="template">模板类</SelectItem>
-          <SelectItem value="support">支护类</SelectItem>
-          <SelectItem value="scaffold">脚手架类</SelectItem>
-          <SelectItem value="assembly">拼装类</SelectItem>
-          <SelectItem value="rail">轨道类</SelectItem>
-          <SelectItem value="profile">型材类</SelectItem>
-          <SelectItem value="cable">电线电缆</SelectItem>
-          <SelectItem value="building">房屋建筑类</SelectItem>
-          <SelectItem value="other">其他材料</SelectItem>
-        </SelectContent>
-      </Select>
     </div>
   )
 }
