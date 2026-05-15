@@ -819,7 +819,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
           </Card>
         </div>
 
-        {/* 对账列��� */}
+        {/* 对账列表 */}
         <Card>
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
@@ -1220,7 +1220,7 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
               <div className="relative flex-1 min-w-[220px] max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="搜索流水号 / ��单号 / 合作方..."
+                  placeholder="搜索流水号 / 订单号 / 合作方..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-9"

@@ -279,7 +279,7 @@ export function MaterialInbound() {
           <div className="min-w-0">
             <h1 className="text-2xl font-bold text-foreground truncate">入库管理</h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              管理采购、调拨、归还、盘盈等入库单据，跟踪到货执行与���据状态
+              管理采购、调拨、归还、盘盈等入库单据，跟踪到货执行与单据状态
             </p>
           </div>
         </div>

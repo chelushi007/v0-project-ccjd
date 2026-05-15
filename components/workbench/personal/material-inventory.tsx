@@ -336,7 +336,7 @@ export function MaterialInventory() {
       {/* 统计卡 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
-          label="物料品���总数"
+          label="物料品类总数"
           value={total.toString()}
           icon={Boxes}
           iconBg="bg-primary/10"

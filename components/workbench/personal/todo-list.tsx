@@ -266,7 +266,7 @@ const getMsgIcon = (type: string) => {
   }
 }
 
-// ── 快捷入口配置 ─────────────────────���────────────────────────────────────────
+// ── 快捷入口配置 ────────────────────────────────────────────────────────────
 
 const quickApprovalEntries = [
   { label: "合同审批", icon: FilePen, count: 2, color: "text-blue-600", bg: "bg-blue-500/10" },

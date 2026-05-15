@@ -349,7 +349,7 @@ export function MaterialPublishPage({ onNavigate }: MaterialPublishPageProps) {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="ton-month">元/吨/月</SelectItem>
-                            <SelectItem value="set-day">元/���/天</SelectItem>
+                            <SelectItem value="set-day">元/套/天</SelectItem>
                             <SelectItem value="piece-month">元/件/月</SelectItem>
                             <SelectItem value="unit-month">元/台/月</SelectItem>
                             <SelectItem value="ring-month">元/环/月</SelectItem>

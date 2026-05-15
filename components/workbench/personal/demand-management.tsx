@@ -258,7 +258,7 @@ const materialRentRows: MaterialRentRow[] = [
     quantity: "500吨",
     location: "广东省广州市黄埔区",
     price: "1800元/吨/月",
-    rentTerm: "6 个���",
+    rentTerm: "6 个月",
     submitDate: "2026-05-10",
     publishDate: "2026-05-11",
     status: "已发布",
@@ -527,7 +527,7 @@ function entrustStatusActions(
       return [
         { label: "查看" },
         { label: "上传合同", tone: "primary" },
-        { label: "合同��情" },
+        { label: "合同详情" },
       ]
     case "已签署":
       return [

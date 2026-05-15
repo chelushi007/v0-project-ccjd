@@ -471,7 +471,7 @@ export function OperatorDashboard() {
           <div>
             <CardTitle className="text-base flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-indigo-600" />
-              ��易统计
+              交易统计
             </CardTitle>
             <CardDescription className="text-xs">
               本月平台流水概览 · 含 GMV、服务费、订单与争议

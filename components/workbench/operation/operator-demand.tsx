@@ -283,7 +283,7 @@ const materialRentRows: MaterialRentRow[] = [
   {
     id: "WZ20260509004",
     title: "工地围挡板出租 800 套",
-    publisher: "中铁二十二局集团第一工程有��公司",
+    publisher: "中铁二十二局集团第一工程有限公司",
     materialType: "支护类",
     quantity: "800套",
     location: "广东省东莞市长安镇",
@@ -1360,7 +1360,7 @@ function ApproveDialog({
         </DialogHeader>
         <div className="space-y-2 pt-2">
           <Label className="text-xs">审核备注（选填）</Label>
-          <Textarea placeholder="如有特殊提示或建议，可填写后通知���布方……" rows={3} />
+          <Textarea placeholder="如有特殊提示或建议，可填写后通知发布方……" rows={3} />
         </div>
         <DialogFooter className="gap-2 sm:gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>

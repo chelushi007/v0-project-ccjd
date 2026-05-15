@@ -729,7 +729,7 @@ function toWarehousePaymentOrder(o: (typeof warehouseOrders)[number]): PaymentOr
   }
 }
 
-// 物料���放订单 → 支付订单视图（按 12 个月计算）
+// 物料存放订单 → 支付订单视图（按 12 个月计算）
 function toStoragePaymentOrder(o: (typeof materialStorageOrders)[number]): PaymentOrder {
   const monthly = parseAmount(o.storageFee)
   const months = 12
