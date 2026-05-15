@@ -447,8 +447,6 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
       {/* 列表内容 */}
       <div className="space-y-3">
         {filtered.map((item) => {
-          const meta = sourceMeta[item.source]
-          const SourceIcon = meta.icon
           return (
             <Card
               key={item.id}
@@ -485,19 +483,6 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
                       >
                         {item.tier === "一级" && <Crown className="w-2.5 h-2.5" />}
                         {item.tier}站点
-                      </Badge>
-                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 shrink-0">
-                        {rentModeLabel[item.rentMode]}运营
-                      </Badge>
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          "text-[10px] gap-0.5 px-1.5 py-0 shrink-0",
-                          meta.sourceBadgeClass,
-                        )}
-                      >
-                        <SourceIcon className="w-2.5 h-2.5" />
-                        {meta.label}
                       </Badge>
                       <h3 className="font-medium text-card-foreground text-base leading-snug line-clamp-1 group-hover:text-primary transition-colors flex-1 min-w-0">
                         {item.title}
@@ -593,8 +578,7 @@ export function WarehouseListPage({ onNavigate }: WarehouseListPageProps) {
                           <span className="text-2xl font-bold text-primary">面议</span>
                         </div>
                         <div className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1 justify-end">
-                          <Zap className="w-2.5 h-2.5 text-amber-600" />
-                          快捷需求 · 详询联系人
+                          详询联系人
                         </div>
                       </div>
                     )}
