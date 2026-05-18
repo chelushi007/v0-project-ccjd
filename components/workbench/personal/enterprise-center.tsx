@@ -26,6 +26,7 @@ import {
   Upload,
   AlertTriangle,
   Crown,
+  PencilLine,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -76,7 +77,7 @@ const enterpriseRoles = [
       email: "contact@crcc14-gz.com",
       address: "广东省广州市天河区珠江新城华夏路30号",
       businessScope:
-        "市政与轨道交通施工、隧道与桥梁工程、项目物料采购与调配、工程供应链管理",
+        "市政与轨道交通施工、隧道与桥梁工程、项目物资采购与调配、工程供应链管理",
       certifications: ["AAA信用企业", "中央驻穗单位", "ISO9001质量体系"],
       stats: [
         { label: "物资存放数量", value: "1,286", unit: "批" },
@@ -96,7 +97,7 @@ const enterpriseRoles = [
     needCertify: false,
     enterprise: {
       shortName: "建物华南",
-      name: "中铁建物料华南仓储有限公司",
+      name: "中铁建物资华南仓储有限公司",
       code: "CRCCM-HN-2023-002",
       type: "国有控股企业",
       status: "已激活",
@@ -109,7 +110,7 @@ const enterpriseRoles = [
       email: "warehouse@crccm-hn.com",
       address: "广东省广州市天河区科韵路38号铁建大厦",
       businessScope:
-        "工程物料仓储与中转、工程机械周转管理、循环物料入出库与配送、库存数据化管理",
+        "工程物资仓储与中转、工程机械周转管理、循环物资入出库与配送、库存数据化管理",
       certifications: ["仓储服务一级资质", "ISO9001质量体系", "AA级信用企业"],
       stats: [
         { label: "运营仓储面积", value: "12.5", unit: "万m²" },
@@ -131,7 +132,7 @@ const enterpriseRoles = [
       shortName: "南沙基地",
       name: "中铁建广州南沙综合仓储基地",
       code: "CRCC-NS-SITE-2022-003",
-      type: "仓储站点（中铁建物料华南直属）",
+      type: "仓储站点（中铁建物资华南直属）",
       tier: "一级" as "一级" | "二级",
       status: "已认证",
       creditScore: 92,
@@ -143,11 +144,11 @@ const enterpriseRoles = [
       email: "nansha.site@crccm-hn.com",
       address: "广东省广州市南沙区进港大道15号铁建仓储园",
       businessScope:
-        "工程钢构与轨道物料仓储、危化品仓储、循环周转物料管理、铁路专用线装卸",
+        "工程钢构与轨道物资仓储、危化品仓储、循环周转物资管理、铁路专用线装卸",
       certifications: ["危化品仓储许可证", "消防安全合格证", "海关监管资质"],
       stats: [
         { label: "可用仓储面积", value: "3.2", unit: "万m²" },
-        { label: "在库物料批次", value: "1,286", unit: "批" },
+        { label: "在库物资批次", value: "1,286", unit: "批" },
         { label: "出租率", value: "86", unit: "%" },
       ],
     },
@@ -163,7 +164,7 @@ const enterpriseRoles = [
     needCertify: true,
     enterprise: {
       shortName: "建物专运",
-      name: "中铁建物料华南专业运营有限公司",
+      name: "中铁建物资华南专业运营有限公司",
       code: "CRCCM-MO-2021-004",
       type: "国有控股企业",
       status: "已认证",
@@ -177,9 +178,9 @@ const enterpriseRoles = [
       address: "广东省深圳市南山区前海铁建大厦18层",
       businessScope:
         "专运单位即循环资源物资专业运营单位的简称。物权单位将物资托管至专运单位的仓储站点后，双方达成协议，可委托专运单位对托管物资进行运营（出租、出售），所得运营收益按双方事先协商的比例进行分成。",
-      certifications: ["物料运营服务资质", "AA级信用企业", "ISO9001质量体系", "供应链管理认证"],
+      certifications: ["物资运营服务资质", "AA级信用企业", "ISO9001质量体系", "供应链管理认证"],
       stats: [
-        { label: "在运营物料", value: "326", unit: "类" },
+        { label: "在运营物资", value: "326", unit: "类" },
         { label: "合作物权单位", value: "18", unit: "家" },
         { label: "交易金额", value: "1.28", unit: "亿元" },
       ],
@@ -187,7 +188,7 @@ const enterpriseRoles = [
   },
   {
     id: "material-user",
-    role: "物料使用方",
+    role: "物资使用方",
     icon: Users,
     color: "text-cyan-600",
     bg: "bg-cyan-500/10",
@@ -208,10 +209,10 @@ const enterpriseRoles = [
       phone: "020-8666 2222",
       email: "purchase@crcc11-gzsz.com",
       address: "广东省广州市越秀区中山五路123号铁建广场",
-      businessScope: "广深城际高铁施工、城市轨道交通建设、市政基础工程、工程物料计划与领用",
+      businessScope: "广深城际高铁施工、城市轨道交通建设、市政基础工程、工程物资计划与领用",
       certifications: ["特级建造资质", "市政公用工程一级", "安全生产许可证"],
       stats: [
-        { label: "在用物料数量", value: "1,862", unit: "批" },
+        { label: "在用物资数量", value: "1,862", unit: "批" },
         { label: "在用物资价值", value: "8.62", unit: "亿元" },
         { label: "在用物资种类", value: "236", unit: "类" },
       ],
@@ -228,7 +229,7 @@ const enterpriseRoles = [
     needCertify: true,
     enterprise: {
       shortName: "建物华南",
-      name: "中国铁建物料集团华南有限公司",
+      name: "中国铁建物资集团华南有限公司",
       code: "CRCCM-HN-SP-2014-006",
       type: "中央企业（中国铁建股份有限公司全资子公司）",
       status: "已认证",
@@ -256,6 +257,7 @@ type RoleAction =
   | { type: "apply-site" }
   | { type: "apply-transport" }
   | { type: "exit-transport" }
+  | { type: "update-info" }
   | null
 
 export function EnterpriseCenter() {
@@ -292,6 +294,16 @@ export function EnterpriseCenter() {
               </Badge>
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setAction({ type: "update-info" })}
+                className="h-8 gap-1.5"
+              >
+                <PencilLine className="w-3.5 h-3.5" />
+                更新信息
+              </Button>
+              <div className="w-px h-5 bg-border mx-1" aria-hidden />
               <Button
                 variant="ghost"
                 size="icon"
@@ -566,6 +578,13 @@ export function EnterpriseCenter() {
         open={action?.type === "exit-transport"}
         onOpenChange={(o) => !o && setAction(null)}
       />
+      {/* 更新企业信息 */}
+      <UpdateInfoDialog
+        open={action?.type === "update-info"}
+        onOpenChange={(o) => !o && setAction(null)}
+        enterprise={active.enterprise}
+        roleLabel={active.role}
+      />
     </div>
   )
 }
@@ -643,7 +662,7 @@ function ApplySiteDialog({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="comprehensive">综合仓储基地</SelectItem>
-                  <SelectItem value="steel">钢构物料仓</SelectItem>
+                  <SelectItem value="steel">钢构物资仓</SelectItem>
                   <SelectItem value="chem">危化品仓</SelectItem>
                   <SelectItem value="cold">冷链/恒温仓</SelectItem>
                   <SelectItem value="open">露天堆场</SelectItem>
@@ -721,7 +740,7 @@ function ApplyTransportDialog({
             申请为专运单位
           </DialogTitle>
           <DialogDescription>
-            升级为「专运单位」后，可承接平台物权单位的物料专业运营托管业务。
+            升级为「专运单位」后，可承接平台物权单位的物资专业运营托管业务。
           </DialogDescription>
         </DialogHeader>
 
@@ -736,7 +755,7 @@ function ApplyTransportDialog({
           </FieldRow>
 
           <FieldRow>
-            <Field label="拟运营物料类别" required>
+            <Field label="拟运营物资类别" required>
               <Select>
                 <SelectTrigger>
                   <SelectValue placeholder="请选择" />
@@ -757,7 +776,7 @@ function ApplyTransportDialog({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="share">运营收益分成</SelectItem>
-                  <SelectItem value="rent">物料整租</SelectItem>
+                  <SelectItem value="rent">物资整租</SelectItem>
                   <SelectItem value="both">两种模式并行</SelectItem>
                 </SelectContent>
               </Select>
@@ -805,7 +824,7 @@ function ApplyTransportDialog({
   )
 }
 
-// ─────────────────────────────────────────────
+// ──────────────��──────────────────────────────
 // 退出「专运单位」申请表单
 // ─────────────────────────────────────────────
 function ExitTransportDialog({
@@ -839,7 +858,7 @@ function ExitTransportDialog({
         <div className="grid gap-4 mt-2">
           <FieldRow>
             <Field label="退出主体" required>
-              <Input defaultValue="中铁建物料华南专业运营有限公司" disabled />
+              <Input defaultValue="中铁建物资华南专业运营有限公司" disabled />
             </Field>
             <Field label="退出生效日期" required>
               <Input type="date" />
@@ -864,7 +883,7 @@ function ExitTransportDialog({
           <Field label="存量业务处理方案" required>
             <Textarea
               rows={3}
-              placeholder="请说明在租物料、在运订单、未结合同等存量业务的处理与移交方案……"
+              placeholder="请说明在租物资、在运订单、未结合同等存量业务的处理与移交方案……"
             />
           </Field>
 
@@ -887,6 +906,101 @@ function ExitTransportDialog({
           <Button variant="destructive" onClick={() => onOpenChange(false)}>
             提交退出申请
           </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+// ─────────────────────────────────────────────
+// 更新企业信息表单
+// ─────────────────────────────────────────────
+function UpdateInfoDialog({
+  open,
+  onOpenChange,
+  enterprise,
+  roleLabel,
+}: {
+  open: boolean
+  onOpenChange: (o: boolean) => void
+  enterprise: {
+    name: string
+    code: string
+    legalPerson: string
+    contact: string
+    phone: string
+    email: string
+    address: string
+    businessScope: string
+  }
+  roleLabel: string
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <PencilLine className="w-5 h-5 text-primary" />
+            更新企业信息
+          </DialogTitle>
+          <DialogDescription>
+            维护「{roleLabel}」的最新基本信息、联系人与资质材料，提交后将进入平台审核流程。
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="grid gap-4">
+          <FieldRow>
+            <Field label="企业名称" required>
+              <Input defaultValue={enterprise.name} />
+            </Field>
+            <Field label="企业编码">
+              <Input defaultValue={enterprise.code} disabled />
+            </Field>
+          </FieldRow>
+
+          <FieldRow>
+            <Field label="法定代表人" required>
+              <Input defaultValue={enterprise.legalPerson} />
+            </Field>
+            <Field label="对接联系人" required>
+              <Input defaultValue={enterprise.contact} />
+            </Field>
+          </FieldRow>
+
+          <FieldRow>
+            <Field label="联系电话" required>
+              <Input defaultValue={enterprise.phone} />
+            </Field>
+            <Field label="联系邮箱" required>
+              <Input type="email" defaultValue={enterprise.email} />
+            </Field>
+          </FieldRow>
+
+          <Field label="注册地址" required>
+            <Input defaultValue={enterprise.address} />
+          </Field>
+
+          <Field label="业务范围" required>
+            <Textarea rows={3} defaultValue={enterprise.businessScope} />
+          </Field>
+
+          <Field label="变更说明">
+            <Textarea
+              rows={2}
+              placeholder="可填写本次变更的事由、生效日期或其他说明……"
+            />
+          </Field>
+
+          <Field label="变更证明材料">
+            <UploadBox hint="如涉及法人/地址变更，请上传最新营业执照、变更核准通知书等" />
+          </Field>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            取消
+          </Button>
+          <Button onClick={() => onOpenChange(false)}>提交更新</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
