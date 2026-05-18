@@ -152,18 +152,27 @@ const warehouseListByProvince: Record<string, WarehouseItem[]> = {
   ],
 }
 
-type HeatmapMode = "warehouses"
+type HeatmapMode = "warehouses" | "transactionAmount"
 
 // 热力分档（按 5 档梯度上色）
-function getHeatColor(value: number, _mode: HeatmapMode, isSelected: boolean, isHovered: boolean) {
+function getHeatColor(value: number, mode: HeatmapMode, isSelected: boolean, isHovered: boolean) {
   if (isSelected) return "#1d4ed8"
   if (isHovered) return "#3b82f6"
 
-  if (value >= 25) return "#1e40af"
-  if (value >= 18) return "#2563eb"
-  if (value >= 12) return "#60a5fa"
-  if (value >= 6) return "#93c5fd"
-  if (value > 0) return "#dbeafe"
+  if (mode === "warehouses") {
+    if (value >= 25) return "#1e40af"
+    if (value >= 18) return "#2563eb"
+    if (value >= 12) return "#60a5fa"
+    if (value >= 6) return "#93c5fd"
+    if (value > 0) return "#dbeafe"
+    return "#f1f5f9"
+  }
+  // transactionAmount (万元)
+  if (value >= 15000) return "#9a3412"
+  if (value >= 8000) return "#ea580c"
+  if (value >= 4000) return "#fb923c"
+  if (value >= 1500) return "#fdba74"
+  if (value > 0) return "#fed7aa"
   return "#f1f5f9"
 }
 
@@ -178,44 +187,22 @@ const heatLegend: Record<HeatmapMode, { label: string; bins: { color: string; la
       { color: "#1e40af", label: "≥25" },
     ],
   },
-}
-
-// 通用 fallback 仓储模板，用于把右侧推荐列表补齐至与该省份「仓储数量」联动
-const fallbackTemplates: Omit<WarehouseItem, "id" | "location">[] = [
-  { name: "标准平库 钢结构 9% 增票 可分租", price: "0.45", area: "1500", priceStatus: "竞价中" },
-  { name: "立体库 自动化设备齐全 24h 看管", price: "0.62", area: "800", priceStatus: "竞价中" },
-  { name: "保税仓 整租优先 月结结算", price: "0.78", area: "2200", priceStatus: "固定价" },
-  { name: "重载地面堆场 适合钢材模板托管", price: "0.36", area: "3000", priceStatus: "竞价中" },
-  { name: "恒温仓 -22℃可控 配双回路", price: "0.95", area: "500", priceStatus: "固定价" },
-  { name: "综合保税仓 近多式联运 可天车装卸", price: "0.56", area: "1200", priceStatus: "竞价中" },
-]
-
-function getProvinceList(province: string): WarehouseItem[] {
-  const base = warehouseListByProvince[province] ?? []
-  const stat = provinceData[province]
-  if (!stat || stat.warehouses === 0) return base
-  // 目标条数：与仓储数量联动，仓储数量 ≥3 时至少 3 条；上限 6 条避免超长
-  const target = Math.min(Math.max(stat.warehouses, 3), 6)
-  if (base.length >= target) return base
-  const filled: WarehouseItem[] = [...base]
-  for (let i = 0; filled.length < target; i++) {
-    const tpl = fallbackTemplates[i % fallbackTemplates.length]
-    filled.push({
-      id: 9000 + i + province.charCodeAt(0),
-      name: tpl.name,
-      location: province,
-      price: tpl.price,
-      area: tpl.area,
-      priceStatus: tpl.priceStatus,
-    })
-  }
-  return filled
+  transactionAmount: {
+    label: "交易金额（万元）",
+    bins: [
+      { color: "#fed7aa", label: "<1500" },
+      { color: "#fdba74", label: "1500-3999" },
+      { color: "#fb923c", label: "4000-7999" },
+      { color: "#ea580c", label: "8000-14999" },
+      { color: "#9a3412", label: "≥15000" },
+    ],
+  },
 }
 
 export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
-  const [selectedProvince, setSelectedProvince] = useState<string | null>(null)
+  const [selectedProvince, setSelectedProvince] = useState<string | null>("广东省")
   const [hoveredProvince, setHoveredProvince] = useState<string | null>(null)
-  const heatmapMode: HeatmapMode = "warehouses"
+  const [heatmapMode, setHeatmapMode] = useState<HeatmapMode>("warehouses")
 
   // 计算总计数据
   const totalStats = useMemo(() => {
@@ -231,7 +218,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
 
   const displayProvince = hoveredProvince || selectedProvince
   const displayMetrics = displayProvince ? provinceData[displayProvince] : null
-  const currentList = displayProvince ? getProvinceList(displayProvince) : []
+  const currentList = displayProvince ? warehouseListByProvince[displayProvince] ?? [] : []
 
   return (
     <section className="w-full">
@@ -268,6 +255,24 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
 
         {/* 中间：地图 */}
         <div className="bg-[#e8f4fc] border-y border-border relative h-full overflow-hidden">
+          {/* 热力图模式切换 */}
+          <div className="absolute top-3 left-3 z-20 flex items-center gap-1 bg-white/95 border border-border rounded-md p-0.5 shadow-sm">
+            {(["warehouses", "transactionAmount"] as const).map((mode) => (
+              <button
+                key={mode}
+                onClick={() => setHeatmapMode(mode)}
+                className={cn(
+                  "px-3 py-1 text-xs rounded transition-colors",
+                  heatmapMode === mode
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted",
+                )}
+              >
+                {mode === "warehouses" ? "按仓储数量" : "按交易金额"}
+              </button>
+            ))}
+          </div>
+
           {/* 图例 */}
           <div className="absolute bottom-3 left-3 z-20 bg-white/95 border border-border rounded-md px-3 py-2 shadow-sm">
             <div className="text-[11px] text-muted-foreground mb-1.5">{heatLegend[heatmapMode].label}</div>
@@ -286,15 +291,11 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
 
           {/* 中国地图底图 + 热力圆点（共享同一容器与比例，保证圆点与省份对齐） */}
           <div className="absolute inset-0 flex items-center justify-center p-4">
-            <div className="relative h-full aspect-[785/645] mx-auto">
+            <div className="relative w-full h-full max-w-full max-h-full aspect-[785/645] mx-auto">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={CHINA_MAP_IMG || "/placeholder.svg"}
                 alt="中国地图"
-                width={785}
-                height={645}
-                loading="eager"
-                decoding="async"
                 className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none"
                 draggable={false}
               />
@@ -306,7 +307,10 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                 const isSelected = selectedProvince === province
                 const isHovered = hoveredProvince === province
                 const fill = getHeatColor(metricValue, heatmapMode, isSelected, isHovered)
-                const maxValue = 35
+                const maxValue =
+                  heatmapMode === "warehouses"
+                    ? 35
+                    : Math.max(...Object.values(provinceData).map((d) => d.transactionAmount))
                 const ratio = Math.min(1, metricValue / maxValue)
                 const size = 14 + ratio * 26
                 return (
@@ -316,7 +320,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                     onMouseLeave={() => setHoveredProvince(null)}
                     onClick={() => setSelectedProvince(province)}
                     className={cn(
-                      "absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-md flex items-center justify-center transition-colors duration-150",
+                      "absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-md flex items-center justify-center transition-all hover:scale-110",
                       isSelected && "ring-2 ring-primary ring-offset-1 z-10",
                     )}
                     style={{
@@ -326,11 +330,15 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                       height: size,
                       backgroundColor: fill,
                     }}
-                    title={`${province} · ${metricValue} 座`}
+                    title={`${province} · ${
+                      heatmapMode === "warehouses"
+                        ? `${metricValue} 座`
+                        : `${metricValue.toLocaleString()} 万元`
+                    }`}
                   >
                     {metricValue > 0 && size >= 24 && (
                       <span className="text-[10px] font-semibold text-white leading-none drop-shadow">
-                        {metricValue}
+                        {heatmapMode === "warehouses" ? metricValue : Math.round(metricValue / 1000) + "k"}
                       </span>
                     )}
                   </button>
@@ -339,44 +347,26 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
             </div>
           </div>
 
-          {/* 省份信息卡片：常驻容器 + 透明度切换，避免 mount/unmount 引发布局闪烁 */}
-          <div
-            className={cn(
-              "absolute top-3 right-3 bg-white/97 border border-border rounded-lg shadow-lg p-4 min-w-[230px] z-10 pointer-events-none transition-opacity duration-150",
-              hoveredProvince && provinceData[hoveredProvince]
-                ? "opacity-100"
-                : "opacity-0",
-            )}
-            aria-hidden={!hoveredProvince}
-          >
-            <h4 className="font-bold text-base mb-3 text-foreground">
-              {hoveredProvince || "\u00A0"}
-            </h4>
-            <div className="space-y-2 text-sm">
-              <DetailRow
-                label="仓储数量"
-                value={`${provinceData[hoveredProvince ?? ""]?.warehouses ?? 0} 座`}
-                highlight
-              />
-              <DetailRow
-                label="总面积"
-                value={`${(provinceData[hoveredProvince ?? ""]?.totalArea ?? 0).toLocaleString()} m²`}
-              />
-              <DetailRow
-                label="可出租面积"
-                value={`${(provinceData[hoveredProvince ?? ""]?.rentableArea ?? 0).toLocaleString()} m²`}
-                highlight
-              />
-              <DetailRow
-                label="交易金额"
-                value={`${(provinceData[hoveredProvince ?? ""]?.transactionAmount ?? 0).toLocaleString()} 万元`}
-              />
-              <DetailRow
-                label="发布单数"
-                value={`${(provinceData[hoveredProvince ?? ""]?.publishCount ?? 0).toLocaleString()} 条`}
-              />
+          {/* 省份信息卡片 */}
+          {displayProvince && displayMetrics && (
+            <div className="absolute top-3 right-3 bg-white/97 border border-border rounded-lg shadow-lg p-4 min-w-[230px] z-10 pointer-events-none">
+              <h4 className="font-bold text-base mb-3 text-foreground">{displayProvince}</h4>
+              <div className="space-y-2 text-sm">
+                <DetailRow label="仓储数量" value={`${displayMetrics.warehouses} 座`} highlight />
+                <DetailRow label="总面积" value={`${displayMetrics.totalArea.toLocaleString()} m²`} />
+                <DetailRow
+                  label="可出租面积"
+                  value={`${displayMetrics.rentableArea.toLocaleString()} m²`}
+                  highlight
+                />
+                <DetailRow
+                  label="交易金额"
+                  value={`${displayMetrics.transactionAmount.toLocaleString()} 万元`}
+                />
+                <DetailRow label="发布单数" value={`${displayMetrics.publishCount.toLocaleString()} 条`} />
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* 右侧：仓储列表（跟随地图省份联动） */}
@@ -394,7 +384,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
               </span>
             </div>
 
-            <div className="flex-1 space-y-2.5 overflow-auto">
+            <div className="flex-1 space-y-2 overflow-auto">
               {currentList.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground py-8">
                   <Building2 className="w-8 h-8 mb-2 opacity-40" />
@@ -402,38 +392,36 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                   <p className="text-[10px] mt-1 opacity-70">悬停其他省份查看</p>
                 </div>
               ) : (
-                currentList.slice(0, 3).map((warehouse) => (
+                currentList.map((warehouse) => (
                   <div
                     key={warehouse.id}
                     className="border border-border rounded-lg overflow-hidden hover:shadow-md hover:border-primary/40 transition-all cursor-pointer bg-card"
                   >
                     <div className="flex">
-                      <div className="w-24 h-28 bg-muted relative flex-shrink-0">
+                      <div className="w-20 h-20 bg-muted relative flex-shrink-0">
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <Building2 className="w-6 h-6 text-muted-foreground/30" />
+                          <Building2 className="w-5 h-5 text-muted-foreground/30" />
                         </div>
                         <Badge className="absolute top-1 left-1 text-[10px] bg-green-500 text-white px-1 py-0">
                           出租
                         </Badge>
                       </div>
-                      <div className="flex-1 p-2.5 min-w-0 flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-baseline gap-1 mb-1.5">
-                            <span className="text-primary font-bold text-base">{warehouse.price}</span>
-                            <span className="text-[10px] text-muted-foreground">元/m²/天</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-1.5">
-                            <Maximize2 className="w-3 h-3" />
-                            <span>{warehouse.area}m²</span>
-                            <Badge
-                              variant="secondary"
-                              className="text-[10px] bg-green-100 text-green-600 px-1 py-0 ml-1"
-                            >
-                              {warehouse.priceStatus}
-                            </Badge>
-                          </div>
+                      <div className="flex-1 p-2 min-w-0">
+                        <div className="flex items-baseline gap-1 mb-1">
+                          <span className="text-primary font-bold text-sm">{warehouse.price}</span>
+                          <span className="text-[10px] text-muted-foreground">元/m²/天</span>
                         </div>
-                        <div className="text-[11px] text-foreground/80 line-clamp-2 leading-snug">
+                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-1">
+                          <Maximize2 className="w-3 h-3" />
+                          <span>{warehouse.area}m²</span>
+                          <Badge
+                            variant="secondary"
+                            className="text-[10px] bg-green-100 text-green-600 px-1 py-0 ml-1"
+                          >
+                            {warehouse.priceStatus}
+                          </Badge>
+                        </div>
+                        <div className="text-[10px] text-muted-foreground line-clamp-2 leading-tight">
                           {warehouse.name}
                         </div>
                       </div>

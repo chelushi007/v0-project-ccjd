@@ -1,35 +1,17 @@
 "use client"
 
-import { useState } from "react"
 import { Package, ArrowRight, MapPin, Eye, Clock, Recycle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
 
-type DealType = "出租" | "出售"
-
-const materials: Array<{
-  id: number
-  name: string
-  category: string
-  location: string
-  dealType: DealType
-  price: string
-  unit: string
-  condition: string
-  supplier: string
-  views: number
-  publishTime: string
-  features: string[]
-  isHot: boolean
-}> = [
+const materials = [
   {
     id: 1,
     name: "二手钢管扣件 约500吨",
     category: "拼装类",
     location: "广东省广州市黄埔区",
-    dealType: "出售",
+    dealType: "出售" as const,
     price: "3500",
     unit: "元/吨",
     condition: "八成新",
@@ -44,7 +26,7 @@ const materials: Array<{
     name: "工地周转木方 约200方",
     category: "房屋建筑类",
     location: "广东省深圳市龙岗区",
-    dealType: "出租",
+    dealType: "出租" as const,
     price: "12",
     unit: "元/方/月",
     condition: "七成新",
@@ -59,7 +41,7 @@ const materials: Array<{
     name: "塔吊标准节 10节",
     category: "其他材料",
     location: "广东省东莞市虎门镇",
-    dealType: "出租",
+    dealType: "出租" as const,
     price: "1800",
     unit: "元/节/月",
     condition: "九成新",
@@ -74,7 +56,7 @@ const materials: Array<{
     name: "建筑模板 约1000张",
     category: "模板类",
     location: "广东省佛山市顺德区",
-    dealType: "出售",
+    dealType: "出售" as const,
     price: "45",
     unit: "元/张",
     condition: "六成新",
@@ -82,36 +64,6 @@ const materials: Array<{
     views: 189,
     publishTime: "1天前",
     features: ["批量优惠", "可自提"],
-    isHot: false,
-  },
-  {
-    id: 5,
-    name: "盘扣式脚手架 约300套",
-    category: "拼装类",
-    location: "广东省珠海市香洲区",
-    dealType: "出租",
-    price: "85",
-    unit: "元/套/月",
-    condition: "八成新",
-    supplier: "中铁建物资华南仓储有限公司",
-    views: 367,
-    publishTime: "8小时前",
-    features: ["现货", "可配送"],
-    isHot: true,
-  },
-  {
-    id: 6,
-    name: "二手挖掘机配件批量出售",
-    category: "其他材料",
-    location: "广东省中山市火炬区",
-    dealType: "出售",
-    price: "1200",
-    unit: "元/件",
-    condition: "七成新",
-    supplier: "中铁二十二局集团华南分公司",
-    views: 215,
-    publishTime: "10小时前",
-    features: ["原厂配件", "可议价"],
     isHot: false,
   },
 ]
@@ -122,50 +74,22 @@ interface MaterialRecommendProps {
 
 export function MaterialRecommend({ onNavigate }: MaterialRecommendProps = {}) {
   const goDetail = () => onNavigate?.("material-detail")
-  const [activeTab, setActiveTab] = useState<DealType>("出租")
-  const visibleItems = materials.filter((m) => m.dealType === activeTab).slice(0, 4)
-
   return (
     <section className="w-full">
-      <div className="grid grid-cols-3 items-center mb-4">
-        {/* 左：标题 */}
-        <div className="flex items-center gap-2 justify-self-start">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
           <Recycle className="w-5 h-5 text-accent" />
           <h2 className="text-lg font-semibold text-foreground">闲置物资</h2>
-          <Badge variant="secondary" className="ml-2 bg-accent/10 text-accent">
-            周转盘活
-          </Badge>
+          <Badge variant="secondary" className="ml-2 bg-accent/10 text-accent">周转盘活</Badge>
         </div>
-
-        {/* 中：tab 切换（与标题同行居中） */}
-        <div className="justify-self-center inline-flex items-center gap-1 rounded-md border border-border bg-card p-0.5">
-          {(["出租", "出售"] as const).map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setActiveTab(t)}
-              className={cn(
-                "px-4 py-1.5 text-sm rounded transition-colors",
-                activeTab === t
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted",
-              )}
-              aria-pressed={activeTab === t}
-            >
-              物资{t}
-            </button>
-          ))}
-        </div>
-
-        {/* 右：查看更多 */}
-        <Button variant="link" className="text-primary justify-self-end" onClick={goDetail}>
+        <Button variant="link" className="text-primary" onClick={goDetail}>
           查看更多
           <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {visibleItems.map((item) => (
+        {materials.map((item) => (
           <Card
             key={item.id}
             onClick={goDetail}
@@ -177,10 +101,9 @@ export function MaterialRecommend({ onNavigate }: MaterialRecommendProps = {}) {
                 <Package className="w-12 h-12 text-accent/20" />
               </div>
               <Badge
-                className={cn(
-                  "absolute top-2 left-2",
-                  item.dealType === "出租" ? "bg-primary" : "bg-accent",
-                )}
+                className={`absolute top-2 left-2 ${
+                  item.dealType === "出租" ? "bg-primary" : "bg-accent"
+                }`}
               >
                 {item.dealType}
               </Badge>
@@ -191,17 +114,18 @@ export function MaterialRecommend({ onNavigate }: MaterialRecommendProps = {}) {
                 {item.condition}
               </Badge>
               {item.isHot && (
-                <Badge className="absolute bottom-2 left-2 bg-destructive text-xs">热门</Badge>
+                <Badge className="absolute bottom-2 left-2 bg-destructive text-xs">
+                  热门
+                </Badge>
               )}
             </div>
 
             <CardContent className="p-3">
               <div className="flex items-center gap-2 mb-2">
                 <span
-                  className={cn(
-                    "text-lg font-bold",
-                    item.dealType === "出租" ? "text-primary" : "text-accent",
-                  )}
+                  className={`text-lg font-bold ${
+                    item.dealType === "出租" ? "text-primary" : "text-accent"
+                  }`}
                 >
                   {item.price}
                 </span>
@@ -217,7 +141,9 @@ export function MaterialRecommend({ onNavigate }: MaterialRecommendProps = {}) {
                 <span className="line-clamp-1">{item.location}</span>
               </div>
 
-              <div className="text-xs text-muted-foreground mb-2">供应商：{item.supplier}</div>
+              <div className="text-xs text-muted-foreground mb-2">
+                供应商：{item.supplier}
+              </div>
 
               <div className="flex flex-wrap gap-1 mb-2">
                 {item.features.slice(0, 2).map((feature) => (
@@ -240,12 +166,6 @@ export function MaterialRecommend({ onNavigate }: MaterialRecommendProps = {}) {
             </CardContent>
           </Card>
         ))}
-
-        {visibleItems.length === 0 && (
-          <div className="col-span-full py-12 text-center text-sm text-muted-foreground">
-            暂无相关{activeTab}物资
-          </div>
-        )}
       </div>
     </section>
   )

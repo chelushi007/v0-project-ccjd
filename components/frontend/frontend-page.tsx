@@ -7,6 +7,7 @@ import { SmartMatch } from "./smart-match"
 import { WarehouseMap } from "./warehouse-map"
 import { WarehouseOpportunity } from "./warehouse-opportunity"
 import { MaterialRecommend } from "./material-recommend"
+import { PlatformRecommend } from "./platform-recommend"
 import { TiejianWarehouse } from "./tiejian-warehouse"
 import { HotSites } from "./hot-sites"
 import { FeaturedTransport } from "./featured-transport"
@@ -38,9 +39,10 @@ export function FrontendPage({ onNavigate }: FrontendPageProps) {
       {/* 仓储地图 */}
       <WarehouseMap onNavigate={onNavigate} />
 
-      {/* 资讯板块（仓储商机 → 铁建仓储 → 热门站点 → 精选专运单位 → 闲置物资） */}
+      {/* 资讯板块（按要求顺序：仓储商机 → 铁建仓储 → 平台推荐 → 热门站点 → 精选专运单位 → 闲置物资） */}
       <WarehouseOpportunity onNavigate={onNavigate} />
       <TiejianWarehouse onNavigate={onNavigate} />
+      <PlatformRecommend onNavigate={onNavigate} />
       <HotSites onNavigate={onNavigate} />
       <FeaturedTransport onNavigate={onNavigate} />
       <MaterialRecommend onNavigate={onNavigate} />
