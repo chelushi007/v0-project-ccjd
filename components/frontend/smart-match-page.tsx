@@ -17,6 +17,8 @@ import {
   Search,
   Warehouse,
   X,
+  List,
+  LayoutGrid,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -224,6 +226,7 @@ export function SmartMatchPage({
   const [textDescription, setTextDescription] = useState("")
   const [hasResults, setHasResults] = useState(false)
   const [isMatching, setIsMatching] = useState(false)
+  const [resultView, setResultView] = useState<"list" | "card">("list")
 
   // 入口联动：当外部 initialType 变化时同步切换需求类型并重置匹配结果
   useEffect(() => {
@@ -539,16 +542,22 @@ export function SmartMatchPage({
             <MaterialResultList
               results={materialResults}
               onReset={() => setHasResults(false)}
+              view={resultView}
+              onViewChange={setResultView}
             />
           ) : demandType === "purchase" ? (
             <PurchaseResultList
               results={purchaseResults}
               onReset={() => setHasResults(false)}
+              view={resultView}
+              onViewChange={setResultView}
             />
           ) : (
             <WarehouseResultList
               results={warehouseResults}
               onReset={() => setHasResults(false)}
+              view={resultView}
+              onViewChange={setResultView}
             />
           )}
         </div>
@@ -561,60 +570,119 @@ export function SmartMatchPage({
 function MaterialResultList({
   results,
   onReset,
+  view,
+  onViewChange,
 }: {
   results: typeof materialResults
   onReset: () => void
+  view: "list" | "card"
+  onViewChange: (v: "list" | "card") => void
 }) {
   return (
     <div className="space-y-4">
-      <ResultHeader title="物资匹配结果" count={results.length} onReset={onReset} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {results.map((result, index) => (
-          <Card
-            key={result.id}
-            className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
-          >
-            <CardContent className="p-0">
-              <ResultBanner index={index} matchScore={result.matchScore} />
-              <div className="p-4">
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-                    <Package className="w-6 h-6 text-accent" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-card-foreground mb-1 line-clamp-1 group-hover:text-primary transition-colors">
-                      {result.name}
-                    </h4>
-                    <div className="text-sm text-muted-foreground line-clamp-1">
-                      {result.provider}
+      <ResultHeader
+        title="物资匹配结果"
+        count={results.length}
+        onReset={onReset}
+        view={view}
+        onViewChange={onViewChange}
+      />
+      {view === "card" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {results.map((result, index) => (
+            <Card
+              key={result.id}
+              className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
+            >
+              <CardContent className="p-0">
+                <ResultBanner index={index} matchScore={result.matchScore} />
+                <div className="p-4">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                      <Package className="w-6 h-6 text-accent" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-card-foreground mb-1 line-clamp-1 group-hover:text-primary transition-colors">
+                        {result.name}
+                      </h4>
+                      <div className="text-sm text-muted-foreground line-clamp-1">
+                        {result.provider}
+                      </div>
                     </div>
                   </div>
+                  <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+                    <InfoLine label="类型" value={result.materialType} />
+                    <InfoLine icon={Weight} value={result.quantity} />
+                    <InfoLine icon={MapPin} value={result.location} clamp />
+                    <InfoLine label="成色" value={result.condition} accent />
+                  </div>
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {result.specs.map((spec) => (
+                      <Badge key={spec} variant="outline" className="text-xs">
+                        {spec}
+                      </Badge>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between pt-3 border-t border-border">
+                    <span className="text-lg font-bold text-primary">{result.price}</span>
+                    <Button size="sm">
+                      立即下单
+                      <ArrowRight className="w-3 h-3 ml-1" />
+                    </Button>
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
-                  <InfoLine label="类型" value={result.materialType} />
-                  <InfoLine icon={Weight} value={result.quantity} />
-                  <InfoLine icon={MapPin} value={result.location} clamp />
-                  <InfoLine label="成色" value={result.condition} accent />
-                </div>
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {result.specs.map((spec) => (
-                    <Badge key={spec} variant="outline" className="text-xs">
-                      {spec}
-                    </Badge>
-                  ))}
-                </div>
-                <div className="flex items-center justify-between pt-3 border-t border-border">
-                  <span className="text-lg font-bold text-primary">{result.price}</span>
-                  <Button size="sm">
-                    立即下单
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="p-0">
+            <ul className="divide-y divide-border">
+              {results.map((result, index) => (
+                <li
+                  key={result.id}
+                  className="flex items-center gap-4 px-4 py-3 hover:bg-muted/40 transition-colors cursor-pointer"
+                >
+                  <RankBadge index={index} />
+                  <div className="w-10 h-10 rounded-md bg-accent/10 flex items-center justify-center shrink-0">
+                    <Package className="w-5 h-5 text-accent" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm text-card-foreground truncate">
+                        {result.name}
+                      </span>
+                      <Badge variant="outline" className="text-[10px] px-1 py-0 shrink-0">
+                        {result.materialType}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-0.5">
+                      <span className="flex items-center gap-0.5">
+                        <MapPin className="w-3 h-3" />
+                        <span className="truncate max-w-[180px]">{result.location}</span>
+                      </span>
+                      <span className="flex items-center gap-0.5">
+                        <Weight className="w-3 h-3" />
+                        {result.quantity}
+                      </span>
+                      <span className="text-accent">成色 {result.condition}</span>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="text-primary font-bold text-sm">{result.price}</div>
+                    <MatchPercent score={result.matchScore} />
+                  </div>
+                  <Button size="sm" className="shrink-0">
+                    查看
                     <ArrowRight className="w-3 h-3 ml-1" />
                   </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
@@ -623,9 +691,13 @@ function MaterialResultList({
 function PurchaseResultList({
   results,
   onReset,
+  view,
+  onViewChange,
 }: {
   results: typeof purchaseResults
   onReset: () => void
+  view: "list" | "card"
+  onViewChange: (v: "list" | "card") => void
 }) {
   return (
     <div className="space-y-4">
@@ -634,65 +706,117 @@ function PurchaseResultList({
         count={results.length}
         onReset={onReset}
         badge="出售中"
+        view={view}
+        onViewChange={onViewChange}
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {results.map((result, index) => (
-          <Card
-            key={result.id}
-            className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
-          >
-            <CardContent className="p-0">
-              <ResultBanner index={index} matchScore={result.matchScore} />
-              <div className="p-4">
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                    <ShoppingCart className="w-6 h-6 text-emerald-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-card-foreground mb-1 line-clamp-1 group-hover:text-emerald-700 transition-colors">
-                      {result.name}
-                    </h4>
-                    <div className="text-sm text-muted-foreground line-clamp-1">
-                      {result.provider}
+      {view === "card" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {results.map((result, index) => (
+            <Card
+              key={result.id}
+              className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
+            >
+              <CardContent className="p-0">
+                <ResultBanner index={index} matchScore={result.matchScore} />
+                <div className="p-4">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                      <ShoppingCart className="w-6 h-6 text-emerald-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-card-foreground mb-1 line-clamp-1 group-hover:text-emerald-700 transition-colors">
+                        {result.name}
+                      </h4>
+                      <div className="text-sm text-muted-foreground line-clamp-1">
+                        {result.provider}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
-                  <InfoLine label="类型" value={result.materialType} />
-                  <InfoLine icon={Weight} value={result.available} />
-                  <InfoLine icon={MapPin} value={result.location} clamp />
-                  <InfoLine label="成色" value={result.condition} accent />
-                </div>
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {result.specs.map((spec) => (
-                    <Badge key={spec} variant="outline" className="text-xs">
-                      {spec}
-                    </Badge>
-                  ))}
-                </div>
-                <div className="rounded-md bg-emerald-50 border border-emerald-100 px-3 py-2 mb-3 text-xs text-emerald-800 flex items-center justify-between">
-                  <span>{result.minOrder}</span>
-                  <span>整批价 {result.totalPrice}</span>
-                </div>
-                <div className="flex items-center justify-between pt-3 border-t border-border">
-                  <div className="flex flex-col leading-tight">
-                    <span className="text-lg font-bold text-emerald-700">
-                      {result.price}
-                    </span>
-                    <span className="text-[11px] text-muted-foreground">
-                      单价 · 可议
-                    </span>
+                  <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+                    <InfoLine label="类型" value={result.materialType} />
+                    <InfoLine icon={Weight} value={result.available} />
+                    <InfoLine icon={MapPin} value={result.location} clamp />
+                    <InfoLine label="成色" value={result.condition} accent />
                   </div>
-                  <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
-                    立即采购
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {result.specs.map((spec) => (
+                      <Badge key={spec} variant="outline" className="text-xs">
+                        {spec}
+                      </Badge>
+                    ))}
+                  </div>
+                  <div className="rounded-md bg-emerald-50 border border-emerald-100 px-3 py-2 mb-3 text-xs text-emerald-800 flex items-center justify-between">
+                    <span>{result.minOrder}</span>
+                    <span>整批价 {result.totalPrice}</span>
+                  </div>
+                  <div className="flex items-center justify-between pt-3 border-t border-border">
+                    <div className="flex flex-col leading-tight">
+                      <span className="text-lg font-bold text-emerald-700">
+                        {result.price}
+                      </span>
+                      <span className="text-[11px] text-muted-foreground">
+                        单价 · 可议
+                      </span>
+                    </div>
+                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
+                      立即采购
+                      <ArrowRight className="w-3 h-3 ml-1" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="p-0">
+            <ul className="divide-y divide-border">
+              {results.map((result, index) => (
+                <li
+                  key={result.id}
+                  className="flex items-center gap-4 px-4 py-3 hover:bg-muted/40 transition-colors cursor-pointer"
+                >
+                  <RankBadge index={index} />
+                  <div className="w-10 h-10 rounded-md bg-emerald-100 flex items-center justify-center shrink-0">
+                    <ShoppingCart className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm text-card-foreground truncate">
+                        {result.name}
+                      </span>
+                      <Badge variant="outline" className="text-[10px] px-1 py-0 shrink-0">
+                        {result.materialType}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-0.5">
+                      <span className="flex items-center gap-0.5">
+                        <MapPin className="w-3 h-3" />
+                        <span className="truncate max-w-[160px]">{result.location}</span>
+                      </span>
+                      <span className="flex items-center gap-0.5">
+                        <Weight className="w-3 h-3" />
+                        {result.available}
+                      </span>
+                      <span className="text-accent">{result.condition}</span>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="text-emerald-700 font-bold text-sm">{result.price}</div>
+                    <div className="text-[10px] text-muted-foreground">{result.totalPrice}</div>
+                    <MatchPercent score={result.matchScore} />
+                  </div>
+                  <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 shrink-0">
+                    采购
                     <ArrowRight className="w-3 h-3 ml-1" />
                   </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
@@ -701,66 +825,128 @@ function PurchaseResultList({
 function WarehouseResultList({
   results,
   onReset,
+  view,
+  onViewChange,
 }: {
   results: typeof warehouseResults
   onReset: () => void
+  view: "list" | "card"
+  onViewChange: (v: "list" | "card") => void
 }) {
   return (
     <div className="space-y-4">
-      <ResultHeader title="仓储匹配结果" count={results.length} onReset={onReset} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {results.map((result, index) => (
-          <Card
-            key={result.id}
-            className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
-          >
-            <CardContent className="p-0">
-              <ResultBanner index={index} matchScore={result.matchScore} />
-              <div className="p-4">
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Building2 className="w-6 h-6 text-primary" />
+      <ResultHeader
+        title="仓储匹配结果"
+        count={results.length}
+        onReset={onReset}
+        view={view}
+        onViewChange={onViewChange}
+      />
+      {view === "card" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {results.map((result, index) => (
+            <Card
+              key={result.id}
+              className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
+            >
+              <CardContent className="p-0">
+                <ResultBanner index={index} matchScore={result.matchScore} />
+                <div className="p-4">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Building2 className="w-6 h-6 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-card-foreground mb-1 line-clamp-1 group-hover:text-primary transition-colors">
+                        {result.name}
+                      </h4>
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <MapPin className="w-3 h-3" />
+                        <span className="line-clamp-1">{result.location}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+                    <InfoLine label="类型" value={result.type} />
+                    <InfoLine icon={Maximize2} value={result.area} />
+                  </div>
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {result.features.map((feature) => (
+                      <Badge key={feature} variant="outline" className="text-xs">
+                        {feature}
+                      </Badge>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between pt-3 border-t border-border">
+                    <span className="text-lg font-bold text-primary">{result.price}</span>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1 text-sm">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <span>{result.rating}</span>
+                        <span className="text-muted-foreground">({result.reviews})</span>
+                      </div>
+                      <Button size="sm">
+                        查看详情
+                        <ArrowRight className="w-3 h-3 ml-1" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="p-0">
+            <ul className="divide-y divide-border">
+              {results.map((result, index) => (
+                <li
+                  key={result.id}
+                  className="flex items-center gap-4 px-4 py-3 hover:bg-muted/40 transition-colors cursor-pointer"
+                >
+                  <RankBadge index={index} />
+                  <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
+                    <Building2 className="w-5 h-5 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-card-foreground mb-1 line-clamp-1 group-hover:text-primary transition-colors">
-                      {result.name}
-                    </h4>
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <MapPin className="w-3 h-3" />
-                      <span className="line-clamp-1">{result.location}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm text-card-foreground truncate">
+                        {result.name}
+                      </span>
+                      <Badge variant="outline" className="text-[10px] px-1 py-0 shrink-0">
+                        {result.type}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-0.5">
+                      <span className="flex items-center gap-0.5">
+                        <MapPin className="w-3 h-3" />
+                        <span className="truncate max-w-[180px]">{result.location}</span>
+                      </span>
+                      <span className="flex items-center gap-0.5">
+                        <Maximize2 className="w-3 h-3" />
+                        {result.area}
+                      </span>
+                      <span className="flex items-center gap-0.5">
+                        <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                        {result.rating}
+                      </span>
                     </div>
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
-                  <InfoLine label="类型" value={result.type} />
-                  <InfoLine icon={Maximize2} value={result.area} />
-                </div>
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {result.features.map((feature) => (
-                    <Badge key={feature} variant="outline" className="text-xs">
-                      {feature}
-                    </Badge>
-                  ))}
-                </div>
-                <div className="flex items-center justify-between pt-3 border-t border-border">
-                  <span className="text-lg font-bold text-primary">{result.price}</span>
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1 text-sm">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span>{result.rating}</span>
-                      <span className="text-muted-foreground">({result.reviews})</span>
-                    </div>
-                    <Button size="sm">
-                      查看详情
-                      <ArrowRight className="w-3 h-3 ml-1" />
-                    </Button>
+                  <div className="text-right shrink-0">
+                    <div className="text-primary font-bold text-sm">{result.price}</div>
+                    <MatchPercent score={result.matchScore} />
                   </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                  <Button size="sm" className="shrink-0">
+                    查看
+                    <ArrowRight className="w-3 h-3 ml-1" />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
@@ -771,14 +957,18 @@ function ResultHeader({
   count,
   onReset,
   badge,
+  view,
+  onViewChange,
 }: {
   title: string
   count: number
   onReset: () => void
   badge?: string
+  view: "list" | "card"
+  onViewChange: (v: "list" | "card") => void
 }) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between flex-wrap gap-2">
       <div className="flex items-center gap-2">
         <h3 className="text-lg font-semibold">{title}</h3>
         <Badge variant="secondary">找到 {count} 个匹配</Badge>
@@ -786,9 +976,68 @@ function ResultHeader({
           <Badge className="bg-emerald-600 hover:bg-emerald-600 text-white">{badge}</Badge>
         )}
       </div>
-      <Button variant="outline" size="sm" onClick={onReset}>
-        重新匹配
-      </Button>
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 rounded-md border border-border bg-card p-0.5">
+          <button
+            type="button"
+            onClick={() => onViewChange("list")}
+            className={cn(
+              "px-2 py-1 rounded text-xs flex items-center gap-1 transition-colors",
+              view === "list"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-muted",
+            )}
+            aria-pressed={view === "list"}
+            title="列表式"
+          >
+            <List className="w-3.5 h-3.5" />
+            列表
+          </button>
+          <button
+            type="button"
+            onClick={() => onViewChange("card")}
+            className={cn(
+              "px-2 py-1 rounded text-xs flex items-center gap-1 transition-colors",
+              view === "card"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-muted",
+            )}
+            aria-pressed={view === "card"}
+            title="卡片式"
+          >
+            <LayoutGrid className="w-3.5 h-3.5" />
+            卡片
+          </button>
+        </div>
+        <Button variant="outline" size="sm" onClick={onReset}>
+          重新匹配
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+function RankBadge({ index }: { index: number }) {
+  const isTop = index === 0
+  return (
+    <div
+      className={cn(
+        "w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold shrink-0",
+        isTop
+          ? "bg-accent text-accent-foreground"
+          : "bg-muted text-muted-foreground",
+      )}
+    >
+      {index + 1}
+    </div>
+  )
+}
+
+function MatchPercent({ score }: { score: number }) {
+  return (
+    <div className="flex items-center justify-end gap-0.5 text-[10px] text-emerald-600 font-medium tabular-nums mt-0.5">
+      <CheckCircle className="w-3 h-3" />
+      匹配 {score}%
     </div>
   )
 }
