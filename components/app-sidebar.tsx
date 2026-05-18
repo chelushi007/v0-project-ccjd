@@ -51,6 +51,7 @@ const frontendMenu: MenuItem[] = [
   { id: "home", label: "首页", icon: Home },
   { id: "warehouse-list", label: "仓储列表", icon: List },
   { id: "warehouse-map", label: "仓储地图", icon: Map },
+  { id: "material-list", label: "物资列表", icon: Boxes },
 ]
 
 // 个人工作台菜单（结算管理含两个子级）

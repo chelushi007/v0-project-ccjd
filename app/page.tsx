@@ -5,6 +5,7 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { FrontendPage } from "@/components/frontend/frontend-page"
 import { WarehouseMapPage } from "@/components/frontend/warehouse-map-page"
 import { WarehouseListPage } from "@/components/frontend/warehouse-list-page"
+import { MaterialListPage } from "@/components/frontend/material-list-page"
 import { SmartMatchPage } from "@/components/frontend/smart-match-page"
 import { DetailPublishPage } from "@/components/frontend/detail-publish-page"
 import { WarehouseDetailPage } from "@/components/frontend/warehouse-detail-page"
@@ -40,6 +41,8 @@ export default function HomePage() {
         setCurrentPage("warehouse-list")
       } else if (subTab === "warehouse-map") {
         setCurrentPage("warehouse-map")
+      } else if (subTab === "material-list") {
+        setCurrentPage("material-list")
       } else if (subTab === "detail-publish") {
         setCurrentPage("detail-publish")
         setPublishDefaultTab("quick") // 从侧边栏进入默认显示快捷发布
@@ -99,6 +102,8 @@ export default function HomePage() {
       setActiveSubTab("warehouse-list")
     } else if (page === "warehouse-map") {
       setActiveSubTab("warehouse-map")
+    } else if (page === "material-list") {
+      setActiveSubTab("material-list")
     } else if (page === "detail-publish") {
       setActiveSubTab("detail-publish")
     } else if (page === "material-publish") {
@@ -114,6 +119,8 @@ export default function HomePage() {
           return <WarehouseMapPage onNavigate={handleNavigate} />
         case "warehouse-list":
           return <WarehouseListPage onNavigate={handleNavigate} />
+        case "material-list":
+          return <MaterialListPage onNavigate={handleNavigate} />
         case "smart-match":
           return (
             <SmartMatchPage

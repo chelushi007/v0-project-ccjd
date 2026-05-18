@@ -159,6 +159,7 @@ export function MaterialRecommend({ onNavigate }: MaterialRecommendProps = {}) {
   const [tab, setTab] = useState<DealType>("出租")
   const list = tab === "出租" ? rentMaterials : saleMaterials
   const goDetail = () => onNavigate?.("material-detail")
+  const goList = () => onNavigate?.("material-list")
 
   return (
     <section className="w-full">
@@ -189,7 +190,7 @@ export function MaterialRecommend({ onNavigate }: MaterialRecommendProps = {}) {
         </div>
 
         <div className="justify-self-end">
-          <Button variant="link" className="text-primary" onClick={goDetail}>
+          <Button variant="link" className="text-primary" onClick={goList}>
             查看更多
             <ArrowRight className="w-4 h-4 ml-1" />
           </Button>
