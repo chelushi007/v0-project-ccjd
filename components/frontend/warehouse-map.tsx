@@ -152,27 +152,18 @@ const warehouseListByProvince: Record<string, WarehouseItem[]> = {
   ],
 }
 
-type HeatmapMode = "warehouses" | "transactionAmount"
+type HeatmapMode = "warehouses"
 
 // 热力分档（按 5 档梯度上色）
-function getHeatColor(value: number, mode: HeatmapMode, isSelected: boolean, isHovered: boolean) {
+function getHeatColor(value: number, _mode: HeatmapMode, isSelected: boolean, isHovered: boolean) {
   if (isSelected) return "#1d4ed8"
   if (isHovered) return "#3b82f6"
 
-  if (mode === "warehouses") {
-    if (value >= 25) return "#1e40af"
-    if (value >= 18) return "#2563eb"
-    if (value >= 12) return "#60a5fa"
-    if (value >= 6) return "#93c5fd"
-    if (value > 0) return "#dbeafe"
-    return "#f1f5f9"
-  }
-  // transactionAmount (万元)
-  if (value >= 15000) return "#9a3412"
-  if (value >= 8000) return "#ea580c"
-  if (value >= 4000) return "#fb923c"
-  if (value >= 1500) return "#fdba74"
-  if (value > 0) return "#fed7aa"
+  if (value >= 25) return "#1e40af"
+  if (value >= 18) return "#2563eb"
+  if (value >= 12) return "#60a5fa"
+  if (value >= 6) return "#93c5fd"
+  if (value > 0) return "#dbeafe"
   return "#f1f5f9"
 }
 
@@ -187,22 +178,44 @@ const heatLegend: Record<HeatmapMode, { label: string; bins: { color: string; la
       { color: "#1e40af", label: "≥25" },
     ],
   },
-  transactionAmount: {
-    label: "交易金额（万元）",
-    bins: [
-      { color: "#fed7aa", label: "<1500" },
-      { color: "#fdba74", label: "1500-3999" },
-      { color: "#fb923c", label: "4000-7999" },
-      { color: "#ea580c", label: "8000-14999" },
-      { color: "#9a3412", label: "≥15000" },
-    ],
-  },
+}
+
+// 通用 fallback 仓储模板，用于把右侧推荐列表补齐至与该省份「仓储数量」联动
+const fallbackTemplates: Omit<WarehouseItem, "id" | "location">[] = [
+  { name: "标准平库 钢结构 9% 增票 可分租", price: "0.45", area: "1500", priceStatus: "竞价中" },
+  { name: "立体库 自动化设备齐全 24h 看管", price: "0.62", area: "800", priceStatus: "竞价中" },
+  { name: "保税仓 整租优先 月结结算", price: "0.78", area: "2200", priceStatus: "固定价" },
+  { name: "重载地面堆场 适合钢材模板托管", price: "0.36", area: "3000", priceStatus: "竞价中" },
+  { name: "恒温仓 -22℃可控 配双回路", price: "0.95", area: "500", priceStatus: "固定价" },
+  { name: "综合保税仓 近多式联运 可天车装卸", price: "0.56", area: "1200", priceStatus: "竞价中" },
+]
+
+function getProvinceList(province: string): WarehouseItem[] {
+  const base = warehouseListByProvince[province] ?? []
+  const stat = provinceData[province]
+  if (!stat || stat.warehouses === 0) return base
+  // 目标条数：与仓储数量联动，仓储数量 ≥3 时至少 3 条；上限 6 条避免超长
+  const target = Math.min(Math.max(stat.warehouses, 3), 6)
+  if (base.length >= target) return base
+  const filled: WarehouseItem[] = [...base]
+  for (let i = 0; filled.length < target; i++) {
+    const tpl = fallbackTemplates[i % fallbackTemplates.length]
+    filled.push({
+      id: 9000 + i + province.charCodeAt(0),
+      name: tpl.name,
+      location: province,
+      price: tpl.price,
+      area: tpl.area,
+      priceStatus: tpl.priceStatus,
+    })
+  }
+  return filled
 }
 
 export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
-  const [selectedProvince, setSelectedProvince] = useState<string | null>("广东省")
+  const [selectedProvince, setSelectedProvince] = useState<string | null>(null)
   const [hoveredProvince, setHoveredProvince] = useState<string | null>(null)
-  const [heatmapMode, setHeatmapMode] = useState<HeatmapMode>("warehouses")
+  const heatmapMode: HeatmapMode = "warehouses"
 
   // 计算总计数据
   const totalStats = useMemo(() => {
@@ -218,7 +231,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
 
   const displayProvince = hoveredProvince || selectedProvince
   const displayMetrics = displayProvince ? provinceData[displayProvince] : null
-  const currentList = displayProvince ? warehouseListByProvince[displayProvince] ?? [] : []
+  const currentList = displayProvince ? getProvinceList(displayProvince) : []
 
   return (
     <section className="w-full">
@@ -255,24 +268,6 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
 
         {/* 中间：地图 */}
         <div className="bg-[#e8f4fc] border-y border-border relative h-full overflow-hidden">
-          {/* 热力图模式切换 */}
-          <div className="absolute top-3 left-3 z-20 flex items-center gap-1 bg-white/95 border border-border rounded-md p-0.5 shadow-sm">
-            {(["warehouses", "transactionAmount"] as const).map((mode) => (
-              <button
-                key={mode}
-                onClick={() => setHeatmapMode(mode)}
-                className={cn(
-                  "px-3 py-1 text-xs rounded transition-colors",
-                  heatmapMode === mode
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted",
-                )}
-              >
-                {mode === "warehouses" ? "按仓储数量" : "按交易金额"}
-              </button>
-            ))}
-          </div>
-
           {/* 图例 */}
           <div className="absolute bottom-3 left-3 z-20 bg-white/95 border border-border rounded-md px-3 py-2 shadow-sm">
             <div className="text-[11px] text-muted-foreground mb-1.5">{heatLegend[heatmapMode].label}</div>
@@ -307,10 +302,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                 const isSelected = selectedProvince === province
                 const isHovered = hoveredProvince === province
                 const fill = getHeatColor(metricValue, heatmapMode, isSelected, isHovered)
-                const maxValue =
-                  heatmapMode === "warehouses"
-                    ? 35
-                    : Math.max(...Object.values(provinceData).map((d) => d.transactionAmount))
+                const maxValue = 35
                 const ratio = Math.min(1, metricValue / maxValue)
                 const size = 14 + ratio * 26
                 return (
@@ -330,15 +322,11 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                       height: size,
                       backgroundColor: fill,
                     }}
-                    title={`${province} · ${
-                      heatmapMode === "warehouses"
-                        ? `${metricValue} 座`
-                        : `${metricValue.toLocaleString()} 万元`
-                    }`}
+                    title={`${province} · ${metricValue} 座`}
                   >
                     {metricValue > 0 && size >= 24 && (
                       <span className="text-[10px] font-semibold text-white leading-none drop-shadow">
-                        {heatmapMode === "warehouses" ? metricValue : Math.round(metricValue / 1000) + "k"}
+                        {metricValue}
                       </span>
                     )}
                   </button>
@@ -347,23 +335,23 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
             </div>
           </div>
 
-          {/* 省份信息卡片 */}
-          {displayProvince && displayMetrics && (
+          {/* 省份信息卡片：默认收起，仅当鼠标移入对应区域时显示 */}
+          {hoveredProvince && provinceData[hoveredProvince] && (
             <div className="absolute top-3 right-3 bg-white/97 border border-border rounded-lg shadow-lg p-4 min-w-[230px] z-10 pointer-events-none">
-              <h4 className="font-bold text-base mb-3 text-foreground">{displayProvince}</h4>
+              <h4 className="font-bold text-base mb-3 text-foreground">{hoveredProvince}</h4>
               <div className="space-y-2 text-sm">
-                <DetailRow label="仓储数量" value={`${displayMetrics.warehouses} 座`} highlight />
-                <DetailRow label="总面积" value={`${displayMetrics.totalArea.toLocaleString()} m²`} />
+                <DetailRow label="仓储数量" value={`${provinceData[hoveredProvince].warehouses} 座`} highlight />
+                <DetailRow label="总面积" value={`${provinceData[hoveredProvince].totalArea.toLocaleString()} m²`} />
                 <DetailRow
                   label="可出租面积"
-                  value={`${displayMetrics.rentableArea.toLocaleString()} m²`}
+                  value={`${provinceData[hoveredProvince].rentableArea.toLocaleString()} m²`}
                   highlight
                 />
                 <DetailRow
                   label="交易金额"
-                  value={`${displayMetrics.transactionAmount.toLocaleString()} 万元`}
+                  value={`${provinceData[hoveredProvince].transactionAmount.toLocaleString()} 万元`}
                 />
-                <DetailRow label="发布单数" value={`${displayMetrics.publishCount.toLocaleString()} 条`} />
+                <DetailRow label="发布单数" value={`${provinceData[hoveredProvince].publishCount.toLocaleString()} 条`} />
               </div>
             </div>
           )}
