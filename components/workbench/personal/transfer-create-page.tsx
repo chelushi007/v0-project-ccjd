@@ -149,7 +149,7 @@ const TRANSFER_REASONS = [
   "其他",
 ]
 
-// 库存中的物料快照（可被过户的物料）
+// 库存中的物资快照（可被过户的物资）
 interface InventoryCandidate {
   id: string
   name: string
@@ -366,7 +366,7 @@ export function TransferCreatePage({ onBack }: { onBack: () => void }) {
         <div>
           <h1 className="text-2xl font-bold text-foreground">新建过户单</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            将存储于仓储的物料过户给其他物权单位、仓储单位、仓储站点或专运单位，支持一次过户多种物料
+            将存储于仓储的物资过户给其他物权单位、仓储单位、仓储站点或专运单位，支持一次过户多种物资
           </p>
         </div>
       </div>
@@ -463,7 +463,7 @@ export function TransferCreatePage({ onBack }: { onBack: () => void }) {
                 </div>
                 <div className="space-y-1.5">
                   <Label>
-                    物料存放仓储
+                    物资存放仓储
                     <span className="text-destructive ml-0.5">*</span>
                   </Label>
                   <Select value={warehouse} onValueChange={setWarehouse}>
@@ -518,13 +518,13 @@ export function TransferCreatePage({ onBack }: { onBack: () => void }) {
             </CardContent>
           </Card>
 
-          {/* 物料明细 */}
+          {/* 物资明细 */}
           <Card>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <CardTitle className="text-base flex items-center gap-2">
                   <Boxes className="w-4 h-4 text-indigo-700" />
-                  过户物料明细
+                  过户物资明细
                   <span className="text-xs font-normal text-muted-foreground">
                     共 {filledRows} 种
                   </span>
@@ -551,7 +551,7 @@ export function TransferCreatePage({ onBack }: { onBack: () => void }) {
                   <TableHeader>
                     <TableRow className="bg-muted/40">
                       <TableHead className="w-[40px]">#</TableHead>
-                      <TableHead className="min-w-[220px]">物料</TableHead>
+                      <TableHead className="min-w-[220px]">物资</TableHead>
                       <TableHead className="min-w-[140px]">规格型号</TableHead>
                       <TableHead className="w-[80px]">单位</TableHead>
                       <TableHead className="w-[110px] text-right">
@@ -582,7 +582,7 @@ export function TransferCreatePage({ onBack }: { onBack: () => void }) {
                           </TableCell>
                           <TableCell>
                             <Input
-                              placeholder="物料名称"
+                              placeholder="物资名称"
                               value={it.name}
                               onChange={(e) =>
                                 updateItem(it.key, "name", e.target.value)
@@ -822,7 +822,7 @@ export function TransferCreatePage({ onBack }: { onBack: () => void }) {
                 <SummaryRow label="存放仓储" value={warehouse || "—"} />
                 <SummaryRow label="申请日期" value={applyDate || "—"} />
                 <SummaryRow
-                  label="物料种数"
+                  label="物资种数"
                   value={
                     filledRows > 0 ? (
                       <span className="tabular-nums">{filledRows}</span>
@@ -887,12 +887,12 @@ export function TransferCreatePage({ onBack }: { onBack: () => void }) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Search className="w-4 h-4" />
-              从库存中选择物料
+              从库存中选择物资
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <Input
-              placeholder="搜索物料名称 / 规格 / 分类 / 仓库"
+              placeholder="搜索物资名称 / 规格 / 分类 / 仓库"
               value={pickerSearch}
               onChange={(e) => setPickerSearch(e.target.value)}
             />
@@ -900,7 +900,7 @@ export function TransferCreatePage({ onBack }: { onBack: () => void }) {
               <Table>
                 <TableHeader className="sticky top-0 bg-background">
                   <TableRow>
-                    <TableHead>物料</TableHead>
+                    <TableHead>物资</TableHead>
                     <TableHead>规格 / 仓库</TableHead>
                     <TableHead className="text-right">可用库存</TableHead>
                     <TableHead className="text-right">账面单价</TableHead>
@@ -956,7 +956,7 @@ export function TransferCreatePage({ onBack }: { onBack: () => void }) {
                         colSpan={5}
                         className="text-center text-sm text-muted-foreground py-8"
                       >
-                        未找到匹配的物料
+                        未找到匹配的物资
                       </TableCell>
                     </TableRow>
                   )}

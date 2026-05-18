@@ -50,8 +50,8 @@ function termOf(orderType: OrderType) {
       orderType === "warehouse"
         ? "仓储租赁合同"
         : orderType === "storage"
-          ? "物料存放保管合同"
-          : "物料交易租赁合同",
+          ? "物资存放保管合同"
+          : "物资交易租赁合同",
   }
 }
 

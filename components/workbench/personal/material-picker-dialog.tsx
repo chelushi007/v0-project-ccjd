@@ -33,14 +33,14 @@ import {
 import { cn } from "@/lib/utils"
 
 export interface MaterialItem {
-  id: string // 分类编号-物料编号
+  id: string // 分类编号-物资编号
   categoryId: string // 所属分类
-  name: string // 物料名称
+  name: string // 物资名称
   spec: string // 规格型号
   unit: string // 计量单位
   auxUnit: string // 辅助计量单位
   tags?: string[]
-  isCommon?: boolean // 是否为常用物料
+  isCommon?: boolean // 是否为常用物资
 }
 
 interface MaterialCategory {
@@ -52,7 +52,7 @@ interface MaterialCategory {
 const CATEGORY_TREE: MaterialCategory[] = [
   {
     id: "XH",
-    label: "XH-循环物料",
+    label: "XH-循环物资",
     children: [
       {
         id: "XH01",
@@ -75,7 +75,7 @@ const CATEGORY_TREE: MaterialCategory[] = [
   },
 ]
 
-// 模拟物料数据
+// 模拟物资数据
 const ALL_MATERIALS: MaterialItem[] = [
   // XH01-模板类
   {
@@ -327,7 +327,7 @@ export function MaterialPickerDialog({
   onConfirm,
   initialSelected = [],
 }: MaterialPickerDialogProps) {
-  // 顶部 Tab：物料信息 / 常用物料 / 物料选中信息
+  // 顶部 Tab：物资信息 / 常用物资 / 物资选中信息
   const [tab, setTab] = useState<"all" | "common" | "selected">("all")
 
   // 全屏切换
@@ -348,7 +348,7 @@ export function MaterialPickerDialog({
   const [page, setPage] = useState(1)
   const pageSize = 10
 
-  // 已选物料
+  // 已选物资
   const [selected, setSelected] = useState<MaterialItem[]>(initialSelected)
 
   const toggleNode = (id: string) => {
@@ -443,7 +443,7 @@ export function MaterialPickerDialog({
         <DialogHeader className="px-5 py-3 border-b flex flex-row items-center justify-between space-y-0 shrink-0">
           <DialogTitle className="flex items-center gap-2 text-base font-semibold">
             <Package2 className="w-4 h-4 text-primary" />
-            物料信息
+            物资信息
           </DialogTitle>
           <div className="flex items-center gap-1">
             <Button
@@ -473,9 +473,9 @@ export function MaterialPickerDialog({
         <div className="px-5 border-b shrink-0">
           <div className="flex items-center gap-6">
             {[
-              { key: "all", label: "物料信息", icon: Package2 },
-              { key: "common", label: "常用物料", icon: Star },
-              { key: "selected", label: "物料选中信息", icon: CheckCircle2 },
+              { key: "all", label: "物资信息", icon: Package2 },
+              { key: "common", label: "常用物资", icon: Star },
+              { key: "selected", label: "物资选中信息", icon: CheckCircle2 },
             ].map((t) => {
               const isActive = tab === t.key
               const Icon = t.icon
@@ -515,7 +515,7 @@ export function MaterialPickerDialog({
 
         {/* 主体：左树 + 右表 */}
         <div className="flex-1 flex min-h-0">
-          {/* 左侧分类树（仅在"物料信息"tab 显示） */}
+          {/* 左侧分类树（仅在"物资信息"tab 显示） */}
           {tab === "all" && (
             <div className="w-[280px] shrink-0 border-r flex flex-col bg-muted/20">
               <div className="p-3 border-b space-y-2 shrink-0">
@@ -560,7 +560,7 @@ export function MaterialPickerDialog({
             <div className="p-3 border-b shrink-0 bg-muted/20">
               <div className="grid grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr_auto] gap-2 items-center">
                 <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
-                  物料信息
+                  物资信息
                 </span>
                 <Input
                   value={filterCode}
@@ -621,8 +621,8 @@ export function MaterialPickerDialog({
                         onCheckedChange={toggleAllOnPage}
                       />
                     </TableHead>
-                    <TableHead className="w-[180px]">分类编号-物料编号</TableHead>
-                    <TableHead>物料名称</TableHead>
+                    <TableHead className="w-[180px]">分类编号-物资编号</TableHead>
+                    <TableHead>物资名称</TableHead>
                     <TableHead className="w-[140px]">规格型号</TableHead>
                     <TableHead className="w-[100px]">计量单位</TableHead>
                     <TableHead className="w-[110px]">辅助计量单位</TableHead>
@@ -730,7 +730,7 @@ export function MaterialPickerDialog({
         <div className="px-5 py-3 border-t flex items-center justify-between shrink-0">
           <div className="text-xs text-muted-foreground">
             已选 <span className="text-primary font-semibold">{selected.length}</span>{" "}
-            条物料
+            条物资
             {selected.length > 0 && (
               <Button
                 variant="link"

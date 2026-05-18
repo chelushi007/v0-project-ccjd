@@ -412,7 +412,7 @@ export function MaterialOutbound() {
                   <TableHead className="w-[150px]">出库单号</TableHead>
                   <TableHead>出库类型</TableHead>
                   <TableHead>收货单位/承租方</TableHead>
-                  <TableHead className="w-[260px]">物料名称</TableHead>
+                  <TableHead className="w-[260px]">物资名称</TableHead>
                   <TableHead className="text-right">品种</TableHead>
                   <TableHead className="text-right">计划数量</TableHead>
                   <TableHead className="text-right">实际出库</TableHead>

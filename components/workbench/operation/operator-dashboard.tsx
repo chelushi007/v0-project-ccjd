@@ -136,7 +136,7 @@ const todos = [
   },
   {
     id: 8,
-    title: "物料目录上架",
+    title: "物资目录上架",
     desc: "盘扣式脚手架配件包（新 SKU）· 待平台审核",
     type: "上架",
     level: "mid",

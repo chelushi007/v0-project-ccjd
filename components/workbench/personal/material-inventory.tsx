@@ -317,7 +317,7 @@ export function MaterialInventory() {
           <div className="min-w-0">
             <h1 className="text-2xl font-bold text-foreground truncate">库存管理</h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              查看循环物料的实时库存、占用与价值分布，支持调拨与盘点
+              查看循环物资的实时库存、占用与价值分布，支持调拨与盘点
             </p>
           </div>
         </div>
@@ -328,7 +328,7 @@ export function MaterialInventory() {
           </Button>
           <Button size="sm" onClick={() => setMode("create")}>
             <Plus className="w-4 h-4 mr-2" />
-            新增物料
+            新增物资
           </Button>
         </div>
       </div>
@@ -336,7 +336,7 @@ export function MaterialInventory() {
       {/* 统计卡 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
-          label="物料品类总数"
+          label="物资品类总数"
           value={total.toString()}
           icon={Boxes}
           iconBg="bg-primary/10"
@@ -376,7 +376,7 @@ export function MaterialInventory() {
             <div className="relative flex-1 min-w-[220px] max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="搜索物料编号、名称、规格"
+                placeholder="搜索物资编号、名称、规格"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-9"
@@ -384,7 +384,7 @@ export function MaterialInventory() {
             </div>
             <Select value={category} onValueChange={setCategory}>
               <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="物料分类" />
+                <SelectValue placeholder="物资分类" />
               </SelectTrigger>
               <SelectContent>
                 {categories.map((c) => (
@@ -429,8 +429,8 @@ export function MaterialInventory() {
               <TableHeader>
                 <TableRow className="bg-muted/40">
                   <TableHead className="w-[60px] text-center">序号</TableHead>
-                  <TableHead className="w-[130px]">物料编号</TableHead>
-                  <TableHead>物料名称</TableHead>
+                  <TableHead className="w-[130px]">物资编号</TableHead>
+                  <TableHead>物资名称</TableHead>
                   <TableHead>规格型号</TableHead>
                   <TableHead>分类</TableHead>
                   <TableHead className="text-right">可用</TableHead>

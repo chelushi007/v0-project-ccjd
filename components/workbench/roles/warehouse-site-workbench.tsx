@@ -30,7 +30,7 @@ export function WarehouseSiteWorkbench({ subTab }: WarehouseSiteWorkbenchProps) 
       return <WarehouseInfo roleType="warehouse-site" />
     }
 
-    // 物料管理
+    // 物资管理
     if (subTab === "material") {
       return <MaterialManagement roleType="warehouse-site" />
     }

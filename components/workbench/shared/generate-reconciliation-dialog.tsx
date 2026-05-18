@@ -111,7 +111,7 @@ const ORDER_BANK: Record<BusinessType, OrderOption[]> = {
     {
       id: "WZJY20260428005",
       title: "贝雷片 (321 型) ×420 片 · 短租",
-      partner: "中铁十二局物料分公司",
+      partner: "中铁十二局物资分公司",
       monthlyAmount: 28000,
       startDate: "2026-04",
       totalMonths: 6,

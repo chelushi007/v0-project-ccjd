@@ -50,7 +50,7 @@ import { OrderContractConfirmDialog } from "./order-contract-confirm-dialog"
 
 // 主状态
 type MainStatus = "履约中" | "已完成" | "合同到期"
-// 仓储/物料交易子状态
+// 仓储/物资交易子状态
 type RentSubStatus =
   | "待确认合同"
   | "待签署合同"
@@ -61,7 +61,7 @@ type RentSubStatus =
   | "已完成"
   | "待续租"
   | "待退还押金"
-// 物料存放子状态
+// 物资存放子状态
 type StorageSubStatus =
   | "待确认合同"
   | "待签署合同"
@@ -91,7 +91,7 @@ const warehouseOrders: Array<{
     title: "中铁建广州南沙综合仓储基地 8000m²",
     area: "8000m²",
     tenant: "中铁十一局广深城际项目部",
-    landlord: "中铁建物料华南仓储有限公司",
+    landlord: "中铁建物资华南仓储有限公司",
     amount: "134,400",
     period: "2026-05-15 至 2027-05-14",
     signDate: "2026-05-11",
@@ -103,7 +103,7 @@ const warehouseOrders: Array<{
     title: "中铁建深圳前海智慧仓储基地 5000m²",
     area: "5000m²",
     tenant: "中铁十四局深圳地铁13号线项目部",
-    landlord: "中铁建物料华南专业运营有限公司",
+    landlord: "中铁建物资华南专业运营有限公司",
     amount: "78,000",
     period: "2026-05-12 至 2026-11-11",
     signDate: "2026-05-09",
@@ -139,7 +139,7 @@ const warehouseOrders: Array<{
     title: "中铁建广州黄埔恒温仓储基地 4500m²",
     area: "4500m²",
     tenant: "中铁十八局深惠城际项目部",
-    landlord: "中铁建物料华南仓储有限公司",
+    landlord: "中铁建物资华南仓储有限公司",
     amount: "229,500",
     period: "2026-05-01 至 2027-04-30",
     signDate: "2026-04-27",
@@ -163,7 +163,7 @@ const warehouseOrders: Array<{
     title: "中铁建广州南沙综合仓储基地 10000m²",
     area: "10000m²",
     tenant: "中铁电气化局集团广州分公司",
-    landlord: "中铁建物料华南仓储有限公司",
+    landlord: "中铁建物资华南仓储有限公司",
     amount: "270,000",
     period: "2025-10-20 至 2026-04-19",
     signDate: "2025-10-14",
@@ -175,7 +175,7 @@ const warehouseOrders: Array<{
     title: "中铁建深圳龙岗物流仓储基地 4000m²",
     area: "4000m²",
     tenant: "中铁二十五局深中通道项目部",
-    landlord: "中铁建物料华南专业运营有限公司",
+    landlord: "中铁建物资华南专业运营有限公司",
     amount: "67,200",
     period: "2025-11-20 至 2026-05-19",
     signDate: "2025-11-15",
@@ -196,7 +196,7 @@ const warehouseOrders: Array<{
   },
 ]
 
-// 物料存放订单
+// 物资存放订单
 const materialStorageOrders: Array<{
   id: string
   title: string
@@ -339,7 +339,7 @@ const materialStorageOrders: Array<{
   },
 ]
 
-// 物料交易订单
+// 物资交易订单
 const materialTradeOrders: Array<{
   id: string
   title: string
@@ -373,7 +373,7 @@ const materialTradeOrders: Array<{
     title: "建筑钢管脚手架 出租",
     materialType: "脚手架类",
     quantity: "1200 套",
-    provider: "中铁建物料华南专业运营有限公司",
+    provider: "中铁建物资华南专业运营有限公司",
     user: "中铁十八局深惠城际项目部",
     tradeType: "出租",
     amount: "540,000",
@@ -388,7 +388,7 @@ const materialTradeOrders: Array<{
     materialType: "型材类",
     quantity: "300 吨",
     provider: "中铁十四局集团广州分公司",
-    user: "中铁建物料华南专业运营有限公司",
+    user: "中铁建物资华南专业运营有限公司",
     tradeType: "整租",
     amount: "1,350,000",
     unitPrice: "1,500元/吨/月",
@@ -429,7 +429,7 @@ const materialTradeOrders: Array<{
     title: "60kg/m 钢轨 整租",
     materialType: "轨道类",
     quantity: "180 吨",
-    provider: "中铁建物料华南专业运营有限公司",
+    provider: "中铁建物资华南专业运营有限公司",
     user: "中铁十四局深圳地铁13号线项目部",
     tradeType: "整租",
     amount: "972,000",
@@ -522,7 +522,7 @@ const saleOrders: SaleOrder[] = [
     materialType: "型材类",
     quantity: "1200 吨",
     propertyOwner: "中铁十四局集团广州分公司",
-    transportUnit: "中铁建物料华南专业运营有限公司",
+    transportUnit: "中铁建物资华南专业运营有限公司",
     buyer: "中铁二十三局深圳分公司",
     unitPrice: "4,200元/吨",
     amount: "5,040,000",
@@ -541,7 +541,7 @@ const saleOrders: SaleOrder[] = [
     materialType: "拼装类",
     quantity: "12000 套",
     propertyOwner: "中铁电气化局集团广州分公司",
-    transportUnit: "中铁建物料华南专业运营有限公司",
+    transportUnit: "中铁建物资华南专业运营有限公司",
     buyer: "中铁十一局广深城际项目部",
     unitPrice: "12元/套",
     amount: "144,000",
@@ -560,7 +560,7 @@ const saleOrders: SaleOrder[] = [
     materialType: "型材类",
     quantity: "480 吨",
     propertyOwner: "中铁建工集团第二建设有限公司",
-    transportUnit: "中铁建物料华南专业运营有限公司",
+    transportUnit: "中铁建物资华南专业运营有限公司",
     buyer: "广州市顺德建材贸易公司",
     unitPrice: "3,950元/吨",
     amount: "1,896,000",
@@ -579,7 +579,7 @@ const saleOrders: SaleOrder[] = [
     materialType: "型材类",
     quantity: "320 吨",
     propertyOwner: "中铁十四局集团广州分公司",
-    transportUnit: "中铁建物料华南专业运营有限公司",
+    transportUnit: "中铁建物资华南专业运营有限公司",
     buyer: "中铁二十二局莞惠城际项目部",
     unitPrice: "4,600元/吨",
     amount: "1,472,000",
@@ -598,7 +598,7 @@ const saleOrders: SaleOrder[] = [
     materialType: "脚手架类",
     quantity: "1500 套",
     propertyOwner: "中铁二十二局集团第一工程有限公司",
-    transportUnit: "中铁建物料华南专业运营有限公司",
+    transportUnit: "中铁建物资华南专业运营有限公司",
     buyer: "中铁二十五局深中通道项目部",
     unitPrice: "180元/套",
     amount: "270,000",
@@ -617,7 +617,7 @@ const saleOrders: SaleOrder[] = [
     materialType: "其他材料",
     quantity: "36 件",
     propertyOwner: "中铁隧道局集团广州分公司",
-    transportUnit: "中铁建物料华南专业运营有限公司",
+    transportUnit: "中铁建物资华南专业运营有限公司",
     buyer: "中铁建工集团广州分公司",
     unitPrice: "12,500元/件",
     amount: "450,000",
@@ -729,7 +729,7 @@ function toWarehousePaymentOrder(o: (typeof warehouseOrders)[number]): PaymentOr
   }
 }
 
-// 物料存放订单 → 支付订单视图（按 12 个月计算）
+// 物资存放订单 → 支付订单视图（按 12 个月计算）
 function toStoragePaymentOrder(o: (typeof materialStorageOrders)[number]): PaymentOrder {
   const monthly = parseAmount(o.storageFee)
   const months = 12
@@ -749,7 +749,7 @@ function toStoragePaymentOrder(o: (typeof materialStorageOrders)[number]): Payme
   }
 }
 
-// 物料交易订单 → 支付订单视图
+// 物资交易订单 → 支付订单视图
 function toTradePaymentOrder(o: (typeof materialTradeOrders)[number]): PaymentOrder {
   const total = parseAmount(o.amount)
   const months = parseMonths(o.period)
@@ -797,14 +797,14 @@ const INITIAL_PAYMENT_RECORDS: Record<string, PaymentRecord> = {
   CCJY20251015007: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
   CCJY20260420008: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
   CCJY20260425009: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
-  // 物料存放
+  // 物资存放
   WZCF20260505004: { depositPaid: true },
   WZCF20260420005: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 1 },
   WZCF20260301006: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 3 },
   WZCF20251115007: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
   WZCF20251025008: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
   WZCF20251015009: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 6 },
-  // 物料交易
+  // 物资交易
   WZJY20260505004: { depositPaid: true },
   WZJY20260428005: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 2 },
   WZJY20260315006: { depositPaid: true, serviceFeePaid: true, rentPaidMonths: 5 },
@@ -1044,7 +1044,7 @@ export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps =
       .toLocaleString("zh-CN"),
   }
 
-  // 物料存放统计
+  // 物资存放统计
   const storageStats = {
     total: materialStorageOrders.length,
     active: materialStorageOrders.filter((o) => o.status === "履约中").length,
@@ -1057,7 +1057,7 @@ export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps =
       .toLocaleString("zh-CN"),
   }
 
-  // 物料交易统计
+  // 物资交易统计
   const tradeStats = {
     total: materialTradeOrders.length,
     active: materialTradeOrders.filter((o) => o.status === "履约中").length,
@@ -1102,15 +1102,15 @@ export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps =
       iconColor: "text-primary",
     },
     storage: {
-      title: "物料存放订单",
-      desc: "管理客户委托保管的物料存放订单，跟踪保证金、保管费与出入库状态",
+      title: "物资存放订单",
+      desc: "管理客户委托保管的物资存放订单，跟踪保证金、保管费与出入库状态",
       icon: PackageOpen,
       iconBg: "bg-purple-100",
       iconColor: "text-purple-700",
     },
     trade: {
-      title: "物料交易订单",
-      desc: "管理物料的租赁与销售订单：出租 / 整租 跟踪租金；销售订单跟踪货款与分成",
+      title: "物资交易订单",
+      desc: "管理物资的租赁与销售订单：出租 / 整租 跟踪租金；销售订单跟踪货款与分成",
       icon: Package,
       iconBg: "bg-accent/10",
       iconColor: "text-accent",
@@ -1355,7 +1355,7 @@ export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps =
               </CardContent>
             </TabsContent>
 
-            {/* 物料存放订单 */}
+            {/* 物资存放订单 */}
             <TabsContent value="storage" className="mt-4 min-w-0">
               <CardTitle className="text-base mb-3 flex items-center gap-2 text-muted-foreground font-normal">
                 <ClipboardCheck className="w-4 h-4 text-purple-700" />
@@ -1369,8 +1369,8 @@ export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps =
                       <TableRow>
                         <TableHead className="w-[56px] text-center whitespace-nowrap">序号</TableHead>
                         <TableHead className="whitespace-nowrap">订单号</TableHead>
-                        <TableHead className="whitespace-nowrap">物料名称</TableHead>
-                        <TableHead className="whitespace-nowrap">物料类型</TableHead>
+                        <TableHead className="whitespace-nowrap">物资名称</TableHead>
+                        <TableHead className="whitespace-nowrap">物资类型</TableHead>
                         <TableHead className="whitespace-nowrap">数量</TableHead>
                         <TableHead className="whitespace-nowrap">物权单位</TableHead>
                         <TableHead className="whitespace-nowrap">存放站点</TableHead>
@@ -1410,7 +1410,7 @@ export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps =
               </CardContent>
             </TabsContent>
 
-            {/* 物料交易订单 */}
+            {/* 物资交易订单 */}
             <TabsContent value="trade" className="mt-4 min-w-0">
               {/* 内部子标签：租赁 / 销售 */}
               <div className="inline-flex items-center gap-1 mb-3 p-1 bg-muted/60 rounded-lg">
@@ -1479,7 +1479,7 @@ export function OrderManagement({ subTab = "warehouse" }: OrderManagementProps =
                               序号
                             </TableHead>
                             <TableHead className="whitespace-nowrap">订单号</TableHead>
-                            <TableHead className="whitespace-nowrap">物料名称</TableHead>
+                            <TableHead className="whitespace-nowrap">物资名称</TableHead>
                             <TableHead className="whitespace-nowrap">数量</TableHead>
                             <TableHead className="whitespace-nowrap">交易方式</TableHead>
                             <TableHead className="whitespace-nowrap">出租方</TableHead>
@@ -1606,7 +1606,7 @@ function SaleOrdersTable({ orders }: { orders: SaleOrder[] }) {
                   序号
                 </TableHead>
                 <TableHead className="whitespace-nowrap">订单号</TableHead>
-                <TableHead className="whitespace-nowrap">物料名称</TableHead>
+                <TableHead className="whitespace-nowrap">物资名称</TableHead>
                 <TableHead className="whitespace-nowrap">数量</TableHead>
                 <TableHead className="whitespace-nowrap">销售模式</TableHead>
                 <TableHead className="whitespace-nowrap">物权单位</TableHead>

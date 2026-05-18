@@ -83,9 +83,9 @@ export function MaterialCreatePage({ onBack }: { onBack: () => void }) {
           <Boxes className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">新增物料单</h1>
+          <h1 className="text-2xl font-bold text-foreground">新增物资单</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            登记一类新的循环物料到资产库，包含规格、单价、初始库存与存放仓库
+            登记一类新的循环物资到资产库，包含规格、单价、初始库存与存放仓库
           </p>
         </div>
       </div>
@@ -104,7 +104,7 @@ export function MaterialCreatePage({ onBack }: { onBack: () => void }) {
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5 md:col-span-2">
                 <Label htmlFor="name">
-                  物料名称<span className="text-destructive ml-0.5">*</span>
+                  物资名称<span className="text-destructive ml-0.5">*</span>
                 </Label>
                 <Input
                   id="name"
@@ -115,7 +115,7 @@ export function MaterialCreatePage({ onBack }: { onBack: () => void }) {
               </div>
               <div className="space-y-1.5">
                 <Label>
-                  物料分类<span className="text-destructive ml-0.5">*</span>
+                  物资分类<span className="text-destructive ml-0.5">*</span>
                 </Label>
                 <Select value={category} onValueChange={setCategory}>
                   <SelectTrigger>
@@ -283,7 +283,7 @@ export function MaterialCreatePage({ onBack }: { onBack: () => void }) {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="rounded-lg border bg-muted/30 p-3 space-y-2">
-                <div className="text-xs text-muted-foreground">物料名称</div>
+                <div className="text-xs text-muted-foreground">物资名称</div>
                 <div className="text-sm font-semibold text-foreground min-h-[20px]">
                   {name || <span className="text-muted-foreground">未填写</span>}
                 </div>

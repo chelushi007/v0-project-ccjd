@@ -37,7 +37,7 @@ interface MaterialOrderManagementProps {
   roleType: "transport" | "user"
 }
 
-// 物料出租订单
+// 物资出租订单
 const mockMaterialRentOrders = [
   {
     id: "WZCZ-2026-001",
@@ -97,7 +97,7 @@ const mockMaterialRentOrders = [
   },
 ]
 
-// 物料承租订单（使用单位视角）
+// 物资承租订单（使用单位视角）
 const mockMaterialLeaseOrders = [
   {
     id: "WCCZ-2026-001",
@@ -119,7 +119,7 @@ const mockMaterialLeaseOrders = [
     materialSpec: "60kg/m-1/12",
     quantity: 3,
     unit: "组",
-    lessor: "中铁建物料华南专业运营有限公司",
+    lessor: "中铁建物资华南专业运营有限公司",
     rentPrice: 5000,
     totalAmount: 90000,
     startDate: "2026-04-15",
@@ -242,10 +242,10 @@ export function MaterialOrderManagement({ subTab, roleType }: MaterialOrderManag
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-lg">
-                {isRentView ? "物料出租订单列表" : "物料承租订单列表"}
+                {isRentView ? "物资出租订单列表" : "物资承租订单列表"}
               </CardTitle>
               <CardDescription>
-                {isRentView ? "管理托管物料的出租业务订单" : "管理承租的物料订单"}
+                {isRentView ? "管理托管物资的出租业务订单" : "管理承租的物资订单"}
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
@@ -261,7 +261,7 @@ export function MaterialOrderManagement({ subTab, roleType }: MaterialOrderManag
             <div className="relative flex-1 min-w-[200px] max-w-sm">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="搜索物料名称或订单号..."
+                placeholder="搜索物资名称或订单号..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-9"
@@ -287,7 +287,7 @@ export function MaterialOrderManagement({ subTab, roleType }: MaterialOrderManag
                 <TableRow>
                   <TableHead className="w-[60px] text-center">序号</TableHead>
                   <TableHead className="w-[140px]">订单编号</TableHead>
-                  <TableHead>物料名称</TableHead>
+                  <TableHead>物资名称</TableHead>
                   <TableHead>规格型号</TableHead>
                   <TableHead className="text-right">数量</TableHead>
                   <TableHead>{isRentView ? "承租方" : "出租方"}</TableHead>

@@ -59,7 +59,7 @@ const WAREHOUSES = [
   "中铁建佛山顺德基地·F区",
 ]
 
-// 备选物料库
+// 备选物资库
 interface MaterialCandidate {
   id: string
   name: string
@@ -233,7 +233,7 @@ export function InboundCreatePage({ onBack }: { onBack: () => void }) {
         <div>
           <h1 className="text-2xl font-bold text-foreground">新建入库单</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            为一次到货登记入库单，可一次添加多种物料并核对数量、单价与批次
+            为一次到货登记入库单，可一次添加多种物资并核对数量、单价与批次
           </p>
         </div>
       </div>
@@ -276,7 +276,7 @@ export function InboundCreatePage({ onBack }: { onBack: () => void }) {
                       <div className="text-xs text-muted-foreground">
                         {t.value === "采购入库" && "对外采购到货登记"}
                         {t.value === "调拨入库" && "兄弟仓库间调入"}
-                        {t.value === "归还入库" && "出租物料回库登记"}
+                        {t.value === "归还入库" && "出租物资回库登记"}
                         {t.value === "盘盈入库" && "盘点新增登记"}
                       </div>
                     </button>
@@ -354,13 +354,13 @@ export function InboundCreatePage({ onBack }: { onBack: () => void }) {
             </CardContent>
           </Card>
 
-          {/* 物料明细（多物料表格） */}
+          {/* 物资明细（多物资表格） */}
           <Card>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <CardTitle className="text-base flex items-center gap-2">
                   <Boxes className="w-4 h-4 text-emerald-700" />
-                  物料明细
+                  物资明细
                   <span className="text-xs font-normal text-muted-foreground">
                     共 {filledRows} 种
                   </span>
@@ -372,7 +372,7 @@ export function InboundCreatePage({ onBack }: { onBack: () => void }) {
                     onClick={() => setPickerOpen(true)}
                   >
                     <Search className="w-4 h-4 mr-2" />
-                    从物料库选择
+                    从物资库选择
                   </Button>
                   <Button size="sm" variant="default" onClick={addEmpty}>
                     <Plus className="w-4 h-4 mr-2" />
@@ -387,7 +387,7 @@ export function InboundCreatePage({ onBack }: { onBack: () => void }) {
                   <TableHeader>
                     <TableRow className="bg-muted/40">
                       <TableHead className="w-[40px]">#</TableHead>
-                      <TableHead className="min-w-[200px]">物料</TableHead>
+                      <TableHead className="min-w-[200px]">物资</TableHead>
                       <TableHead className="min-w-[140px]">规格型号</TableHead>
                       <TableHead className="w-[80px]">单位</TableHead>
                       <TableHead className="w-[110px] text-right">
@@ -414,7 +414,7 @@ export function InboundCreatePage({ onBack }: { onBack: () => void }) {
                           </TableCell>
                           <TableCell>
                             <Input
-                              placeholder="物料名称"
+                              placeholder="物资名称"
                               value={it.name}
                               onChange={(e) =>
                                 updateItem(it.key, "name", e.target.value)
@@ -655,17 +655,17 @@ export function InboundCreatePage({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
-      {/* 物料库选择弹窗 */}
+      {/* 物资库选择弹窗 */}
       <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>从物料库选择</DialogTitle>
+            <DialogTitle>从物资库选择</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="搜索物料名称、规格或分类"
+                placeholder="搜索物资名称、规格或分类"
                 value={pickerSearch}
                 onChange={(e) => setPickerSearch(e.target.value)}
                 className="pl-9"
@@ -702,7 +702,7 @@ export function InboundCreatePage({ onBack }: { onBack: () => void }) {
               ))}
               {filteredLib.length === 0 && (
                 <div className="py-8 text-center text-sm text-muted-foreground">
-                  未找到匹配的物料
+                  未找到匹配的物资
                 </div>
               )}
             </div>

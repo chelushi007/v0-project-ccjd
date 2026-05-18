@@ -250,7 +250,7 @@ export function OutboundCreatePage({ onBack }: { onBack: () => void }) {
         <div>
           <h1 className="text-2xl font-bold text-foreground">新建出库单</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            为一次发运登记出库单，支持一次添加多种物料并校验可用库存
+            为一次发运登记出库单，支持一次添加多种物资并校验可用库存
           </p>
         </div>
       </div>
@@ -369,13 +369,13 @@ export function OutboundCreatePage({ onBack }: { onBack: () => void }) {
             </CardContent>
           </Card>
 
-          {/* 物料明细 */}
+          {/* 物资明细 */}
           <Card>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <CardTitle className="text-base flex items-center gap-2">
                   <Boxes className="w-4 h-4 text-orange-700" />
-                  物料明细
+                  物资明细
                   <span className="text-xs font-normal text-muted-foreground">
                     共 {filledRows} 种
                   </span>
@@ -402,7 +402,7 @@ export function OutboundCreatePage({ onBack }: { onBack: () => void }) {
                   <TableHeader>
                     <TableRow className="bg-muted/40">
                       <TableHead className="w-[40px]">#</TableHead>
-                      <TableHead className="min-w-[200px]">物料</TableHead>
+                      <TableHead className="min-w-[200px]">物资</TableHead>
                       <TableHead className="min-w-[140px]">规格型号</TableHead>
                       <TableHead className="w-[80px]">单位</TableHead>
                       <TableHead className="w-[100px] text-right">
@@ -433,7 +433,7 @@ export function OutboundCreatePage({ onBack }: { onBack: () => void }) {
                           </TableCell>
                           <TableCell>
                             <Input
-                              placeholder="物料名称"
+                              placeholder="物资名称"
                               value={it.name}
                               onChange={(e) =>
                                 updateItem(it.key, "name", e.target.value)
@@ -682,7 +682,7 @@ export function OutboundCreatePage({ onBack }: { onBack: () => void }) {
                 <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 flex items-start gap-2">
                   <AlertTriangle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />
                   <div className="text-xs text-destructive">
-                    存在出库数量超过可用库存的物料，请调整后再提交。
+                    存在出库数量超过可用库存的物资，请调整后再提交。
                   </div>
                 </div>
               )}
@@ -715,7 +715,7 @@ export function OutboundCreatePage({ onBack }: { onBack: () => void }) {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="搜索物料名称、规格或分类"
+                placeholder="搜索物资名称、规格或分类"
                 value={pickerSearch}
                 onChange={(e) => setPickerSearch(e.target.value)}
                 className="pl-9"

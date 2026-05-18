@@ -392,7 +392,7 @@ export function MaterialInbound() {
                   <TableHead className="w-[150px]">入库单号</TableHead>
                   <TableHead>入库类型</TableHead>
                   <TableHead>来源/委托方</TableHead>
-                  <TableHead className="w-[260px]">物料名称</TableHead>
+                  <TableHead className="w-[260px]">物资名称</TableHead>
                   <TableHead className="text-right">品种</TableHead>
                   <TableHead className="text-right">计划数量</TableHead>
                   <TableHead className="text-right">实际入库</TableHead>

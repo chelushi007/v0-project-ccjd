@@ -75,12 +75,12 @@ interface WarehouseDist {
 }
 
 interface OperatorMaterialRow {
-  id: string // 物料编号
-  name: string // 物料名称
+  id: string // 物资编号
+  name: string // 物资名称
   category: string
   spec: string
   unit: string
-  owner: string // 物权方（物料归属单位）
+  owner: string // 物权方（物资归属单位）
   ownerType: "施工单位" | "供应商" | "物资公司"
   total: number // 总台账数量
   available: number // 在库可用
@@ -424,10 +424,10 @@ export function OperatorMaterial() {
             </div>
             <div className="min-w-0">
               <h1 className="text-2xl font-bold text-foreground truncate">
-                物料监管
+                物资监管
               </h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                按物权方维度查看物料台账、存储分布、出租与出售进度
+                按物权方维度查看物资台账、存储分布、出租与出售进度
               </p>
             </div>
           </div>
@@ -442,7 +442,7 @@ export function OperatorMaterial() {
         {/* 统计卡 */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <StatCard
-            label="登记物料 SKU"
+            label="登记物资 SKU"
             value={totalSKU.toString()}
             icon={Boxes}
             iconBg="bg-primary/10"
@@ -498,7 +498,7 @@ export function OperatorMaterial() {
               <div className="relative flex-1 min-w-[240px] max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="搜索物料编号、名称、规格、物权方"
+                  placeholder="搜索物资编号、名称、规格、物权方"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-9"
@@ -518,7 +518,7 @@ export function OperatorMaterial() {
               </Select>
               <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="物料分类" />
+                  <SelectValue placeholder="物资分类" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((c) => (
@@ -553,8 +553,8 @@ export function OperatorMaterial() {
                 <TableHeader>
                   <TableRow className="bg-muted/40">
                     <TableHead className="w-[56px] text-center">序号</TableHead>
-                    <TableHead className="w-[130px]">物料编号</TableHead>
-                    <TableHead className="min-w-[180px]">物料 / 规格</TableHead>
+                    <TableHead className="w-[130px]">物资编号</TableHead>
+                    <TableHead className="min-w-[180px]">物资 / 规格</TableHead>
                     <TableHead className="w-[100px]">分类</TableHead>
                     <TableHead className="min-w-[180px]">物权方</TableHead>
                     <TableHead className="w-[150px] text-right">

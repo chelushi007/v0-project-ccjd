@@ -128,14 +128,14 @@ export function MaterialManagement({ roleType = "warehouse-unit" }: MaterialMana
   const getRoleTitle = () => {
     switch (roleType) {
       case "property":
-        return "我的物料"
+        return "我的物资"
       case "warehouse-unit":
       case "warehouse-site":
-        return "存放物料"
+        return "存放物资"
       case "transport":
-        return "托管物料"
+        return "托管物资"
       default:
-        return "物料管理"
+        return "物资管理"
     }
   }
 
@@ -164,7 +164,7 @@ export function MaterialManagement({ roleType = "warehouse-unit" }: MaterialMana
                 <Package className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">物料总数</p>
+                <p className="text-sm text-muted-foreground">物资总数</p>
                 <p className="text-2xl font-bold">{totalQuantity}</p>
               </div>
             </div>
@@ -177,7 +177,7 @@ export function MaterialManagement({ roleType = "warehouse-unit" }: MaterialMana
                 <Archive className="h-6 w-6 text-accent" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">在库物料</p>
+                <p className="text-sm text-muted-foreground">在库物资</p>
                 <p className="text-2xl font-bold">{mockMaterials.filter(m => m.status === "在库").length}</p>
               </div>
             </div>
@@ -203,7 +203,7 @@ export function MaterialManagement({ roleType = "warehouse-unit" }: MaterialMana
                 <Package className="h-6 w-6 text-orange-500" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">物料总价值</p>
+                <p className="text-sm text-muted-foreground">物资总价值</p>
                 <p className="text-2xl font-bold">{(totalValue / 10000).toFixed(0)}万</p>
               </div>
             </div>
@@ -225,7 +225,7 @@ export function MaterialManagement({ roleType = "warehouse-unit" }: MaterialMana
               ))}
               <Button size="sm">
                 <Plus className="h-4 w-4 mr-1" />
-                新增物料
+                新增物资
               </Button>
             </div>
           </div>
@@ -236,7 +236,7 @@ export function MaterialManagement({ roleType = "warehouse-unit" }: MaterialMana
             <div className="relative flex-1 min-w-[200px] max-w-sm">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="搜索物料名称或编号..."
+                placeholder="搜索物资名称或编号..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-9"
@@ -244,7 +244,7 @@ export function MaterialManagement({ roleType = "warehouse-unit" }: MaterialMana
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="物料状态" />
+                <SelectValue placeholder="物资状态" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">全部状态</SelectItem>
@@ -256,7 +256,7 @@ export function MaterialManagement({ roleType = "warehouse-unit" }: MaterialMana
             </Select>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="物料类别" />
+                <SelectValue placeholder="物资类别" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">全部类别</SelectItem>
@@ -281,14 +281,14 @@ export function MaterialManagement({ roleType = "warehouse-unit" }: MaterialMana
             </Button>
           </div>
 
-          {/* 物料列表 */}
+          {/* 物资列表 */}
           <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[60px] text-center">序号</TableHead>
-                  <TableHead className="w-[120px]">物料编号</TableHead>
-                  <TableHead>物料名称</TableHead>
+                  <TableHead className="w-[120px]">物资编号</TableHead>
+                  <TableHead>物资名称</TableHead>
                   <TableHead>规格型号</TableHead>
                   <TableHead>类别</TableHead>
                   <TableHead className="text-right">数量</TableHead>

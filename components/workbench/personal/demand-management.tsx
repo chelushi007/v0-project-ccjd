@@ -232,7 +232,7 @@ const entrustRows: EntrustRow[] = [
   },
 ]
 
-// ============ 数据：物料出租 ============
+// ============ 数据：物资出租 ============
 
 interface MaterialRentRow {
   id: string
@@ -307,7 +307,7 @@ const materialRentRows: MaterialRentRow[] = [
     views: 0,
     inquiries: 0,
     rejectReason:
-      "1) 物料规格型号填写不完整；2) 缺少物料照片附件；3) 单价超过平台基准 20%，请重新核算后提交。",
+      "1) 物资规格型号填写不完整；2) 缺少物资照片附件；3) 单价超过平台基准 20%，请重新核算后提交。",
   },
 ]
 
@@ -476,7 +476,7 @@ function RowActions({ actions }: { actions: RowAction[] }) {
   )
 }
 
-// 自主出租 & 物料出租：基于状态的操作矩阵
+// 自主出租 & 物资出租：基于状态的操作矩阵
 function selfStatusActions(status: SelfStatus, onViewReject?: () => void): RowAction[] {
   switch (status) {
     case "草稿":
@@ -706,7 +706,7 @@ export function DemandManagement({ subTab = "self-rent" }: DemandManagementProps
     <div className="space-y-5 min-w-0">
       {renderPage()}
 
-      {/* 物料分类选择弹窗 */}
+      {/* 物资分类选择弹窗 */}
       <MaterialPickerDialog
         open={materialPickerOpen}
         onOpenChange={setMaterialPickerOpen}
@@ -1004,7 +1004,7 @@ function renderEntrustRent(
   )
 }
 
-// ============ 子页：物料出租 ============
+// ============ 子页：物资出租 ============
 
 function renderMaterialRent(
   openPicker: (o: boolean) => void,
@@ -1021,9 +1021,9 @@ function renderMaterialRent(
       <PageHeader
         icon={Package}
         iconTone="emerald"
-        title="物料出租"
-        desc="基于循环物料库的出租需求单，支持按物料分类批量发布"
-        actionLabel="新建物料出租"
+        title="物资出租"
+        desc="基于循环物资库的出租需求单，支持按物资分类批量发布"
+        actionLabel="新建物资出租"
         onAction={() => openPicker(true)}
       />
 
@@ -1063,7 +1063,7 @@ function renderMaterialRent(
                   <TableHead className="w-[56px] text-center">序号</TableHead>
                   <TableHead className="w-[130px]">需求单号</TableHead>
                   <TableHead>标题</TableHead>
-                  <TableHead className="w-[100px]">物料类型</TableHead>
+                  <TableHead className="w-[100px]">物资类型</TableHead>
                   <TableHead className="w-[90px]">数量</TableHead>
                   <TableHead className="w-[150px]">所在区域</TableHead>
                   <TableHead className="w-[140px]">租金单价</TableHead>
@@ -1203,7 +1203,7 @@ function renderMaterialSale(
               </span>
             </h3>
             <Toolbar
-              placeholder="搜索需求单号、物料或物权单位"
+              placeholder="搜索需求单号、物资或物权单位"
               statusOptions={[
                 { value: "draft", label: "草稿" },
                 { value: "reviewing", label: "待审核" },
@@ -1220,7 +1220,7 @@ function renderMaterialSale(
                   <TableHead className="w-[56px] text-center">序号</TableHead>
                   <TableHead className="w-[130px]">需求单号</TableHead>
                   <TableHead className="min-w-[220px]">标题</TableHead>
-                  <TableHead className="w-[100px]">物料类型</TableHead>
+                  <TableHead className="w-[100px]">物资类型</TableHead>
                   <TableHead className="w-[110px]">数量</TableHead>
                   <TableHead className="min-w-[200px]">物权单位</TableHead>
                   <TableHead className="w-[120px]">销售单价</TableHead>

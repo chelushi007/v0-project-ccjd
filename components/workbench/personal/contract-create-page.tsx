@@ -65,7 +65,7 @@ type UploadedFile = {
 }
 
 const CONTRACT_TYPES: { value: ContractType; desc: string; color: string }[] = [
-  { value: "租赁合同", desc: "仓储 / 物料 租赁场景", color: "bg-primary/10 text-primary border-primary/20" },
+  { value: "租赁合同", desc: "仓储 / 物资 租赁场景", color: "bg-primary/10 text-primary border-primary/20" },
   { value: "托管合同", desc: "委托第三方运营管理", color: "bg-purple-500/10 text-purple-600 border-purple-500/20" },
   { value: "服务合同", desc: "包装、配送、装卸等服务", color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
   { value: "存放合同", desc: "纯仓储存放业务", color: "bg-orange-500/10 text-orange-600 border-orange-500/20" },
@@ -132,7 +132,7 @@ export function ContractCreatePage({ onBack }: Props) {
   const [signDate, setSignDate] = useState(nowDate())
 
   // 合同双方
-  const partyA = "中铁建物料华南仓储有限公司" // 本企业
+  const partyA = "中铁建物资华南仓储有限公司" // 本企业
   const [partyB, setPartyB] = useState("")
   const [partyAContact, setPartyAContact] = useState("张工")
   const [partyAPhone, setPartyAPhone] = useState("020-8888 1234")

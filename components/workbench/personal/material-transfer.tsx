@@ -306,7 +306,7 @@ export function MaterialTransfer() {
               过户管理
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              将存储于仓储的物料过户给其他物权单位、仓储单位、仓储站点或专运单位，跟踪审批与凭证签发
+              将存储于仓储的物资过户给其他物权单位、仓储单位、仓储站点或专运单位，跟踪审批与凭证签发
             </p>
           </div>
         </div>
@@ -466,7 +466,7 @@ export function MaterialTransfer() {
                   <TableHead className="w-[150px]">过户单号</TableHead>
                   <TableHead>接收方类型</TableHead>
                   <TableHead className="w-[380px]">物权流转</TableHead>
-                  <TableHead className="w-[260px]">物料明细</TableHead>
+                  <TableHead className="w-[260px]">物资明细</TableHead>
                   <TableHead className="text-right">品种</TableHead>
                   <TableHead className="text-right">数量</TableHead>
                   <TableHead>存放仓储</TableHead>

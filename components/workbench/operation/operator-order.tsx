@@ -91,7 +91,7 @@ const warehouseOrders: Array<{
     title: "中铁建广州南沙综合仓储基地 8000m²",
     area: "8000m²",
     tenant: "中铁十一局广深城际项目部",
-    landlord: "中铁建物料华南仓储有限公司",
+    landlord: "中铁建物资华南仓储有限公司",
     amount: "134,400",
     fee: "4,032",
     period: "2026-05-15 至 2027-05-14",
@@ -103,7 +103,7 @@ const warehouseOrders: Array<{
     title: "中铁建深圳前海智慧仓储基地 5000m²",
     area: "5000m²",
     tenant: "中铁十四局深圳地铁13号线项目部",
-    landlord: "中铁建物料华南专业运营有限公司",
+    landlord: "中铁建物资华南专业运营有限公司",
     amount: "78,000",
     fee: "2,340",
     period: "2026-05-12 至 2026-11-11",
@@ -139,7 +139,7 @@ const warehouseOrders: Array<{
     title: "中铁建广州黄埔恒温仓储基地 4500m²",
     area: "4500m²",
     tenant: "中铁十八局深惠城际项目部",
-    landlord: "中铁建物料华南仓储有限公司",
+    landlord: "中铁建物资华南仓储有限公司",
     amount: "229,500",
     fee: "6,885",
     period: "2026-05-01 至 2027-04-30",
@@ -163,7 +163,7 @@ const warehouseOrders: Array<{
     title: "中铁建广州南沙综合仓储基地 10000m²",
     area: "10000m²",
     tenant: "中铁电气化局集团广州分公司",
-    landlord: "中铁建物料华南仓储有限公司",
+    landlord: "中铁建物资华南仓储有限公司",
     amount: "270,000",
     fee: "8,100",
     period: "2025-10-20 至 2026-04-19",
@@ -175,7 +175,7 @@ const warehouseOrders: Array<{
     title: "中铁建深圳龙岗物流仓储基地 4000m²",
     area: "4000m²",
     tenant: "中铁二十五局深中通道项目部",
-    landlord: "中铁建物料华南专业运营有限公司",
+    landlord: "中铁建物资华南专业运营有限公司",
     amount: "67,200",
     fee: "2,016",
     period: "2025-11-20 至 2026-05-19",
@@ -383,7 +383,7 @@ const materialTradeOrders: Array<{
     title: "建筑钢管脚手架 出租",
     materialType: "脚手架类",
     quantity: "1200 套",
-    provider: "中铁建物料华南专业运营有限公司",
+    provider: "中铁建物资华南专业运营有限公司",
     user: "中铁十八局深惠城际项目部",
     tradeType: "出租",
     amount: "540,000",
@@ -399,7 +399,7 @@ const materialTradeOrders: Array<{
     materialType: "型材类",
     quantity: "300 吨",
     provider: "中铁十四局集团广州分公司",
-    user: "中铁建物料华南专业运营有限公司",
+    user: "中铁建物资华南专业运营有限公司",
     tradeType: "整租",
     amount: "1,350,000",
     fee: "40,500",
@@ -443,7 +443,7 @@ const materialTradeOrders: Array<{
     title: "60kg/m 钢轨 整租",
     materialType: "轨道类",
     quantity: "180 吨",
-    provider: "中铁建物料华南专业运营有限公司",
+    provider: "中铁建物资华南专业运营有限公司",
     user: "中铁十四局深圳地铁13号线项目部",
     tradeType: "整租",
     amount: "972,000",
@@ -527,7 +527,7 @@ const saleOrders: SaleOrder[] = [
     materialType: "型材类",
     quantity: "1200 吨",
     propertyOwner: "中铁十四局集团广州分公司",
-    transportUnit: "中铁建物料华南专业运营有限公司",
+    transportUnit: "中铁建物资华南专业运营有限公司",
     buyer: "中铁二十三局深圳分公司",
     unitPrice: "4,200元/吨",
     amount: "5,040,000",
@@ -546,7 +546,7 @@ const saleOrders: SaleOrder[] = [
     materialType: "拼装类",
     quantity: "12000 套",
     propertyOwner: "中铁电气化局集团广州分公司",
-    transportUnit: "中铁建物料华南专业运营有限公司",
+    transportUnit: "中铁建物资华南专业运营有限公司",
     buyer: "中铁十一局广深城际项目部",
     unitPrice: "12元/套",
     amount: "144,000",
@@ -565,7 +565,7 @@ const saleOrders: SaleOrder[] = [
     materialType: "型材类",
     quantity: "480 吨",
     propertyOwner: "中铁建工集团第二建设有限公司",
-    transportUnit: "中铁建物料华南专业运营有限公司",
+    transportUnit: "中铁建物资华南专业运营有限公司",
     buyer: "广州市顺德建材贸易公司",
     unitPrice: "3,950元/吨",
     amount: "1,896,000",
@@ -584,7 +584,7 @@ const saleOrders: SaleOrder[] = [
     materialType: "型材类",
     quantity: "320 吨",
     propertyOwner: "中铁十四局集团广州分公司",
-    transportUnit: "中铁建物料华南专业运营有限公司",
+    transportUnit: "中铁建物资华南专业运营有限公司",
     buyer: "中铁二十二局莞惠城际项目部",
     unitPrice: "4,600元/吨",
     amount: "1,472,000",
@@ -603,7 +603,7 @@ const saleOrders: SaleOrder[] = [
     materialType: "脚手架类",
     quantity: "1500 套",
     propertyOwner: "中铁二十二局集团第一工程有限公司",
-    transportUnit: "中铁建物料华南专业运营有限公司",
+    transportUnit: "中铁建物资华南专业运营有限公司",
     buyer: "中铁二十五局深中通道项目部",
     unitPrice: "180元/套",
     amount: "270,000",
@@ -622,7 +622,7 @@ const saleOrders: SaleOrder[] = [
     materialType: "其他材料",
     quantity: "36 件",
     propertyOwner: "中铁隧道局集团广州分公司",
-    transportUnit: "中铁建物料华南专业运营有限公司",
+    transportUnit: "中铁建物资华南专业运营有限公司",
     buyer: "中铁建工集团广州分公司",
     unitPrice: "12,500元/件",
     amount: "450,000",
@@ -821,15 +821,15 @@ export function OperatorOrder({ subTab }: OperatorOrderProps = {}) {
       iconColor: "text-primary",
     },
     storage: {
-      title: "物料存放订单监管",
-      desc: "全平台物料保管订单流转监控 · 占用面积统计 · 服务费跟踪",
+      title: "物资存放订单监管",
+      desc: "全平台物资保管订单流转监控 · 占用面积统计 · 服务费跟踪",
       icon: PackageOpen,
       iconBg: "bg-purple-100",
       iconColor: "text-purple-700",
     },
     trade: {
-      title: "物料交易订单监管",
-      desc: "全平台物料租赁与销售订单流转监控 · 服务费 / 分成跟踪",
+      title: "物资交易订单监管",
+      desc: "全平台物资租赁与销售订单流转监控 · 服务费 / 分成跟踪",
       icon: Package,
       iconBg: "bg-accent/10",
       iconColor: "text-accent",
@@ -1099,7 +1099,7 @@ export function OperatorOrder({ subTab }: OperatorOrderProps = {}) {
               </CardContent>
             </TabsContent>
 
-            {/* 物料存放订单 */}
+            {/* 物资存放订单 */}
             <TabsContent value="storage" className="mt-4 min-w-0">
               <CardTitle className="text-base mb-3 flex items-center gap-2 text-muted-foreground font-normal">
                 <ClipboardCheck className="w-4 h-4 text-purple-700" />
@@ -1113,8 +1113,8 @@ export function OperatorOrder({ subTab }: OperatorOrderProps = {}) {
                       <TableRow>
                         <TableHead className="w-[56px] text-center whitespace-nowrap">序号</TableHead>
                         <TableHead className="whitespace-nowrap">订单号</TableHead>
-                        <TableHead className="whitespace-nowrap">物料名称</TableHead>
-                        <TableHead className="whitespace-nowrap">物料类型</TableHead>
+                        <TableHead className="whitespace-nowrap">物资名称</TableHead>
+                        <TableHead className="whitespace-nowrap">物资类型</TableHead>
                         <TableHead className="whitespace-nowrap">数量</TableHead>
                         <TableHead className="whitespace-nowrap">物权单位</TableHead>
                         <TableHead className="whitespace-nowrap">存放站点</TableHead>
@@ -1156,7 +1156,7 @@ export function OperatorOrder({ subTab }: OperatorOrderProps = {}) {
               </CardContent>
             </TabsContent>
 
-            {/* 物料交易订单 */}
+            {/* 物资交易订单 */}
             <TabsContent value="trade" className="mt-4 min-w-0">
               {/* 子标签：租赁 / 销售 */}
               <div className="inline-flex items-center gap-1 mb-3 p-1 bg-muted/60 rounded-lg">
@@ -1221,7 +1221,7 @@ export function OperatorOrder({ subTab }: OperatorOrderProps = {}) {
                           <TableRow>
                             <TableHead className="w-[56px] text-center whitespace-nowrap">序号</TableHead>
                             <TableHead className="whitespace-nowrap">订单号</TableHead>
-                            <TableHead className="whitespace-nowrap">物料名称</TableHead>
+                            <TableHead className="whitespace-nowrap">物资名称</TableHead>
                             <TableHead className="whitespace-nowrap">数量</TableHead>
                             <TableHead className="whitespace-nowrap">交易方式</TableHead>
                             <TableHead className="whitespace-nowrap">出租方</TableHead>
@@ -1303,7 +1303,7 @@ function SaleOrdersTable({
               <TableRow>
                 <TableHead className="w-[56px] text-center whitespace-nowrap">序号</TableHead>
                 <TableHead className="whitespace-nowrap">订单号</TableHead>
-                <TableHead className="whitespace-nowrap">物料名称</TableHead>
+                <TableHead className="whitespace-nowrap">物资名称</TableHead>
                 <TableHead className="whitespace-nowrap">数量</TableHead>
                 <TableHead className="whitespace-nowrap">销售模式</TableHead>
                 <TableHead className="whitespace-nowrap">物权单位</TableHead>

@@ -142,7 +142,7 @@ const mockReconciliations: ReconciliationItem[] = [
     createDate: "2026-04-01",
     confirmDate: "",
     rejectReason:
-      "对账金额中包含 2026年2月已结算的 ¥3,000 服务费，存在重复计算；另：本期物料运营分成比例应按 6:4 而非 7:3 核算，请重新核对后再发起对账。",
+      "对账金额中包含 2026年2月已结算的 ¥3,000 服务费，存在重复计算；另：本期物资运营分成比例应按 6:4 而非 7:3 核算，请重新核对后再发起对账。",
     rejectedBy: "李建国（中铁建东莞虎门港务仓储基地 · 财务部）",
     rejectedAt: "2026-04-02 14:25:36",
   },
@@ -162,7 +162,7 @@ const mockReconciliations: ReconciliationItem[] = [
   {
     id: "DZ-2026-005",
     orderId: "WZJY20260428005",
-    partner: "中铁十二局物料分公司",
+    partner: "中铁十二局物资分公司",
     businessType: "物资租赁",
     subType: "租金对账",
     period: "2026年4月",
@@ -185,7 +185,7 @@ const mockReconciliations: ReconciliationItem[] = [
     createDate: "2026-04-01",
     confirmDate: "",
     rejectReason:
-      "3 月 15 日至 22 日期间仓库电力中断，物料入库被迫延迟，按合同第 6.2 条该期间租金应按 70% 计费；请按 ¥44,800 重新出具对账单。",
+      "3 月 15 日至 22 日期间仓库电力中断，物资入库被迫延迟，按合同第 6.2 条该期间租金应按 70% 计费；请按 ¥44,800 重新出具对账单。",
     rejectedBy: "王志强（中铁十五局集团 · 项目部）",
     rejectedAt: "2026-04-03 09:42:18",
   },
@@ -261,7 +261,7 @@ const mockReconciliations: ReconciliationItem[] = [
   {
     id: "DZ-2026-012",
     orderId: "WZJY20260505004",
-    partner: "中铁十二局物料分公司",
+    partner: "中铁十二局物资分公司",
     businessType: "物资租赁",
     subType: "月度租金对账",
     period: "2026年5月",
@@ -280,9 +280,9 @@ type FeeCategory =
   | "服务费"
   | "仓储租金"
   | "保管费"
-  | "物料租金"
+  | "物资租金"
   | "运输费"
-  | "物料运营分成"
+  | "物资运营分成"
   | "物资销售款"
   | "销售分成"
   | "退款"
@@ -324,14 +324,14 @@ const mockSettlements: SettleRecord[] = [
     businessType: "物资租赁",
     category: "押金",
     direction: "支出",
-    partner: "中铁十二局物料分公司",
+    partner: "中铁十二局物资分公司",
     amount: 36000,
     channel: "工商银行 对公转账",
     status: "已支付",
     occurDate: "2026-05-05 10:08:45",
     voucherNo: "ICBC202605050100199",
   },
-  // 保证金（物料存放）
+  // 保证金（物资存放）
   {
     id: "JS20260505100198",
     orderId: "WZCF20260505004",
@@ -352,7 +352,7 @@ const mockSettlements: SettleRecord[] = [
     businessType: "仓储租赁",
     category: "服务费",
     direction: "支出",
-    partner: "中铁建物料华南专业运营有限公司",
+    partner: "中铁建物资华南专业运营有限公司",
     amount: 13500,
     channel: "工商银行 对公转账",
     status: "已支付",
@@ -365,7 +365,7 @@ const mockSettlements: SettleRecord[] = [
     businessType: "物资存放",
     category: "服务费",
     direction: "支出",
-    partner: "中铁建物料华南专业运营有限公司",
+    partner: "中铁建物资华南专业运营有限公司",
     amount: 4860,
     channel: "工商银行 对公转账",
     status: "已支付",
@@ -379,7 +379,7 @@ const mockSettlements: SettleRecord[] = [
     businessType: "仓储租赁",
     category: "仓储租金",
     direction: "支出",
-    partner: "中铁建物料华南专业运营有限公司",
+    partner: "中铁建物资华南专业运营有限公司",
     amount: 37500,
     channel: "工商银行 对公转账",
     status: "已支付",
@@ -392,35 +392,35 @@ const mockSettlements: SettleRecord[] = [
     businessType: "仓储租赁",
     category: "仓储租金",
     direction: "支出",
-    partner: "中铁建物料华南专业运营有限公司",
+    partner: "中铁建物资华南专业运营有限公司",
     amount: 42000,
     channel: "工商银行 对公转账",
     status: "已支付",
     occurDate: "2026-04-08 14:18:45",
     voucherNo: "ICBC202604080100165",
   },
-  // 保管费（物料存放）
+  // 保管费（物资存放）
   {
     id: "JS20260415100170",
     orderId: "WZCF20260420005",
     businessType: "物资存放",
     category: "保管费",
     direction: "支出",
-    partner: "中铁建物料华南专业运营有限公司",
+    partner: "中铁建物资华南专业运营有限公司",
     amount: 16200,
     channel: "工商银行 对公转账",
     status: "已支付",
     occurDate: "2026-04-15 10:52:09",
     voucherNo: "ICBC202604150100170",
   },
-  // 物料租金（物料交易）
+  // 物资租金（物资交易）
   {
     id: "JS20260505100195",
     orderId: "WZJY20260428005",
     businessType: "物资租赁",
-    category: "物料租金",
+    category: "物资租金",
     direction: "支出",
-    partner: "中铁建物料华南专业运营有限公司",
+    partner: "中铁建物资华南专业运营有限公司",
     amount: 28000,
     channel: "工商银行 对公转账",
     status: "已支付",
@@ -441,12 +441,12 @@ const mockSettlements: SettleRecord[] = [
     occurDate: "2026-04-20 17:42:09",
     voucherNo: "ICBC202604200100180",
   },
-  // 物料运营分成（站点 → 业主单位）
+  // 物资运营分成（站点 → 业主单位）
   {
     id: "JS20260410100168",
     orderId: "YYFC20260301002",
     businessType: "物资租赁",
-    category: "物料运营分成",
+    category: "物资运营分成",
     direction: "收入",
     partner: "中铁十二局集团有限公司",
     amount: 82000,
@@ -462,7 +462,7 @@ const mockSettlements: SettleRecord[] = [
     businessType: "仓储租赁",
     category: "仓储租金",
     direction: "支出",
-    partner: "中铁建物料华南专业运营有限公司",
+    partner: "中铁建物资华南专业运营有限公司",
     amount: 37500,
     channel: "工商银行 对公转账",
     status: "待支付",
@@ -474,7 +474,7 @@ const mockSettlements: SettleRecord[] = [
     businessType: "物资存放",
     category: "保管费",
     direction: "支出",
-    partner: "中铁建物料华南专业运营有限公司",
+    partner: "中铁建物资华南专业运营有限公司",
     amount: 5400,
     channel: "工商银行 对公转账",
     status: "待支付",
@@ -484,7 +484,7 @@ const mockSettlements: SettleRecord[] = [
     id: "JS20260520100205",
     orderId: "YYFC20260301002",
     businessType: "物资租赁",
-    category: "物料运营分成",
+    category: "物资运营分成",
     direction: "收入",
     partner: "中铁十二局集团有限公司",
     amount: 78000,
@@ -627,7 +627,7 @@ const categoryConfig: Record<
     chip: "bg-indigo-50 text-indigo-700 border-indigo-200",
     iconColor: "text-indigo-600",
   },
-  物料租金: {
+  物资租金: {
     icon: Banknote,
     chip: "bg-blue-50 text-blue-700 border-blue-200",
     iconColor: "text-blue-600",
@@ -637,7 +637,7 @@ const categoryConfig: Record<
     chip: "bg-slate-50 text-slate-700 border-slate-200",
     iconColor: "text-slate-600",
   },
-  物料运营分成: {
+  物资运营分成: {
     icon: TrendingUp,
     chip: "bg-emerald-50 text-emerald-700 border-emerald-200",
     iconColor: "text-emerald-600",
@@ -1064,9 +1064,9 @@ export function SettlementManagement({ subTab }: SettlementManagementProps) {
       "服务费",
       "仓储租金",
       "保管费",
-      "物料租金",
+      "物资租金",
       "运输费",
-      "物料运营分成",
+      "物资运营分成",
       "物资销售款",
       "销售分成",
       "退款",

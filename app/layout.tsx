@@ -7,8 +7,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: '中铁建仓储基地 - 中国铁建循环物料共享平台',
-  description: '中国铁建循环物料共享平台仓储基地模块，面向中铁建体系各局、分公司及项目部，提供仓储出租、委托出租、智能寻租、物料存放及托管运营等一站式仓储服务',
+  title: '中铁建仓储基地 - 中国铁建循环物资共享平台',
+  description: '中国铁建循环物资共享平台仓储基地模块，面向中铁建体系各局、分公司及项目部，提供仓储出租、委托出租、智能寻租、物资存放及托管运营等一站式仓储服务',
   generator: 'v0.app',
   icons: {
     icon: [

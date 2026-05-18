@@ -149,7 +149,7 @@ export function MaterialSalePublishPage({
   const requiredChecks = [
     { key: "title", label: "需求标题", done: title.trim().length > 0 },
     { key: "owner", label: "物权单位", done: !!propertyOwnerId },
-    { key: "materials", label: "物料清单 (≥1 项)", done: materials.length > 0 },
+    { key: "materials", label: "物资清单 (≥1 项)", done: materials.length > 0 },
     {
       key: "priced",
       label: "数量与售价已填",
@@ -264,7 +264,7 @@ export function MaterialSalePublishPage({
                     maxLength={60}
                   />
                   <p className="text-[11px] text-muted-foreground mt-1">
-                    建议突出物料类别 / 数量 / 销售模式 / 区域
+                    建议突出物资类别 / 数量 / 销售模式 / 区域
                   </p>
                 </div>
 
@@ -282,7 +282,7 @@ export function MaterialSalePublishPage({
                       <div>
                         <div className="text-sm font-medium">整批销售</div>
                         <div className="text-[11px] text-muted-foreground">
-                          按物料清单一次性出售
+                          按物资清单一次性出售
                         </div>
                       </div>
                     </label>
@@ -369,7 +369,7 @@ export function MaterialSalePublishPage({
                     <div className="flex items-center gap-2 rounded-md border border-dashed border-primary/40 bg-primary/5 px-3 py-2">
                       <Building2 className="w-4 h-4 text-primary shrink-0" />
                       <span className="text-sm font-medium text-foreground">
-                        中铁建物料华南专业运营有限公司
+                        中铁建物资华南专业运营有限公司
                       </span>
                       <Badge className="ml-auto bg-primary text-primary-foreground text-[10px] h-5">
                         本企业
@@ -460,14 +460,14 @@ export function MaterialSalePublishPage({
             </CardContent>
           </Card>
 
-          {/* 3. 物料清单 */}
+          {/* 3. 物资清单 */}
           <Card>
             <CardContent className="p-6">
               <SectionTitle
                 no={3}
                 icon={Tags}
-                title="物料清单与定价"
-                desc="选择物权单位托管在仓的物料，设置数量与单价"
+                title="物资清单与定价"
+                desc="选择物权单位托管在仓的物资，设置数量与单价"
                 extra={
                   <Button
                     variant="outline"
@@ -475,7 +475,7 @@ export function MaterialSalePublishPage({
                     onClick={() => setPickerOpen(true)}
                   >
                     <Plus className="w-4 h-4 mr-1.5" />
-                    选择物料
+                    选择物资
                   </Button>
                 }
               />
@@ -487,10 +487,10 @@ export function MaterialSalePublishPage({
                 >
                   <Tags className="w-10 h-10 mx-auto text-muted-foreground mb-2" />
                   <p className="text-sm text-foreground">
-                    点击从循环物料库选择待销售物料
+                    点击从循环物资库选择待销售物资
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    支持多分类批量添加，仅显示托管在本企业仓储的物料
+                    支持多分类批量添加，仅显示托管在本企业仓储的物资
                   </p>
                 </button>
               ) : (
@@ -498,8 +498,8 @@ export function MaterialSalePublishPage({
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-muted/40 hover:bg-muted/40">
-                        <TableHead className="w-[170px]">分类-物料编号</TableHead>
-                        <TableHead>物料名称</TableHead>
+                        <TableHead className="w-[170px]">分类-物资编号</TableHead>
+                        <TableHead>物资名称</TableHead>
                         <TableHead className="w-[140px]">规格</TableHead>
                         <TableHead className="w-[70px]">单位</TableHead>
                         <TableHead className="w-[140px]">
@@ -654,14 +654,14 @@ export function MaterialSalePublishPage({
             </CardContent>
           </Card>
 
-          {/* 5. 物料描述与图片 */}
+          {/* 5. 物资描述与图片 */}
           <Card>
             <CardContent className="p-6">
               <SectionTitle
                 no={5}
                 icon={Upload}
-                title="物料描述与图片"
-                desc="补充物料新旧程度、品质、检验报告等细节"
+                title="物资描述与图片"
+                desc="补充物资新旧程度、品质、检验报告等细节"
               />
               <div className="space-y-4">
                 <div>
@@ -669,7 +669,7 @@ export function MaterialSalePublishPage({
                   <Textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="请描述物料的产地、批次、使用历史、检测报告等"
+                    placeholder="请描述物资的产地、批次、使用历史、检测报告等"
                     className="min-h-[110px]"
                     maxLength={1000}
                   />
@@ -799,7 +799,7 @@ export function MaterialSalePublishPage({
               </h4>
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">物料数量</span>
+                  <span className="text-muted-foreground">物资数量</span>
                   <span className="font-medium text-foreground tabular-nums">
                     {materials.length} 项
                   </span>
@@ -840,7 +840,7 @@ export function MaterialSalePublishPage({
               <div className="flex items-start gap-2">
                 <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                 <div className="text-[11px] leading-relaxed text-amber-900">
-                  发布前请确认所选物料已托管在本企业仓储站点，且与物权单位已签署
+                  发布前请确认所选物资已托管在本企业仓储站点，且与物权单位已签署
                   <span className="font-semibold"> 销售代理协议 </span>
                   与
                   <span className="font-semibold"> 分成协议 </span>。

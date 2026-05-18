@@ -52,14 +52,14 @@ const todoItems = {
     },
     {
       id: "E002",
-      title: "物料托管申请",
+      title: "物资托管申请",
       applicant: "中铁十一局广深城际项目部",
-      type: "物料托管",
+      type: "物资托管",
       createTime: "2026-01-19 14:20",
       deadline: "2026-01-24",
       status: "pending",
       priority: "medium",
-      description: "申请托管钢材物料3000吨",
+      description: "申请托管钢材物资3000吨",
     },
     {
       id: "E003",
@@ -104,7 +104,7 @@ const todoItems = {
     },
     {
       id: "A003",
-      title: "专运单位申请 - 中铁建物料华南",
+      title: "专运单位申请 - 中铁建物资华南",
       applicant: "本企业",
       type: "专运单位申请",
       createTime: "2026-01-17 16:45",
@@ -114,7 +114,7 @@ const todoItems = {
       totalStep: 3,
       status: "pending",
       priority: "medium",
-      description: "申请成为物料专运单位，等待运营工作台受理",
+      description: "申请成为物资专运单位，等待运营工作台受理",
     },
     {
       id: "A004",
@@ -170,7 +170,7 @@ const messages = [
     id: "M002",
     type: "business",
     title: "新的委托运营申请",
-    content: "中铁十一局广深城际项目部提交了一笔物料托管申请，请尽快处理。",
+    content: "中铁十一局广深城际项目部提交了一笔物资托管申请，请尽快处理。",
     time: "1小时前",
     read: false,
   },
@@ -285,9 +285,9 @@ const quickBizEntries = [
 // 交易统计配置
 const tradeStats = [
   { label: "仓储成交订单", value: "18", unit: "笔", trend: "+15%", up: true, icon: Warehouse, color: "text-blue-600", bg: "bg-blue-500/10" },
-  { label: "物料成交订单", value: "10", unit: "笔", trend: "+8%", up: true, icon: Package, color: "text-green-600", bg: "bg-green-500/10" },
+  { label: "物资成交订单", value: "10", unit: "笔", trend: "+8%", up: true, icon: Package, color: "text-green-600", bg: "bg-green-500/10" },
   { label: "仓储成交金额", value: "98.6", unit: "万元", trend: "+12.3%", up: true, icon: Warehouse, color: "text-purple-600", bg: "bg-purple-500/10" },
-  { label: "物料成交金额", value: "57.8", unit: "万元", trend: "-3.5%", up: false, icon: Package, color: "text-orange-600", bg: "bg-orange-500/10" },
+  { label: "物资成交金额", value: "57.8", unit: "万元", trend: "-3.5%", up: false, icon: Package, color: "text-orange-600", bg: "bg-orange-500/10" },
 ]
 
 // ── 主组件 ──────────────────────────────────────────────────────────────────
@@ -630,7 +630,7 @@ export function TodoList({ roleType = "property" }: TodoListProps) {
                     </span>
                     <span className="flex items-center gap-1">
                       <span className="w-2.5 h-2.5 rounded-sm bg-accent" />
-                      <span className="text-muted-foreground">物料</span>
+                      <span className="text-muted-foreground">物资</span>
                     </span>
                   </div>
                 </div>
@@ -825,7 +825,7 @@ export function TodoList({ roleType = "property" }: TodoListProps) {
                               >
                                 {data[i].warehouse}
                               </text>
-                              {/* 物料气泡 */}
+                              {/* 物资气泡 */}
                               <rect
                                 x={wx - 28}
                                 y={my + 8}

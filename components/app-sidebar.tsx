@@ -61,7 +61,7 @@ const personalMenu: MenuItem[] = [
   { id: "warehouse", label: "仓储管理", icon: Warehouse },
   {
     id: "material",
-    label: "物料管理",
+    label: "物资管理",
     icon: Package,
     children: [
       { id: "material-inventory", label: "库存管理", icon: Boxes },
@@ -77,7 +77,7 @@ const personalMenu: MenuItem[] = [
     children: [
       { id: "demand-self", label: "仓储自主出租", icon: Warehouse },
       { id: "demand-entrust", label: "仓储委托出租", icon: FileText },
-      { id: "demand-material", label: "物料出租", icon: Package },
+      { id: "demand-material", label: "物资出租", icon: Package },
       { id: "demand-material-sale", label: "物资出售", icon: Tags },
     ],
   },
@@ -87,8 +87,8 @@ const personalMenu: MenuItem[] = [
     icon: ShoppingCart,
     children: [
       { id: "order-warehouse", label: "仓储交易订单", icon: Warehouse },
-      { id: "order-storage", label: "物料存放订单", icon: Package },
-      { id: "order-trade", label: "物料交易订单", icon: ShoppingCart },
+      { id: "order-storage", label: "物资存放订单", icon: Package },
+      { id: "order-trade", label: "物资交易订单", icon: ShoppingCart },
     ],
   },
   {
@@ -107,7 +107,7 @@ const personalMenu: MenuItem[] = [
 const operationMenu: MenuItem[] = [
   { id: "op-my-workbench", label: "我的工作台", icon: LayoutDashboard },
   { id: "op-warehouse", label: "仓储管理", icon: Warehouse },
-  { id: "op-material", label: "物料管理", icon: Package },
+  { id: "op-material", label: "物资管理", icon: Package },
   {
     id: "op-demand",
     label: "需求管理",
@@ -115,7 +115,7 @@ const operationMenu: MenuItem[] = [
     children: [
       { id: "op-demand-self", label: "仓储自主出租", icon: Warehouse },
       { id: "op-demand-entrust", label: "仓储委托出租", icon: FileText },
-      { id: "op-demand-material", label: "物料出租", icon: Package },
+      { id: "op-demand-material", label: "物资出租", icon: Package },
       { id: "op-demand-material-sale", label: "物资出售", icon: Tags },
     ],
   },
@@ -125,8 +125,8 @@ const operationMenu: MenuItem[] = [
     icon: ShoppingCart,
     children: [
       { id: "op-order-warehouse", label: "仓储交易订单", icon: Warehouse },
-      { id: "op-order-storage", label: "物料存放订单", icon: Package },
-      { id: "op-order-trade", label: "物料交易订单", icon: ShoppingCart },
+      { id: "op-order-storage", label: "物资存放订单", icon: Package },
+      { id: "op-order-trade", label: "物资交易订单", icon: ShoppingCart },
     ],
   },
   { id: "op-fee", label: "费用管理", icon: CreditCard },
