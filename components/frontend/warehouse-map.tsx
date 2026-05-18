@@ -152,27 +152,18 @@ const warehouseListByProvince: Record<string, WarehouseItem[]> = {
   ],
 }
 
-type HeatmapMode = "warehouses" | "transactionAmount"
+type HeatmapMode = "warehouses"
 
-// 热力分档（按 5 档梯度上色）
-function getHeatColor(value: number, mode: HeatmapMode, isSelected: boolean, isHovered: boolean) {
+// 热力分档（按 5 档梯度上色，固定按仓储数量）
+function getHeatColor(value: number, _mode: HeatmapMode, isSelected: boolean, isHovered: boolean) {
   if (isSelected) return "#1d4ed8"
   if (isHovered) return "#3b82f6"
 
-  if (mode === "warehouses") {
-    if (value >= 25) return "#1e40af"
-    if (value >= 18) return "#2563eb"
-    if (value >= 12) return "#60a5fa"
-    if (value >= 6) return "#93c5fd"
-    if (value > 0) return "#dbeafe"
-    return "#f1f5f9"
-  }
-  // transactionAmount (万元)
-  if (value >= 15000) return "#9a3412"
-  if (value >= 8000) return "#ea580c"
-  if (value >= 4000) return "#fb923c"
-  if (value >= 1500) return "#fdba74"
-  if (value > 0) return "#fed7aa"
+  if (value >= 25) return "#1e40af"
+  if (value >= 18) return "#2563eb"
+  if (value >= 12) return "#60a5fa"
+  if (value >= 6) return "#93c5fd"
+  if (value > 0) return "#dbeafe"
   return "#f1f5f9"
 }
 
@@ -187,22 +178,12 @@ const heatLegend: Record<HeatmapMode, { label: string; bins: { color: string; la
       { color: "#1e40af", label: "≥25" },
     ],
   },
-  transactionAmount: {
-    label: "交易金额（万元）",
-    bins: [
-      { color: "#fed7aa", label: "<1500" },
-      { color: "#fdba74", label: "1500-3999" },
-      { color: "#fb923c", label: "4000-7999" },
-      { color: "#ea580c", label: "8000-14999" },
-      { color: "#9a3412", label: "≥15000" },
-    ],
-  },
 }
 
 export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
   const [selectedProvince, setSelectedProvince] = useState<string | null>("广东省")
   const [hoveredProvince, setHoveredProvince] = useState<string | null>(null)
-  const [heatmapMode, setHeatmapMode] = useState<HeatmapMode>("warehouses")
+  const [heatmapMode] = useState<HeatmapMode>("warehouses")
 
   // 计算总计数据
   const totalStats = useMemo(() => {
@@ -255,24 +236,6 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
 
         {/* 中间：地图 */}
         <div className="bg-[#e8f4fc] border-y border-border relative h-full overflow-hidden">
-          {/* 热力图模式切换 */}
-          <div className="absolute top-3 left-3 z-20 flex items-center gap-1 bg-white/95 border border-border rounded-md p-0.5 shadow-sm">
-            {(["warehouses", "transactionAmount"] as const).map((mode) => (
-              <button
-                key={mode}
-                onClick={() => setHeatmapMode(mode)}
-                className={cn(
-                  "px-3 py-1 text-xs rounded transition-colors",
-                  heatmapMode === mode
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted",
-                )}
-              >
-                {mode === "warehouses" ? "按仓储数量" : "按交易金额"}
-              </button>
-            ))}
-          </div>
-
           {/* 图例 */}
           <div className="absolute bottom-3 left-3 z-20 bg-white/95 border border-border rounded-md px-3 py-2 shadow-sm">
             <div className="text-[11px] text-muted-foreground mb-1.5">{heatLegend[heatmapMode].label}</div>
@@ -307,10 +270,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                 const isSelected = selectedProvince === province
                 const isHovered = hoveredProvince === province
                 const fill = getHeatColor(metricValue, heatmapMode, isSelected, isHovered)
-                const maxValue =
-                  heatmapMode === "warehouses"
-                    ? 35
-                    : Math.max(...Object.values(provinceData).map((d) => d.transactionAmount))
+                const maxValue = 35
                 const ratio = Math.min(1, metricValue / maxValue)
                 const size = 14 + ratio * 26
                 return (
@@ -330,15 +290,11 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                       height: size,
                       backgroundColor: fill,
                     }}
-                    title={`${province} · ${
-                      heatmapMode === "warehouses"
-                        ? `${metricValue} 座`
-                        : `${metricValue.toLocaleString()} 万元`
-                    }`}
+                    title={`${province} · ${metricValue} 座`}
                   >
                     {metricValue > 0 && size >= 24 && (
                       <span className="text-[10px] font-semibold text-white leading-none drop-shadow">
-                        {heatmapMode === "warehouses" ? metricValue : Math.round(metricValue / 1000) + "k"}
+                        {metricValue}
                       </span>
                     )}
                   </button>
