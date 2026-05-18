@@ -284,13 +284,17 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
             </div>
           </div>
 
-          {/* 中��地图底图 + 热力圆点（共享同一容器与比例，保证圆点与省份对齐） */}
+          {/* 中���地图底图 + 热力圆点（共享同一容器与比例，保证圆点与省份对齐） */}
           <div className="absolute inset-0 flex items-center justify-center p-4">
             <div className="relative w-full h-full max-w-full max-h-full aspect-[785/645] mx-auto">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={CHINA_MAP_IMG || "/placeholder.svg"}
                 alt="中国地图"
+                width={785}
+                height={645}
+                loading="eager"
+                decoding="async"
                 className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none"
                 draggable={false}
               />
@@ -312,7 +316,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                     onMouseLeave={() => setHoveredProvince(null)}
                     onClick={() => setSelectedProvince(province)}
                     className={cn(
-                      "absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-md flex items-center justify-center transition-all hover:scale-110",
+                      "absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-md flex items-center justify-center transition-colors duration-150",
                       isSelected && "ring-2 ring-primary ring-offset-1 z-10",
                     )}
                     style={{
