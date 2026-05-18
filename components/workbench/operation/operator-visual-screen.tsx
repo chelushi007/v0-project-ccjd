@@ -118,9 +118,8 @@ const gmvTrend = Array.from({ length: 12 }, (_, i) => {
 })
 
 const incomeMix = [
-  { name: "仓储委托", value: 612.32, fill: "#22d3ee" },
-  { name: "增值服务", value: 248.16, fill: "#a78bfa" },
-  { name: "物资交易", value: 466.0, fill: "#fbbf24" },
+  { name: "平台服务费", value: 862.32, fill: "#22d3ee" },
+  { name: "增值服务", value: 464.16, fill: "#a78bfa" },
 ]
 
 const businessBars = [
@@ -273,15 +272,6 @@ export function OperatorVisualScreen({ onClose }: { onClose: () => void }) {
             accent="text-cyan-300"
           />
           <KpiBar
-            label="平台发单量"
-            value="8,432"
-            unit="单"
-            delta="+9.6%"
-            icon={Send}
-            tone="from-sky-500/30 via-sky-400/10 to-transparent"
-            accent="text-sky-300"
-          />
-          <KpiBar
             label="物资盘活金额"
             value="3,128.45"
             unit="万元"
@@ -289,6 +279,15 @@ export function OperatorVisualScreen({ onClose }: { onClose: () => void }) {
             icon={Recycle}
             tone="from-amber-500/30 via-amber-400/10 to-transparent"
             accent="text-amber-300"
+          />
+          <KpiBar
+            label="入驻仓储数量"
+            value="486"
+            unit="座"
+            delta="+24"
+            icon={Send}
+            tone="from-sky-500/30 via-sky-400/10 to-transparent"
+            accent="text-sky-300"
           />
           <KpiBar
             label="入驻仓储单位"
@@ -305,7 +304,7 @@ export function OperatorVisualScreen({ onClose }: { onClose: () => void }) {
         <div className="flex-1 grid grid-cols-12 gap-3 px-6 pb-3 min-h-0">
           {/* 左列 */}
           <div className="col-span-3 flex flex-col gap-3 min-h-0">
-            <Panel title="GMV 12 月趋势" subtitle="MONTHLY GMV TREND">
+            <Panel title="GMV 近一年趋势" subtitle="LAST 12 MONTHS GMV TREND">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={gmvTrend} margin={{ top: 8, right: 8, left: -22, bottom: 0 }}>
                   <defs>
@@ -380,7 +379,7 @@ export function OperatorVisualScreen({ onClose }: { onClose: () => void }) {
               </div>
             </Panel>
 
-            <Panel title="业务线分布" subtitle="BUSINESS LINES (GMV · 万元)">
+            <Panel title="业务线交易分布" subtitle="BUSINESS LINES (GMV · 万元)">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={businessBars} layout="vertical" margin={{ top: 4, right: 16, left: 4, bottom: 0 }}>
                   <XAxis type="number" hide />
