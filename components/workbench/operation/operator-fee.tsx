@@ -36,7 +36,6 @@ import {
   Download,
   PiggyBank,
   Sparkles,
-  Plus,
   BadgeCheck,
   Megaphone,
   Star,
@@ -345,10 +344,6 @@ export function OperatorFee() {
           <Button variant="outline" size="sm">
             <Download className="w-4 h-4 mr-1" />
             导出收款明细
-          </Button>
-          <Button size="sm">
-            <Plus className="w-4 h-4 mr-1" />
-            创建增值服务订单
           </Button>
         </div>
       </div>
