@@ -200,9 +200,9 @@ const heatLegend: Record<HeatmapMode, { label: string; bins: { color: string; la
 }
 
 export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
-  const [selectedProvince, setSelectedProvince] = useState<string | null>(null)
+  const [selectedProvince, setSelectedProvince] = useState<string | null>("广东省")
   const [hoveredProvince, setHoveredProvince] = useState<string | null>(null)
-  const heatmapMode: HeatmapMode = "warehouses"
+  const [heatmapMode, setHeatmapMode] = useState<HeatmapMode>("warehouses")
 
   // 计算总计数据
   const totalStats = useMemo(() => {
@@ -255,6 +255,24 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
 
         {/* 中间：地图 */}
         <div className="bg-[#e8f4fc] border-y border-border relative h-full overflow-hidden">
+          {/* 热力图模式切换 */}
+          <div className="absolute top-3 left-3 z-20 flex items-center gap-1 bg-white/95 border border-border rounded-md p-0.5 shadow-sm">
+            {(["warehouses", "transactionAmount"] as const).map((mode) => (
+              <button
+                key={mode}
+                onClick={() => setHeatmapMode(mode)}
+                className={cn(
+                  "px-3 py-1 text-xs rounded transition-colors",
+                  heatmapMode === mode
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted",
+                )}
+              >
+                {mode === "warehouses" ? "按仓储数量" : "按交易金额"}
+              </button>
+            ))}
+          </div>
+
           {/* 图例 */}
           <div className="absolute bottom-3 left-3 z-20 bg-white/95 border border-border rounded-md px-3 py-2 shadow-sm">
             <div className="text-[11px] text-muted-foreground mb-1.5">{heatLegend[heatmapMode].label}</div>
@@ -329,23 +347,23 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
             </div>
           </div>
 
-          {/* 省份信息卡片：仅在 hover 时浮现，离开即隐藏 */}
-          {hoveredProvince && provinceData[hoveredProvince] && (
+          {/* 省份信息卡片 */}
+          {displayProvince && displayMetrics && (
             <div className="absolute top-3 right-3 bg-white/97 border border-border rounded-lg shadow-lg p-4 min-w-[230px] z-10 pointer-events-none">
-              <h4 className="font-bold text-base mb-3 text-foreground">{hoveredProvince}</h4>
+              <h4 className="font-bold text-base mb-3 text-foreground">{displayProvince}</h4>
               <div className="space-y-2 text-sm">
-                <DetailRow label="仓储数量" value={`${provinceData[hoveredProvince].warehouses} 座`} highlight />
-                <DetailRow label="总面积" value={`${provinceData[hoveredProvince].totalArea.toLocaleString()} m²`} />
+                <DetailRow label="仓储数量" value={`${displayMetrics.warehouses} 座`} highlight />
+                <DetailRow label="总面积" value={`${displayMetrics.totalArea.toLocaleString()} m²`} />
                 <DetailRow
                   label="可出租面积"
-                  value={`${provinceData[hoveredProvince].rentableArea.toLocaleString()} m²`}
+                  value={`${displayMetrics.rentableArea.toLocaleString()} m²`}
                   highlight
                 />
                 <DetailRow
                   label="交易金额"
-                  value={`${provinceData[hoveredProvince].transactionAmount.toLocaleString()} 万元`}
+                  value={`${displayMetrics.transactionAmount.toLocaleString()} 万元`}
                 />
-                <DetailRow label="发布单数" value={`${provinceData[hoveredProvince].publishCount.toLocaleString()} 条`} />
+                <DetailRow label="发布单数" value={`${displayMetrics.publishCount.toLocaleString()} 条`} />
               </div>
             </div>
           )}
