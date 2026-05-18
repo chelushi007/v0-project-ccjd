@@ -284,7 +284,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
             </div>
           </div>
 
-          {/* 中国地图底图 + 热力圆点（共享同一容器与比例，保证圆点与省份对齐） */}
+          {/* 中��地图底图 + 热力圆点（共享同一容器与比例，保证圆点与省份对齐） */}
           <div className="absolute inset-0 flex items-center justify-center p-4">
             <div className="relative w-full h-full max-w-full max-h-full aspect-[785/645] mx-auto">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -372,7 +372,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
               </span>
             </div>
 
-            <div className="flex-1 space-y-2 overflow-auto">
+            <div className="flex-1 space-y-2.5 overflow-auto">
               {currentList.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground py-8">
                   <Building2 className="w-8 h-8 mb-2 opacity-40" />
@@ -380,36 +380,38 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
                   <p className="text-[10px] mt-1 opacity-70">悬停其他省份查看</p>
                 </div>
               ) : (
-                currentList.map((warehouse) => (
+                currentList.slice(0, 3).map((warehouse) => (
                   <div
                     key={warehouse.id}
                     className="border border-border rounded-lg overflow-hidden hover:shadow-md hover:border-primary/40 transition-all cursor-pointer bg-card"
                   >
                     <div className="flex">
-                      <div className="w-20 h-20 bg-muted relative flex-shrink-0">
+                      <div className="w-24 h-28 bg-muted relative flex-shrink-0">
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <Building2 className="w-5 h-5 text-muted-foreground/30" />
+                          <Building2 className="w-6 h-6 text-muted-foreground/30" />
                         </div>
                         <Badge className="absolute top-1 left-1 text-[10px] bg-green-500 text-white px-1 py-0">
                           出租
                         </Badge>
                       </div>
-                      <div className="flex-1 p-2 min-w-0">
-                        <div className="flex items-baseline gap-1 mb-1">
-                          <span className="text-primary font-bold text-sm">{warehouse.price}</span>
-                          <span className="text-[10px] text-muted-foreground">元/m²/天</span>
+                      <div className="flex-1 p-2.5 min-w-0 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-baseline gap-1 mb-1.5">
+                            <span className="text-primary font-bold text-base">{warehouse.price}</span>
+                            <span className="text-[10px] text-muted-foreground">元/m²/天</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-1.5">
+                            <Maximize2 className="w-3 h-3" />
+                            <span>{warehouse.area}m²</span>
+                            <Badge
+                              variant="secondary"
+                              className="text-[10px] bg-green-100 text-green-600 px-1 py-0 ml-1"
+                            >
+                              {warehouse.priceStatus}
+                            </Badge>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-1">
-                          <Maximize2 className="w-3 h-3" />
-                          <span>{warehouse.area}m²</span>
-                          <Badge
-                            variant="secondary"
-                            className="text-[10px] bg-green-100 text-green-600 px-1 py-0 ml-1"
-                          >
-                            {warehouse.priceStatus}
-                          </Badge>
-                        </div>
-                        <div className="text-[10px] text-muted-foreground line-clamp-2 leading-tight">
+                        <div className="text-[11px] text-foreground/80 line-clamp-2 leading-snug">
                           {warehouse.name}
                         </div>
                       </div>
