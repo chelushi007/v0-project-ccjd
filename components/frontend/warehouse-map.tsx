@@ -284,9 +284,9 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
             </div>
           </div>
 
-          {/* 中���地图底图 + 热力圆点（共享同一容器与比例，保证圆点与省份对齐） */}
+          {/* 中国地图底图 + 热力圆点（共享同一容器与比例，保证圆点与省份对齐） */}
           <div className="absolute inset-0 flex items-center justify-center p-4">
-            <div className="relative w-full h-full max-w-full max-h-full aspect-[785/645] mx-auto">
+            <div className="relative h-full aspect-[785/645] mx-auto">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={CHINA_MAP_IMG || "/placeholder.svg"}
@@ -339,26 +339,44 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
             </div>
           </div>
 
-          {/* 省份信息卡片：默认收起，仅当鼠标移入对应区域时显示 */}
-          {hoveredProvince && provinceData[hoveredProvince] && (
-            <div className="absolute top-3 right-3 bg-white/97 border border-border rounded-lg shadow-lg p-4 min-w-[230px] z-10 pointer-events-none">
-              <h4 className="font-bold text-base mb-3 text-foreground">{hoveredProvince}</h4>
-              <div className="space-y-2 text-sm">
-                <DetailRow label="仓储数量" value={`${provinceData[hoveredProvince].warehouses} 座`} highlight />
-                <DetailRow label="总面积" value={`${provinceData[hoveredProvince].totalArea.toLocaleString()} m²`} />
-                <DetailRow
-                  label="可出租面积"
-                  value={`${provinceData[hoveredProvince].rentableArea.toLocaleString()} m²`}
-                  highlight
-                />
-                <DetailRow
-                  label="交易金额"
-                  value={`${provinceData[hoveredProvince].transactionAmount.toLocaleString()} 万元`}
-                />
-                <DetailRow label="发布单数" value={`${provinceData[hoveredProvince].publishCount.toLocaleString()} 条`} />
-              </div>
+          {/* 省份信息卡片：常驻容器 + 透明度切换，避免 mount/unmount 引发布局闪烁 */}
+          <div
+            className={cn(
+              "absolute top-3 right-3 bg-white/97 border border-border rounded-lg shadow-lg p-4 min-w-[230px] z-10 pointer-events-none transition-opacity duration-150",
+              hoveredProvince && provinceData[hoveredProvince]
+                ? "opacity-100"
+                : "opacity-0",
+            )}
+            aria-hidden={!hoveredProvince}
+          >
+            <h4 className="font-bold text-base mb-3 text-foreground">
+              {hoveredProvince || "\u00A0"}
+            </h4>
+            <div className="space-y-2 text-sm">
+              <DetailRow
+                label="仓储数量"
+                value={`${provinceData[hoveredProvince ?? ""]?.warehouses ?? 0} 座`}
+                highlight
+              />
+              <DetailRow
+                label="总面积"
+                value={`${(provinceData[hoveredProvince ?? ""]?.totalArea ?? 0).toLocaleString()} m²`}
+              />
+              <DetailRow
+                label="可出租面积"
+                value={`${(provinceData[hoveredProvince ?? ""]?.rentableArea ?? 0).toLocaleString()} m²`}
+                highlight
+              />
+              <DetailRow
+                label="交易金额"
+                value={`${(provinceData[hoveredProvince ?? ""]?.transactionAmount ?? 0).toLocaleString()} 万元`}
+              />
+              <DetailRow
+                label="发布单数"
+                value={`${(provinceData[hoveredProvince ?? ""]?.publishCount ?? 0).toLocaleString()} 条`}
+              />
             </div>
-          )}
+          </div>
         </div>
 
         {/* 右侧：仓储列表（跟随地图省份联动） */}
