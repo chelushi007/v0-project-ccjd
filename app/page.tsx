@@ -45,6 +45,10 @@ export default function HomePage() {
         setCurrentPage("warehouse-map")
       } else if (subTab === "material-list") {
         setCurrentPage("material-list")
+      } else if (subTab === "transport-list") {
+        setCurrentPage("transport-list")
+      } else if (subTab === "transaction-notice-list") {
+        setCurrentPage("transaction-notice-list")
       } else if (subTab === "detail-publish") {
         setCurrentPage("detail-publish")
         setPublishDefaultTab("quick") // 从侧边栏进入默认显示快捷发布
@@ -106,6 +110,10 @@ export default function HomePage() {
       setActiveSubTab("warehouse-map")
     } else if (page === "material-list") {
       setActiveSubTab("material-list")
+    } else if (page === "transport-list") {
+      setActiveSubTab("transport-list")
+    } else if (page === "transaction-notice-list") {
+      setActiveSubTab("transaction-notice-list")
     } else if (page === "detail-publish") {
       setActiveSubTab("detail-publish")
     } else if (page === "material-publish") {

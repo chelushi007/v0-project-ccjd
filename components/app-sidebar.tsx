@@ -27,6 +27,8 @@ import {
   Tags,
   Settings2,
   BarChart3,
+  Truck,
+  Megaphone,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -52,6 +54,8 @@ const frontendMenu: MenuItem[] = [
   { id: "warehouse-list", label: "仓储列表", icon: List },
   { id: "warehouse-map", label: "仓储地图", icon: Map },
   { id: "material-list", label: "物资列表", icon: Boxes },
+  { id: "transport-list", label: "专运单位列表", icon: Truck },
+  { id: "transaction-notice-list", label: "成交公告列表", icon: Megaphone },
 ]
 
 // 个人工作台菜单（结算管理含两个子级）
