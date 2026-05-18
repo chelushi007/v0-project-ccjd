@@ -77,7 +77,7 @@ export function TiejianWarehouse({ onNavigate }: TiejianWarehouseProps = {}) {
             央企品质
           </Badge>
         </div>
-        <Button variant="link" className="text-primary">
+        <Button variant="link" className="text-primary" onClick={() => onNavigate?.("warehouse-list")}>
           查看全部
           <ArrowRight className="w-4 h-4 ml-1" />
         </Button>

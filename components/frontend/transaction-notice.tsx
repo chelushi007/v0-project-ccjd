@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Bell, ArrowRight, Calendar } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Bell, ArrowRight, Calendar } from "lucide-react"import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -185,7 +184,7 @@ const dataMap: Record<DealType, DealRecord[]> = {
   ],
 }
 
-export function TransactionNotice() {
+export function TransactionNotice({ onNavigate }: { onNavigate?: (page: string) => void } = {}) {
   const [tab, setTab] = useState<DealType>("warehouse")
   const current = tabs.find((t) => t.key === tab)!
   const records = dataMap[tab]
@@ -217,7 +216,11 @@ export function TransactionNotice() {
         </div>
 
         <div className="justify-self-end">
-          <Button variant="link" className="text-primary">
+          <Button
+            variant="link"
+            className="text-primary"
+            onClick={() => onNavigate?.("transaction-notice-list")}
+          >
             查看全部公告
             <ArrowRight className="w-4 h-4 ml-1" />
           </Button>

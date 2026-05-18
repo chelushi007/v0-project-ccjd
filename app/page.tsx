@@ -12,6 +12,8 @@ import { WarehouseDetailPage } from "@/components/frontend/warehouse-detail-page
 import { TransportDetailPage } from "@/components/frontend/transport-detail-page"
 import { MaterialDetailPage } from "@/components/frontend/material-detail-page"
 import { MaterialPublishPage } from "@/components/frontend/material-publish-page"
+import { TransportListPage } from "@/components/frontend/transport-list-page"
+import { TransactionNoticeListPage } from "@/components/frontend/transaction-notice-list-page"
 import { PersonalWorkbench } from "@/components/workbench/personal-workbench"
 import { OperationWorkbench } from "@/components/workbench/operation-workbench"
 import { cn } from "@/lib/utils"
@@ -138,6 +140,10 @@ export default function HomePage() {
           return <MaterialDetailPage onNavigate={handleNavigate} />
         case "material-publish":
           return <MaterialPublishPage onNavigate={handleNavigate} />
+        case "transport-list":
+          return <TransportListPage onNavigate={handleNavigate} />
+        case "transaction-notice-list":
+          return <TransactionNoticeListPage onNavigate={handleNavigate} />
         case "home":
         default:
           return <FrontendPage onNavigate={handleNavigate} />

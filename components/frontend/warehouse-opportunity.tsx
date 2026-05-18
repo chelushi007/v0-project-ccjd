@@ -82,7 +82,7 @@ export function WarehouseOpportunity({ onNavigate }: WarehouseOpportunityProps =
           <h2 className="text-lg font-semibold text-foreground">仓储商机</h2>
           <Badge variant="secondary" className="ml-2">出租信息</Badge>
         </div>
-        <Button variant="link" className="text-primary">
+        <Button variant="link" className="text-primary" onClick={() => onNavigate?.("warehouse-list")}>
           更多商机
           <ArrowRight className="w-4 h-4 ml-1" />
         </Button>

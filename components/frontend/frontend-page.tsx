@@ -46,7 +46,7 @@ export function FrontendPage({ onNavigate }: FrontendPageProps) {
       <MaterialRecommend onNavigate={onNavigate} />
 
       {/* 成交公告 */}
-      <TransactionNotice />
+      <TransactionNotice onNavigate={onNavigate} />
 
       {/* 页脚 */}
       <footer className="py-8 border-t border-border">
