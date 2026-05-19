@@ -375,13 +375,14 @@ export function MaterialMap({ onNavigate }: MaterialMapProps) {
 
         {/* 中间：地图 */}
         <div className="bg-[#eef9f1] border-y border-border relative h-full overflow-hidden">
-          {/* 右上角入口：物资地图（指向物资列表） */}
+          {/* 右上角入口：物资地图（指向物资地图二级页） */}
           <div className="absolute top-2 right-2 z-30">
             <Button
               variant="secondary"
               size="sm"
               className="h-7 px-2.5 text-xs bg-white/95 hover:bg-white shadow-sm border border-border"
-              onClick={() => onNavigate?.("material-list")}
+              onClick={() => onNavigate?.("material-map")}
+              aria-label="进入物资地图"
             >
               物资地图
               <ArrowRight className="w-3.5 h-3.5 ml-1" />
