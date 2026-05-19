@@ -202,18 +202,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
   const currentList = displayProvince ? warehouseListByProvince[displayProvince] ?? [] : []
 
   return (
-    <section className="w-full">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-semibold text-foreground">仓储地图分布</h2>
-        </div>
-        <Button variant="link" className="text-primary" onClick={() => onNavigate?.("warehouse-map")}>
-          仓储地图
-          <ArrowRight className="w-4 h-4 ml-1" />
-        </Button>
-      </div>
-
+    <div className="w-full">
       <div className="grid grid-cols-[minmax(180px,18%)_minmax(0,1fr)_minmax(240px,24%)] gap-0 h-[460px]">
         {/* 左侧：全国统计 5 项 */}
         <div className="bg-[#0f2742] text-white rounded-l-lg p-4 flex flex-col h-full">
@@ -236,6 +225,18 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
 
         {/* 中间：地图 */}
         <div className="bg-[#e8f4fc] border-y border-border relative h-full overflow-hidden">
+          {/* 右上角入口：仓储地图 */}
+          <div className="absolute top-2 right-2 z-30">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="h-7 px-2.5 text-xs bg-white/95 hover:bg-white shadow-sm border border-border"
+              onClick={() => onNavigate?.("warehouse-map")}
+            >
+              仓储地图
+              <ArrowRight className="w-3.5 h-3.5 ml-1" />
+            </Button>
+          </div>
           {/* 图例 */}
           <div className="absolute bottom-3 left-3 z-20 bg-white/95 border border-border rounded-md px-3 py-2 shadow-sm">
             <div className="text-[11px] text-muted-foreground mb-1.5">{heatLegend[heatmapMode].label}</div>
@@ -305,7 +306,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
 
           {/* 省份信息卡片 */}
           {displayProvince && displayMetrics && (
-            <div className="absolute top-3 right-3 bg-white/97 border border-border rounded-lg shadow-lg p-4 min-w-[230px] z-10 pointer-events-none">
+            <div className="absolute top-12 right-3 bg-white/97 border border-border rounded-lg shadow-lg p-4 min-w-[230px] z-10 pointer-events-none">
               <h4 className="font-bold text-base mb-3 text-foreground">{displayProvince}</h4>
               <div className="space-y-2 text-sm">
                 <DetailRow label="仓储数量" value={`${displayMetrics.warehouses} 座`} highlight />
@@ -400,7 +401,7 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
           </CardContent>
         </Card>
       </div>
-    </section>
+    </div>
   )
 }
 
