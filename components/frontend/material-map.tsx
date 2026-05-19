@@ -4,6 +4,7 @@ import { useMemo, useState } from "react"
 import {
   ArrowRight,
   Boxes,
+  Building2,
   Package,
   Maximize2,
   ShieldCheck,
@@ -239,6 +240,7 @@ type MaterialItem = {
   id: number
   name: string
   province: string
+  warehouseName: string
   category: Exclude<CategoryId, "all">
   type: "rent" | "sale"
   price: string
@@ -248,30 +250,30 @@ type MaterialItem = {
 }
 
 const materialItems: MaterialItem[] = [
-  { id: 1, name: "组合钢模板 65系列 9成新 现货 1500套", province: "广东省", category: "template", type: "rent", price: "0.32", unit: "元/套/天", spec: "65×100", status: "竞价中" },
-  { id: 2, name: "工字钢 I20a 闲置出租 总长 800m", province: "广东省", category: "section", type: "rent", price: "0.18", unit: "元/m/天", spec: "I20a", status: "竞价中" },
-  { id: 3, name: "盘扣式脚手架立杆 8000根 大量到货", province: "广东省", category: "scaffold", type: "rent", price: "0.06", unit: "元/根/天", spec: "Q345 60×3.0", status: "固定价" },
-  { id: 4, name: "P50/P60 钢轨二手 长度 25m 共 120 根", province: "北京市", category: "rail", type: "sale", price: "3,820", unit: "元/吨", spec: "P50", status: "可议价" },
-  { id: 5, name: "型钢支护 H400×200 重防腐 现货 240吨", province: "北京市", category: "support", type: "rent", price: "0.85", unit: "元/吨/天", spec: "H400×200", status: "竞价中" },
-  { id: 6, name: "可拆装板房 6×3m 含空调 闲置 30套", province: "上海市", category: "house", type: "sale", price: "9,800", unit: "元/套", spec: "6×3m", status: "可议价" },
-  { id: 7, name: "拼装式钢栈桥模块 2t/㎡ 总长 80m", province: "上海市", category: "assembly", type: "rent", price: "12.6", unit: "元/㎡/天", spec: "2t/㎡", status: "竞价中" },
-  { id: 8, name: "ZRYJV22 4×95 阻燃电缆 余 3000m", province: "江苏省", category: "cable", type: "sale", price: "286", unit: "元/m", spec: "4×95mm²", status: "固定价" },
-  { id: 9, name: "异形钢模板 弧形墙体 8成新", province: "江苏省", category: "template", type: "sale", price: "4,250", unit: "元/吨", spec: "弧形", status: "可议价" },
-  { id: 10, name: "槽钢 [16a 长度 12m 现存 60吨", province: "浙江省", category: "section", type: "rent", price: "0.16", unit: "元/m/天", spec: "[16a", status: "竞价中" },
-  { id: 11, name: "脚手架横杆 1.5m 12000根 物流园直发", province: "山东省", category: "scaffold", type: "sale", price: "12.8", unit: "元/根", spec: "1.5m", status: "固定价" },
-  { id: 12, name: "钢便桥拼装单元 12m 6套 重型加固", province: "河南省", category: "assembly", type: "rent", price: "85", unit: "元/m/天", spec: "12m 单元", status: "竞价中" },
-  { id: 13, name: "矿用工字钢支护 240根 含连接件", province: "河北省", category: "support", type: "rent", price: "0.78", unit: "元/吨/天", spec: "I18", status: "固定价" },
-  { id: 14, name: "彩钢活动板房二手 5×3m 18套", province: "湖北省", category: "house", type: "sale", price: "6,800", unit: "元/套", spec: "5×3m", status: "可议价" },
-  { id: 15, name: "P43 钢轨现货 共计 60 吨", province: "四川省", category: "rail", type: "rent", price: "1,260", unit: "元/吨/月", spec: "P43", status: "竞价中" },
-  { id: 16, name: "塑料模板 1830×915 闲置 800张", province: "福建省", category: "template", type: "sale", price: "62", unit: "元/张", spec: "18mm", status: "可议价" },
-  { id: 17, name: "电焊机/发电机 轨道式 8台打包出售", province: "重庆市", category: "other", type: "sale", price: "12,800", unit: "元/台", spec: "500A", status: "固定价" },
-  { id: 18, name: "YJV 3×185 高压电缆 闲置 1200m", province: "湖南省", category: "cable", type: "rent", price: "0.85", unit: "元/m/天", spec: "3×185", status: "竞价中" },
-  { id: 19, name: "圆钢 Φ32 闲置 80 吨 出租可分单", province: "辽宁省", category: "section", type: "rent", price: "0.20", unit: "元/m/天", spec: "Φ32", status: "竞价中" },
-  { id: 20, name: "拼装钢围檩 2t/m 现货 400m", province: "江西省", category: "assembly", type: "rent", price: "32", unit: "元/m/天", spec: "2t/m", status: "竞价中" },
-  { id: 21, name: "盘扣立杆 60×2.75 现货 2万根", province: "广西壮族自治区", category: "scaffold", type: "rent", price: "0.05", unit: "元/根/天", spec: "60×2.75", status: "固定价" },
-  { id: 22, name: "其他建材打包 含护栏/网片/夹具等", province: "陕西省", category: "other", type: "sale", price: "面议", unit: "整批", spec: "混合", status: "可议价" },
-  { id: 23, name: "异形支护构件 弧形/角部 现货", province: "天津市", category: "support", type: "rent", price: "0.92", unit: "元/吨/天", spec: "异形", status: "竞价中" },
-  { id: 24, name: "钢板房地基模块 1.5×1.5m 60块", province: "广东省", category: "house", type: "rent", price: "8", unit: "元/块/天", spec: "1.5×1.5m", status: "竞价中" },
+  { id: 1, name: "组合钢模板 65系列 9成新 现货 1500套", province: "广东省", warehouseName: "深圳前海综合物流仓", category: "template", type: "rent", price: "0.32", unit: "元/套/天", spec: "65×100", status: "竞价中" },
+  { id: 2, name: "工字钢 I20a 闲置出租 总长 800m", province: "广东省", warehouseName: "广州黄埔保税仓", category: "section", type: "rent", price: "0.18", unit: "元/m/天", spec: "I20a", status: "竞价中" },
+  { id: 3, name: "盘扣式脚手架立杆 8000根 大量到货", province: "广东省", warehouseName: "东莞松山湖工程材料库", category: "scaffold", type: "rent", price: "0.06", unit: "元/根/天", spec: "Q345 60×3.0", status: "固定价" },
+  { id: 4, name: "P50/P60 钢轨二手 长度 25m 共 120 根", province: "北京市", warehouseName: "北京通州轨交集料站", category: "rail", type: "sale", price: "3,820", unit: "元/吨", spec: "P50", status: "可议价" },
+  { id: 5, name: "型钢支护 H400×200 重防腐 现货 240吨", province: "北京市", warehouseName: "北京大兴机械总仓", category: "support", type: "rent", price: "0.85", unit: "元/吨/天", spec: "H400×200", status: "竞价中" },
+  { id: 6, name: "可拆装板房 6×3m 含空调 闲置 30套", province: "上海市", warehouseName: "上海临港装配建材仓", category: "house", type: "sale", price: "9,800", unit: "元/套", spec: "6×3m", status: "可议价" },
+  { id: 7, name: "拼装式钢栈桥模块 2t/㎡ 总长 80m", province: "上海市", warehouseName: "上海浦东桥隧周转库", category: "assembly", type: "rent", price: "12.6", unit: "元/㎡/天", spec: "2t/㎡", status: "竞价中" },
+  { id: 8, name: "ZRYJV22 4×95 阻燃电缆 余 3000m", province: "江苏省", warehouseName: "南京江宁电缆中心仓", category: "cable", type: "sale", price: "286", unit: "元/m", spec: "4×95mm²", status: "固定价" },
+  { id: 9, name: "异形钢模板 弧形墙体 8成新", province: "江苏省", warehouseName: "苏州相城建材联合仓", category: "template", type: "sale", price: "4,250", unit: "元/吨", spec: "弧形", status: "可议价" },
+  { id: 10, name: "槽钢 [16a 长度 12m 现存 60吨", province: "浙江省", warehouseName: "宁波镇海钢材集中库", category: "section", type: "rent", price: "0.16", unit: "元/m/天", spec: "[16a", status: "竞价中" },
+  { id: 11, name: "脚手架横杆 1.5m 12000根 物流园直发", province: "山东省", warehouseName: "济南章丘工器具中心库", category: "scaffold", type: "sale", price: "12.8", unit: "元/根", spec: "1.5m", status: "固定价" },
+  { id: 12, name: "钢便桥拼装单元 12m 6套 重型加固", province: "河南省", warehouseName: "郑州中牟轨建总仓", category: "assembly", type: "rent", price: "85", unit: "元/m/天", spec: "12m 单元", status: "竞价中" },
+  { id: 13, name: "矿用工字钢支护 240根 含连接件", province: "河北省", warehouseName: "石家庄正定型钢中转仓", category: "support", type: "rent", price: "0.78", unit: "元/吨/天", spec: "I18", status: "固定价" },
+  { id: 14, name: "彩钢活动板房二手 5×3m 18套", province: "湖北省", warehouseName: "武汉东西湖装配仓", category: "house", type: "sale", price: "6,800", unit: "元/套", spec: "5×3m", status: "可议价" },
+  { id: 15, name: "P43 钢轨现货 共计 60 吨", province: "四川省", warehouseName: "成都青白江钢轨集料站", category: "rail", type: "rent", price: "1,260", unit: "元/吨/月", spec: "P43", status: "竞价中" },
+  { id: 16, name: "塑料模板 1830×915 闲置 800张", province: "福建省", warehouseName: "福州长乐建材综合仓", category: "template", type: "sale", price: "62", unit: "元/张", spec: "18mm", status: "可议价" },
+  { id: 17, name: "电焊机/发电机 轨道式 8台打包出售", province: "重庆市", warehouseName: "重庆江津机电中心仓", category: "other", type: "sale", price: "12,800", unit: "元/台", spec: "500A", status: "固定价" },
+  { id: 18, name: "YJV 3×185 高压电缆 闲置 1200m", province: "湖南省", warehouseName: "长沙望城电力周转库", category: "cable", type: "rent", price: "0.85", unit: "元/m/天", spec: "3×185", status: "竞价中" },
+  { id: 19, name: "圆钢 Φ32 闲置 80 吨 出租可分单", province: "辽宁省", warehouseName: "沈阳浑南钢材联合仓", category: "section", type: "rent", price: "0.20", unit: "元/m/天", spec: "Φ32", status: "竞价中" },
+  { id: 20, name: "拼装钢围檩 2t/m 现货 400m", province: "江西省", warehouseName: "南昌新建桥隧物资仓", category: "assembly", type: "rent", price: "32", unit: "元/m/天", spec: "2t/m", status: "竞价中" },
+  { id: 21, name: "盘扣立杆 60×2.75 现货 2万根", province: "广西壮族自治区", warehouseName: "南宁武鸣脚手架中心库", category: "scaffold", type: "rent", price: "0.05", unit: "元/根/天", spec: "60×2.75", status: "固定价" },
+  { id: 22, name: "其他建材打包 含护栏/网片/夹具等", province: "陕西省", warehouseName: "西安灞桥综合材料仓", category: "other", type: "sale", price: "面议", unit: "整批", spec: "混合", status: "可议价" },
+  { id: 23, name: "异形支护构件 弧形/角部 现货", province: "天津市", warehouseName: "天津滨海支护构件仓", category: "support", type: "rent", price: "0.92", unit: "元/吨/天", spec: "异形", status: "竞价中" },
+  { id: 24, name: "钢板房地基模块 1.5×1.5m 60块", province: "广东省", warehouseName: "佛山顺德装配地基仓", category: "house", type: "rent", price: "8", unit: "元/块/天", spec: "1.5×1.5m", status: "竞价中" },
 ]
 
 // 颜色梯度（按全部物资总需求量分档）
@@ -511,7 +513,7 @@ export function MaterialMap({ onNavigate }: MaterialMapProps) {
                   <p className="text-[10px] mt-1 opacity-70">尝试切换分类或地区</p>
                 </div>
               ) : (
-                recommendList.slice(0, 8).map((it) => (
+                recommendList.slice(0, 3).map((it) => (
                   <div
                     key={it.id}
                     className="border border-border rounded-lg overflow-hidden hover:shadow-md hover:border-emerald-500/40 transition-all cursor-pointer bg-card"
@@ -535,19 +537,25 @@ export function MaterialMap({ onNavigate }: MaterialMapProps) {
                         <div className="flex items-baseline gap-1 mb-1">
                           <span className="text-emerald-700 font-bold text-sm">{it.price}</span>
                           <span className="text-[10px] text-muted-foreground">{it.unit}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-1">
-                          <Maximize2 className="w-3 h-3" />
-                          <span>{it.spec}</span>
                           <Badge
                             variant="secondary"
-                            className="text-[10px] bg-emerald-100 text-emerald-700 px-1 py-0 ml-1"
+                            className="text-[10px] bg-emerald-100 text-emerald-700 px-1 py-0 ml-auto"
                           >
                             {it.status}
                           </Badge>
                         </div>
-                        <div className="text-[10px] text-muted-foreground line-clamp-2 leading-tight">
+                        <div className="text-[11px] text-foreground line-clamp-1 leading-tight font-medium">
                           {it.name}
+                        </div>
+                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-1">
+                          <Maximize2 className="w-3 h-3 shrink-0" />
+                          <span className="shrink-0">{it.spec}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-0.5">
+                          <Building2 className="w-3 h-3 shrink-0 text-emerald-600" />
+                          <span className="truncate" title={it.warehouseName}>
+                            {it.warehouseName}
+                          </span>
                         </div>
                       </div>
                     </div>
