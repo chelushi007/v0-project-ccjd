@@ -17,6 +17,7 @@ import {
   LayoutGrid,
   List as ListIcon,
   Map as MapIcon,
+  Building2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -44,6 +45,7 @@ interface MaterialListItem {
   category: string
   dealType: DealType
   location: string
+  warehouseName: string
   price: string
   unit: string
   condition: string
@@ -65,6 +67,7 @@ const materialData: MaterialListItem[] = [
     category: "房屋建筑类",
     dealType: "出租",
     location: "广东省深圳市龙岗区",
+    warehouseName: "深圳龙岗周转材料中心仓",
     price: "12",
     unit: "元/方/月",
     condition: "七成新",
@@ -84,6 +87,7 @@ const materialData: MaterialListItem[] = [
     category: "其他材料",
     dealType: "出租",
     location: "广东省东莞市虎门镇",
+    warehouseName: "东莞虎门塔机器材集中仓",
     price: "1800",
     unit: "元/节/月",
     condition: "九成新",
@@ -102,6 +106,7 @@ const materialData: MaterialListItem[] = [
     category: "拼装类",
     dealType: "出租",
     location: "广东省广州市番禺区",
+    warehouseName: "广州番禺南村脚手架基地",
     price: "0.8",
     unit: "元/套/天",
     condition: "九成新",
@@ -121,6 +126,7 @@ const materialData: MaterialListItem[] = [
     category: "机械设备",
     dealType: "出租",
     location: "广东省珠海市横琴新区",
+    warehouseName: "珠海横琴重型设备仓",
     price: "2.6",
     unit: "万元/月",
     condition: "八成新",
@@ -139,6 +145,7 @@ const materialData: MaterialListItem[] = [
     category: "拼装类",
     dealType: "出售",
     location: "广东省广州市黄埔区",
+    warehouseName: "广州黄埔保税材料周转仓",
     price: "3500",
     unit: "元/吨",
     condition: "八成新",
@@ -158,6 +165,7 @@ const materialData: MaterialListItem[] = [
     category: "模板类",
     dealType: "出售",
     location: "广东省佛山市顺德区",
+    warehouseName: "佛山顺德建材联合仓",
     price: "45",
     unit: "元/张",
     condition: "六成新",
@@ -176,6 +184,7 @@ const materialData: MaterialListItem[] = [
     category: "机械设备",
     dealType: "出售",
     location: "广东省东莞市厚街镇",
+    warehouseName: "东莞厚街机械装备仓",
     price: "26",
     unit: "万元/台",
     condition: "七成新",
@@ -195,6 +204,7 @@ const materialData: MaterialListItem[] = [
     category: "再生材料",
     dealType: "出售",
     location: "广东省惠州市仲恺区",
+    warehouseName: "惠州仲恺再生资源集结仓",
     price: "2800",
     unit: "元/吨",
     condition: "废料",
@@ -525,6 +535,10 @@ export function MaterialListPage({ onNavigate }: MaterialListPageProps) {
                           <MapPin className="w-3.5 h-3.5" />
                           {item.location}
                         </span>
+                        <span className="flex items-center gap-1 text-primary">
+                          <Building2 className="w-3.5 h-3.5" />
+                          {item.warehouseName}
+                        </span>
                         <span className="flex items-center gap-1">
                           <Package className="w-3.5 h-3.5" />
                           {item.quantity}
@@ -664,9 +678,15 @@ export function MaterialListPage({ onNavigate }: MaterialListPageProps) {
                   <h3 className="font-medium text-card-foreground mb-2 line-clamp-1 text-sm group-hover:text-primary transition-colors">
                     {item.name}
                   </h3>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
                     <MapPin className="w-3 h-3" />
                     <span className="line-clamp-1">{item.location}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-primary mb-2">
+                    <Building2 className="w-3 h-3 shrink-0" />
+                    <span className="line-clamp-1" title={item.warehouseName}>
+                      {item.warehouseName}
+                    </span>
                   </div>
                   <div className="text-xs text-muted-foreground mb-2 line-clamp-1">
                     供应商:{item.supplier}
