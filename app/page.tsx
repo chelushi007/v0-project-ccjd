@@ -14,6 +14,7 @@ import { MaterialDetailPage } from "@/components/frontend/material-detail-page"
 import { MaterialPublishPage } from "@/components/frontend/material-publish-page"
 import { TransportListPage } from "@/components/frontend/transport-list-page"
 import { TransactionNoticeListPage } from "@/components/frontend/transaction-notice-list-page"
+import { MaterialMapPage } from "@/components/frontend/material-map-page"
 import { PersonalWorkbench } from "@/components/workbench/personal-workbench"
 import { OperationWorkbench } from "@/components/workbench/operation-workbench"
 import { cn } from "@/lib/utils"
@@ -45,6 +46,8 @@ export default function HomePage() {
         setCurrentPage("warehouse-map")
       } else if (subTab === "material-list") {
         setCurrentPage("material-list")
+      } else if (subTab === "material-map") {
+        setCurrentPage("material-map")
       } else if (subTab === "transport-list") {
         setCurrentPage("transport-list")
       } else if (subTab === "transaction-notice-list") {
@@ -110,6 +113,8 @@ export default function HomePage() {
       setActiveSubTab("warehouse-map")
     } else if (page === "material-list") {
       setActiveSubTab("material-list")
+    } else if (page === "material-map") {
+      setActiveSubTab("material-map")
     } else if (page === "transport-list") {
       setActiveSubTab("transport-list")
     } else if (page === "transaction-notice-list") {
@@ -131,6 +136,8 @@ export default function HomePage() {
           return <WarehouseListPage onNavigate={handleNavigate} />
         case "material-list":
           return <MaterialListPage onNavigate={handleNavigate} />
+        case "material-map":
+          return <MaterialMapPage onNavigate={handleNavigate} />
         case "smart-match":
           return (
             <SmartMatchPage

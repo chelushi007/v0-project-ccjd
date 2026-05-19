@@ -4,7 +4,7 @@ import { HeroBanner } from "./hero-banner"
 import { SearchEngine } from "./search-engine"
 import { DemandPublish } from "./demand-publish"
 import { SmartMatch } from "./smart-match"
-import { WarehouseMap } from "./warehouse-map"
+import { MapDistribution } from "./map-distribution"
 import { WarehouseOpportunity } from "./warehouse-opportunity"
 import { MaterialRecommend } from "./material-recommend"
 import { TiejianWarehouse } from "./tiejian-warehouse"
@@ -35,8 +35,8 @@ export function FrontendPage({ onNavigate }: FrontendPageProps) {
         <SmartMatch onNavigate={onNavigate} />
       </div>
 
-      {/* 仓储地图 */}
-      <WarehouseMap onNavigate={onNavigate} />
+      {/* 仓储地图 / 物资地图 双 Tab */}
+      <MapDistribution onNavigate={onNavigate} />
 
       {/* 资讯板块：仓储商机 → 铁建仓储 → 热门站点（含原平台推荐内容）→ 精选专运单位 → 闲置物资 */}
       <WarehouseOpportunity onNavigate={onNavigate} />
