@@ -16,7 +16,6 @@ import {
   Recycle,
   LayoutGrid,
   List as ListIcon,
-  Map as MapIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -268,23 +267,6 @@ export function MaterialListPage({ onNavigate }: MaterialListPageProps) {
         <ChevronRight className="w-4 h-4 text-muted-foreground" />
         <span className="text-foreground">物资列表</span>
         <div className="ml-auto flex items-center gap-2">
-          {/* 物资地图 / 物资列表 切换 */}
-          <div className="flex items-center bg-muted rounded-lg p-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7"
-              onClick={() => onNavigate?.("material-map")}
-            >
-              <MapIcon className="w-4 h-4 mr-1" />
-              物资地图
-            </Button>
-            <Button variant="secondary" size="sm" className="h-7">
-              <ListIcon className="w-4 h-4 mr-1" />
-              物资列表
-            </Button>
-          </div>
-          {/* 列表 / 卡片 视图切换 */}
           <div className="flex items-center bg-muted rounded-lg p-1">
             <Button
               variant={view === "list" ? "secondary" : "ghost"}

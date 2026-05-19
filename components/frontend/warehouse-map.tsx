@@ -202,14 +202,13 @@ export function WarehouseMap({ onNavigate }: WarehouseMapProps) {
   const currentList = displayProvince ? warehouseListByProvince[displayProvince] ?? [] : []
 
   return (
-    <section className="w-full relative">
-      {/* 右上角浮动入口 */}
-      <div className="absolute -top-1 right-0 z-30">
-        <Button
-          variant="link"
-          className="text-primary h-7"
-          onClick={() => onNavigate?.("warehouse-map")}
-        >
+    <section className="w-full">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <MapPin className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-semibold text-foreground">仓储地图分布</h2>
+        </div>
+        <Button variant="link" className="text-primary" onClick={() => onNavigate?.("warehouse-map")}>
           仓储地图
           <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
