@@ -314,16 +314,6 @@ export function MaterialMap({ onNavigate }: MaterialMapProps) {
     return totals
   }, [])
 
-  // 全国汇总（基于当前分类）
-  const totals = useMemo(() => {
-    let rent = 0, sale = 0, warehouses = 0, deal = 0
-    Object.values(provinceMatrix).forEach((m) => {
-      const c = m[activeCat]
-      rent += c.rent; sale += c.sale; warehouses += c.warehouses; deal += c.deal
-    })
-    return { rent, sale, warehouses, deal }
-  }, [activeCat])
-
   const displayProvince = hoveredProvince || selectedProvince
   const displayMetrics = displayProvince ? provinceMatrix[displayProvince]?.[activeCat] : null
 
@@ -495,15 +485,7 @@ export function MaterialMap({ onNavigate }: MaterialMapProps) {
               <span className="text-[10px] text-muted-foreground shrink-0">共 {recommendList.length} 条</span>
             </div>
 
-            {/* 全国汇总（无地区聚焦时展示当前分类总览） */}
-            {!displayProvince && (
-              <div className="grid grid-cols-2 gap-1.5 mb-2 text-[10px]">
-                <SummaryChip label="出租" value={totals.rent} tone="emerald" />
-                <SummaryChip label="出售" value={totals.sale} tone="amber" />
-                <SummaryChip label="仓储" value={totals.warehouses} tone="sky" />
-                <SummaryChip label="成交(万)" value={Math.round(totals.deal / 100) / 10 + "k"} tone="primary" />
-              </div>
-            )}
+            {/* 全国汇总分类已移除，保持卡片直接展示 */}
 
             <div className="flex-1 space-y-2 overflow-auto">
               {recommendList.length === 0 ? (
@@ -602,31 +584,6 @@ function DetailRow({
     <div className="flex justify-between gap-3">
       <span className="text-muted-foreground">{label}</span>
       <span className={cn("font-semibold tabular-nums", highlight ? toneCls : "text-foreground")}>{value}</span>
-    </div>
-  )
-}
-
-function SummaryChip({
-  label,
-  value,
-  tone,
-}: {
-  label: string
-  value: number | string
-  tone: "emerald" | "amber" | "sky" | "primary"
-}) {
-  const cls =
-    tone === "emerald"
-      ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-      : tone === "amber"
-        ? "bg-amber-50 text-amber-700 border-amber-100"
-        : tone === "sky"
-          ? "bg-sky-50 text-sky-700 border-sky-100"
-          : "bg-primary/10 text-primary border-primary/20"
-  return (
-    <div className={cn("border rounded-md px-2 py-1 flex items-center justify-between", cls)}>
-      <span className="opacity-75">{label}</span>
-      <span className="font-semibold tabular-nums">{value}</span>
     </div>
   )
 }
